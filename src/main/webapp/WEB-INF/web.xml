@@ -17,9 +17,13 @@
 
     <display-name>Tatami</display-name>
 
-    <context-param>
+	<context-param>
+	     <param-name>contextClass</param-name>
+	     <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+	</context-param>
+	<context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:META-INF/spring/applicationContext.xml</param-value>
+        <param-value>fr.ippon.tatami.application</param-value>
     </context-param>
 
     <listener>
@@ -49,11 +53,21 @@
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<!-- No explicit configuration file reference here: everything is configured in the root container for simplicity -->
+			<param-name>contextConfigLocation</param-name>
+			<param-value></param-value>
+		</init-param>        
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
-        <url-pattern>/tatami/*</url-pattern>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
+
+
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
 </web-app>

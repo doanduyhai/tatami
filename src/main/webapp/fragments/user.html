@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">
+<div id="homeContent" class="container-fluid">
+	<div class="row-fluid">
+		<div class="span3 gravatar">
+			<img id="picture" src="http://www.gravatar.com/avatar/"
+				th:src="${'http://www.gravatar.com/avatar/'+currentUser.gravatar+'?s=64'}">
+			</img>
+		</div>
+		<div class="span9">
+			<h2>
+				<span id="firstName" th:text="${currentUser.firstName}">Julien</span> 
+				<span id="lastName" th:text="${currentUser.lastName}">DUBOIS</span>
+			</h2>
+		</div>
+	</div>
+	<div class="well well-small row-fluid">
+		<div class="span4">
+			<span id="tweetCount" class="badge" th:text="${currentUser.tweetCount}">20</span><br/>TWEETS
+		</div>
+		<div class="span4">
+			<span id="friendsCount" class="badge" th:text="${currentUser.friendsCount}">5</span><br/>FOLLOWING
+		</div>
+		<div class="span4">
+			<span id="followersCount" class="badge" th:text="${currentUser.followersCount}">100</span><br/>FOLLOWERS
+		</div>
+	</div>
+	<div class="row-fluid">
+		<div id="tweetInputZone" class="span12">
+			<textarea id="tweetContent" class="focused" maxlength="140"
+				  placeholder="Type a new tweet...">
+			</textarea>
+			<button id="tweetButton" type="button" class="btn btn-primary">Tweet!</button>
+		</div>
+	</div>
+</div>
+</html>

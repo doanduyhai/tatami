@@ -8,6 +8,17 @@ function incrementNbTweets() {
 	nbTweets += 10;
 }
 
+function loadHome()
+{
+	jQuery('#homeTabContent').empty();
+	jQuery('#homeTabContent').load('fragments/user.html #homeContent',
+	function()
+	{
+		jQuery('#tweetButton').click(tweet);
+	});
+}
+
+
 
 function refreshProfile() {
 	$.ajax({
@@ -29,7 +40,7 @@ function refreshProfile() {
 
 
 function tweet() {
-	if ($("#tweetContent").val() == "") {
+	if (jQuery('#tweetContent').val() == "") {
 		alert('Please type a message.');
 		return false;
 	}
@@ -43,7 +54,7 @@ function tweet() {
         success: function(data) {
             $("#tweetContent").slideUp().val("").slideDown('fast');
             setTimeout(function() {
-                        refreshProfile();
+            			$("#tweetCount").text($("#tweetCount").text()+1);
                         listTweets(true);
                     }, 1000);	//DEBUG wait for persistence consistency
         }

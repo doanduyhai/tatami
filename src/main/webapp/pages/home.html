@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">
+
+  <head th:substituteby="templates/global :: header" />	
+  <body>
+
+	<div id="topbar-home" th:substituteby="templates/global :: topbar-home"></div>
+
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span4">
+				<div class="tabbable">
+                    <ul class="nav nav-tabs">
+						<li class="active"><a id="defaultTab" href="#homeTabContent" data-toggle="pill">Show profile</a></li>
+						<li><a href="#profileTabContent" data-toggle="pill">Update Profile</a></li>
+					</ul>
+					<div id="userDetailsPanel" class="tab-content alert alert-info">
+						<div class="tab-pane active" id="homeTabContent">
+									
+						</div>
+						<div class="tab-pane" id="profileTabContent"></div>
+					</div>
+				</div>
+                <div>
+                    <div class="alert alert-info" id="followUserContent">
+                    
+                    </div>
+                </div>
+			</div>
+
+			<div class="span8">
+				<div class="tabbable">
+					<ul class="nav nav-tabs">
+						<li class="active"><a id="mainTab" href="#timeLinePanel" data-toggle="tab">Tweets</a></li>
+						<li><a id="userTab" href="#userLinePanel" data-toggle="tab">Other User Tweets</a></li>
+						<li><a id="chartTab" href="#view3Content" data-toggle="tab">Time chart</a></li>
+					</ul>
+					<div id="tweetsPanel" class="tab-content alert alert-success">
+						<div class="tab-pane active" id="timeLinePanel"></div>
+						<div class="tab-pane" id="userLinePanel"></div>
+						<div class="tab-pane" id="view3Content"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer th:substituteby="templates/global :: footer"></footer>
+	<script type="text/javascript" src="/assets/js/tatami.js" th:src="@{/assets/js/tatami.js}"></script>
+	<script type="text/javascript" src="/assets/js/profile.js" th:src="@{/assets/js/profile.js}"></script>
+	<script type="text/javascript" src="/assets/js/shortcut.js" th:src="@{/assets/js/shortcut.js}"></script>	
+
+
+	<script type="text/javascript" th:inline="javascript">
+		/*<![CDATA[*/
+        var login =  /*[[${sec.principal.username}]]*/ "jdubois";
+        resetNbTweets();
+		
+        !function ( $ ) {
+        	// left panel
+			//$('#homeTabContent').load('/assets/fragments/home.html', refreshProfile());
+        	loadHome();
+			$('#profileTabContent').load('assets/fragments/profile.html');
+            $('#followUserContent').load('assets/fragments/followUser.html', whoToFollow());
+        	// auto-refresh
+		    $('a[data-toggle="pill"]').on('show', function(e) {
+		    	if (e.target.hash == '#homeTabContent') {
+					refreshProfile();
+		    	} else if (e.target.hash == '#profileTabContent') {
+		        	displayProfile();
+		        }
+		    });
+
+		    // right panel
+			$('#timeLinePanel').load('assets/fragments/timeline.html', listTweets(true));
+		    // browser's refresh shortcut override
+			shortcut.add("Ctrl+R", function() {
+				listTweets(true);
+			});
+
+		    // infinite scroll
+			$(window).scroll(function() { 
+				if ($('#timeline').is(':visible') && $(window).scrollTop() >= $(document).height() - $(window).height()) {
+					listTweets(false);
+				}
+			});
+
+			$('#userLinePanel').load('assets/fragments/userline.html');
+        }( window.jQuery );
+        /*]]>*/
+	</script>
+
+	
+  </body>
+</html>

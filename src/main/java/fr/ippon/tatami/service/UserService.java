@@ -1,130 +1,152 @@
 package fr.ippon.tatami.service;
 
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.CounterRepository;
 import fr.ippon.tatami.repository.FollowerRepository;
 import fr.ippon.tatami.repository.FriendRepository;
 import fr.ippon.tatami.repository.UserRepository;
 import fr.ippon.tatami.service.util.GravatarUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
 
 /**
  * Manages the application's users.
- *
+ * 
  * @author Julien Dubois
  */
 @Service
-public class UserService {
+public class UserService
+{
 
-    private final Log log = LogFactory.getLog(UserService.class);
+	private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    @Inject
-    private UserRepository userRepository;
+	@Inject
+	private UserRepository userRepository;
 
-    @Inject
-    private FollowerRepository followerRepository;
+	@Inject
+	private FollowerRepository followerRepository;
 
-    @Inject
-    private FriendRepository friendRepository;
+	@Inject
+	private FriendRepository friendRepository;
 
-    @Inject
-    private CounterRepository counterRepository;
+	@Inject
+	private CounterRepository counterRepository;
 
-    public User getUserByLogin(String login) {
-        if (log.isDebugEnabled()) {
-            log.debug("Looking for user with login : " + login);
-        }
-        return userRepository.findUserByLogin(login);
-    }
+	public User getUserByLogin(String login)
+	{
+		log.debug("Looking for user with login {} ", login);
+		return userRepository.findUserByLogin(login);
+	}
 
-    public User getUserProfileByLogin(String login) {
-        User user = getUserByLogin(login);
-        user.setTweetCount(counterRepository.getTweetCounter(login));
-        user.setFollowersCount(counterRepository.getFollowersCounter(login));
-        user.setFriendsCount(counterRepository.getFriendsCounter(login));
-        return user;
-    }
+	public User getUserProfileByLogin(String login)
+	{
+		User user = getUserByLogin(login);
+		user.setTweetCount(counterRepository.getTweetCounter(login));
+		user.setFollowersCount(counterRepository.getFollowersCounter(login));
+		user.setFriendsCount(counterRepository.getFriendsCounter(login));
+		return user;
+	}
 
-    public void updateUser(User user) {
-        User currentUser = getCurrentUser();
-        if (currentUser.getLogin().equals(user.getLogin())) {
-            user.setGravatar(GravatarUtil.getHash(user.getEmail()));
-            userRepository.updateUser(user);
-        } else {
-            log.info("Security alert : user " + currentUser.getLogin() +
-                " tried to update user " + user);
-        }
-    }
+	public void updateUser(User user)
+	{
+		User currentUser = getCurrentUser();
+		if (currentUser.getLogin().equals(user.getLogin()))
+		{
+			user.setGravatar(GravatarUtil.getHash(user.getEmail()));
+			userRepository.updateUser(user);
+		}
+		else
+		{
+			log.info("Security alert : user {} tried to update user {} ", currentUser.getLogin(), user);
+		}
+	}
 
-    public void createUser(User user) {
-        user.setGravatar(GravatarUtil.getHash(user.getEmail()));
-        counterRepository.createTweetCounter(user.getLogin());
-        counterRepository.createFriendsCounter(user.getLogin());
-        counterRepository.createFollowersCounter(user.getLogin());
-        userRepository.createUser(user);
-    }
+	public void createUser(User user)
+	{
+		user.setGravatar(GravatarUtil.getHash(user.getEmail()));
+		counterRepository.createTweetCounter(user.getLogin());
+		counterRepository.createFriendsCounter(user.getLogin());
+		counterRepository.createFollowersCounter(user.getLogin());
+		userRepository.createUser(user);
+	}
 
-    public void followUser(String loginToFollow) {
-        if (log.isDebugEnabled()) {
-            log.debug("Adding friend : " + loginToFollow);
-        }
-        User currentUser = getCurrentUser();
-        User followedUser = getUserByLogin(loginToFollow);
-        if (followedUser != null && !followedUser.equals(currentUser)) {
-            boolean userAlreadyFollowed = false;
-            if (counterRepository.getFriendsCounter(currentUser.getLogin()) > 0) {
-                for (String alreadyFollowingTest : friendRepository.findFriendsForUser(currentUser.getLogin())) {
-                    if (alreadyFollowingTest.equals(loginToFollow)) {
-                        userAlreadyFollowed = true;
-                    }
-                }
-            }
-            if (!userAlreadyFollowed) {
-                friendRepository.addFriend(currentUser.getLogin(), followedUser.getLogin());
-                counterRepository.incrementFriendsCounter(currentUser.getLogin());
-                followerRepository.addFollower(followedUser.getLogin(), currentUser.getLogin());
-                counterRepository.incrementFollowersCounter(followedUser.getLogin());
-            }
-        } else {
-            log.debug("Followed user does not exist : " + loginToFollow);
-        }
-    }
+	public void followUser(String loginToFollow)
+	{
+		log.debug("Adding friend : {} ", loginToFollow);
 
-    public void forgetUser(String login) {
-        if (log.isDebugEnabled()) {
-            log.debug("Removing followed user : " + login);
-        }
-        User currentUser = getCurrentUser();
-        User followedUser = getUserByLogin(login);
-        if (followedUser != null) {
-            boolean userAlreadyFollowed = false;
-            for (String alreadyFollowingTest : friendRepository.findFriendsForUser(currentUser.getLogin())) {
-                    if (alreadyFollowingTest.equals(login)) {
-                        userAlreadyFollowed = true;
-                    }
-                }
-            if (userAlreadyFollowed) {
-                friendRepository.removeFriend(currentUser.getLogin(), followedUser.getLogin());
-                counterRepository.decrementFriendsCounter(currentUser.getLogin());
-                followerRepository.removeFollower(followedUser.getLogin(), currentUser.getLogin());
-                counterRepository.decrementFollowersCounter(followedUser.getLogin());
-            }
-        } else {
-            log.debug("Followed user does not exist : " + login);
-        }
-    }
+		User currentUser = getCurrentUser();
+		User followedUser = getUserByLogin(loginToFollow);
 
-    public User getCurrentUser() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        org.springframework.security.core.userdetails.User springSecurityUser = (org.springframework.security.core.userdetails.User) securityContext
-                .getAuthentication().getPrincipal();
+		if (followedUser != null && !followedUser.equals(currentUser))
+		{
+			boolean userAlreadyFollowed = false;
+			if (counterRepository.getFriendsCounter(currentUser.getLogin()) > 0)
+			{
+				for (String alreadyFollowingTest : friendRepository.findFriendsForUser(currentUser.getLogin()))
+				{
+					if (alreadyFollowingTest.equals(loginToFollow))
+					{
+						userAlreadyFollowed = true;
+						break;
+					}
+				}
+			}
+			if (!userAlreadyFollowed)
+			{
+				friendRepository.addFriend(currentUser.getLogin(), followedUser.getLogin());
+				counterRepository.incrementFriendsCounter(currentUser.getLogin());
+				followerRepository.addFollower(followedUser.getLogin(), currentUser.getLogin());
+				counterRepository.incrementFollowersCounter(followedUser.getLogin());
+			}
+		}
+		else
+		{
+			log.debug("Followed user does not exist : {}", loginToFollow);
+		}
+	}
 
-        return getUserByLogin(springSecurityUser.getUsername());
-    }
+	public void forgetUser(String login)
+	{
+		log.debug("Removing followed user : {}", login);
+		User currentUser = getCurrentUser();
+		User followedUser = getUserByLogin(login);
+		if (followedUser != null)
+		{
+			boolean userAlreadyFollowed = false;
+			for (String alreadyFollowingTest : friendRepository.findFriendsForUser(currentUser.getLogin()))
+			{
+				if (alreadyFollowingTest.equals(login))
+				{
+					userAlreadyFollowed = true;
+					break;
+				}
+			}
+			if (userAlreadyFollowed)
+			{
+				friendRepository.removeFriend(currentUser.getLogin(), followedUser.getLogin());
+				counterRepository.decrementFriendsCounter(currentUser.getLogin());
+				followerRepository.removeFollower(followedUser.getLogin(), currentUser.getLogin());
+				counterRepository.decrementFollowersCounter(followedUser.getLogin());
+			}
+		}
+		else
+		{
+			log.debug("Followed user does not exist : {}", login);
+		}
+	}
+
+	public User getCurrentUser()
+	{
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		org.springframework.security.core.userdetails.User springSecurityUser = (org.springframework.security.core.userdetails.User) securityContext
+				.getAuthentication().getPrincipal();
+
+		return getUserByLogin(springSecurityUser.getUsername());
+	}
 }

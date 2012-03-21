@@ -1,32 +1,55 @@
 package fr.ippon.tatami.web;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import fr.ippon.tatami.service.UserService;
 
 /**
  * Main tatami page.
- *
+ * 
  * @author Julien Dubois
  */
 @Controller
-public class TatamiController {
+public class TatamiController
+{
 
-    private final Log log = LogFactory.getLog(TatamiController.class);
+	private final Logger log = LoggerFactory.getLogger(TatamiController.class);
 
-    @RequestMapping("/login")
-    public String welcome() {
-        return "login";
-    }
+	@Inject
+	UserService userService;
 
-    @RequestMapping("/")
-    public String tatami() {
-        return "home";
-    }
+	@RequestMapping("/login")
+	public String welcome()
+	{
+		return "pages/login";
+	}
 
-    @RequestMapping("/about")
-    public String about() {
-        return "about";
-    }
+	@RequestMapping(value =
+	{
+			"/",
+			"/home"
+	})
+	public String tatami()
+	{
+		return "pages/home";
+	}
+
+	@RequestMapping("/about")
+	public String about()
+	{
+		return "pages/about";
+	}
+
+	@RequestMapping(value = "/fragments/user")
+	public String homeFragment(Model model)
+	{
+		model.addAttribute("currentUser", userService.getCurrentUser());
+		return "fragments/user";
+	}
 }

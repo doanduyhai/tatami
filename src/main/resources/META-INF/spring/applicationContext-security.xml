@@ -12,21 +12,22 @@
 
     <context:component-scan base-package="fr.ippon.tatami.security"/>
 
-    <http pattern="/tatami/login" security="none"/>
-    <http pattern="/tatami/about" security="none"/>
+    <http pattern="/login" security="none"/>
+    <http pattern="/about" security="none"/>
+    <http pattern="/assets/**" security="none"/>
 
     <http auto-config="true" use-expressions="true">
         <intercept-url pattern="/**" access="isAuthenticated()" />
         <form-login
-                login-processing-url="/tatami/authentication"
-                login-page="/tatami/login"
-                authentication-failure-url="/tatami/login?error=true"
-                default-target-url="/tatami/"
+                login-processing-url="/authentication"
+                login-page="/login"
+                authentication-failure-url="/login?error=true"
+                default-target-url="/home"
                 always-use-default-target="true"
                 authentication-success-handler-ref="tatamiAuthenticationSuccessHandler"/>
         <remember-me user-service-ref="userDetailsService"/>
-        <logout logout-url="/tatami/logout"
-                logout-success-url="/tatami/login"/>
+        <logout logout-url="/logout"
+                logout-success-url="/login"/>
     </http>
 
     <authentication-manager>
@@ -36,6 +37,7 @@
     <user-service id="userDetailsService">
         <user name="jdubois" password="password" authorities="ROLE_USER"/>
         <user name="tescolan" password="password" authorities="ROLE_USER"/>
+        <user name="duyhai" password="a" authorities="ROLE_USER"/>
     </user-service>
 
 </beans:beans>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" 
+	  xmlns="http://www.w3.org/1999/xhtml" 
+	  xmlns:th="http://www.thymeleaf.org">
+	<head th:fragment="header">
+		<title>Tatami - Authentication</title>
+		<meta charset="utf-8"></meta>	
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+		<meta name="description" content=""></meta>
+		<meta name="author" content="Ippon Technologies"></meta>
+	
+		<link rel="stylesheet" href="assets/css/bootstrap.css" th:href="@{/assets/css/bootstrap.css}"></link>
+		<link rel="stylesheet/less" href="assets/css/tatami-custom.less" th:href="@{/assets/css/tatami-custom.less}"></link>
+		<link rel="shortcut icon" href="assets/img/ippon.ico" th:href="@{/assets/img/ippon.ico}"></link>
+
+		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->		
+  	</head>
+	<body>
+		<!-- TOP BAR Templates -->
+		<div id="topbar-login" th:fragment="topbar-login" class="navbar navbar-fixed-top topbar">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</a>
+					<a class="brand" href="#"><img src="/assets/img/ippon-logo.png" th:src="@{/assets/img/ippon-logo.png}"></img> Tatami</a>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li class="active"><a href="/tatami/login" th:href="@{/login}"><i class="icon-lock icon-white"></i> Login</a></li>
+							<li><a href="/tatami/about" th:href="@{/about}"><i class="icon-info-sign icon-white"></i> About</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="topbar-about" th:fragment="topbar-about" class="navbar navbar-fixed-top topbar" >
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</a>
+					<a class="brand" href="#"><img src="/assets/img/ippon-logo.png" th:src="@{/assets/img/ippon-logo.png}"></img> Tatami</a>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li><a href="/tatami/home" th:href="@{/home}"><i class="icon-home icon-white"></i> Home</a></li>
+							<li class="active"><a href="#"><i class="icon-info-sign icon-white"></i> About</a></li>
+						</ul>
+						<ul class="nav pull-right">
+							<li class="divider-vertical"></li>
+							<li><a href="/tatami/logout" th:href="@{/logout}"><i class="icon-user icon-white"></i> Logout</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="topbar-home" th:fragment="topbar-home" class="navbar navbar-fixed-top topbar" >
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</a>
+					<a class="brand" href="#"><img src="/assets/img/ippon-logo.png" th:src="@{/assets/img/ippon-logo.png}"></img> Tatami</a>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li class="active"><a href="/tatami/home" th:href="@{/home}"><i class="icon-home icon-white"></i> Home</a></li>
+	                        <li><a href="/tatami/about" th:href="@{/about}"><i class="icon-info-sign icon-white"></i> About</a></li>
+						</ul>
+						<ul class="nav pull-right">
+							<li class="divider-vertical"></li>
+							<li><a href="/tatami/logout" th:href="@{/logout}"><i class="icon-user icon-white"></i> Logout</a></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+
+		<!-- FOOTER Templates -->							
+		<footer id="center-footer" th:fragment="footer">
+       		<div id="footerText" class="span12" >Copyright 2012 <a href="http://www.ippon.fr">Ippon Technologies</a> |
+           	 	<a href="https://github.com/ippontech/tatami">Fork Tatami on Github</a> |
+            	<a href="http://blog.ippon.fr">Blog Ippon</a> |
+            	<a href="https://twitter.com/#!/ippontech">Follow @ippontech on Twitter</a>
+       		</div>
+       		<script type="text/javascript" src="assets/js/jquery.js" th:src="@{/assets/js/jquery.js}"></script>
+       		<script type="text/javascript" src="assets/js/less-1.2.1.js" th:src="@{/assets/js/less-1.2.1.js}"></script>
+			<script type="text/javascript" src="assets/js/bootstrap.js" th:src="@{/assets/js/bootstrap.js}"></script>
+		</footer>
+		
+		<div id="home-javascript" th:fragment="home-javascript">		
+			<script type="text/javascript" src="/assets/js/tatami.js" th:src="@{/assets/js/tatami.js}"></script>
+			<script type="text/javascript" src="/assets/js/profile.js" th:src="@{/assets/js/profile.js}"></script>
+			<script type="text/javascript" src="/assets/js/shortcut.js" th:src="@{/assets/js/shortcut.js}"></script>			
+		</div>
+	</body>
+</html>
