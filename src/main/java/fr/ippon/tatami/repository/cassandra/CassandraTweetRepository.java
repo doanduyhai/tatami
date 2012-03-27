@@ -164,11 +164,11 @@ public class CassandraTweetRepository implements TweetRepository
 	@Override
 	public Collection<String> getTagline(String tag, int size)
 	{
-		ColumnSlice<String, String> result = createSliceQuery(keyspaceOperator, StringSerializer.get(), StringSerializer.get(),
-				StringSerializer.get()).setColumnFamily(TAGLINE_CF).setKey(tag).setRange(null, null, true, size).execute().get();
+		ColumnSlice<Long, String> result = createSliceQuery(keyspaceOperator, StringSerializer.get(), LongSerializer.get(), StringSerializer.get())
+				.setColumnFamily(TAGLINE_CF).setKey(tag).setRange(null, null, true, size).execute().get();
 
 		Collection<String> tweetIds = new ArrayList<String>();
-		for (HColumn<String, String> column : result.getColumns())
+		for (HColumn<Long, String> column : result.getColumns())
 		{
 			tweetIds.add(column.getValue());
 		}

@@ -1,9 +1,5 @@
 package fr.ippon.tatami.web.rest;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -15,11 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.service.TimelineService;
 import fr.ippon.tatami.service.UserService;
-import fr.ippon.tatami.service.util.TatamiConstants;
 
 /**
  * REST controller for managing users.
@@ -93,31 +87,6 @@ public class UserController
 		{
 			log.info("Cannot remove a friend from another user");
 		}
-	}
-
-	@RequestMapping(value = "/rest/suggestions", method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public Collection<User> suggestions()
-	{
-		User currentUser = userService.getCurrentUser();
-		final String login = currentUser.getLogin();
-		log.debug("REST request to get the last active tweeters list (except {} ).", login);
-
-		Collection<String> exceptions = userService.getFriendsForUser(login);
-		exceptions.add(login);
-
-		Collection<Tweet> tweets = timelineService.getDayline(null);
-		Map<String, User> users = new HashMap<String, User>();
-		for (Tweet tweet : tweets)
-		{
-			if (exceptions.contains(tweet.getLogin()))
-				continue;
-
-			users.put(tweet.getLogin(), userService.getUserProfileByLogin(tweet.getLogin()));
-			if (users.size() == TatamiConstants.USER_SUGGESTION_LIMIT)
-				break; // suggestions list limit
-		}
-		return users.values();
 	}
 
 	@RequestMapping(value = "/rest/likeTweet/{tweet}", method = RequestMethod.GET)

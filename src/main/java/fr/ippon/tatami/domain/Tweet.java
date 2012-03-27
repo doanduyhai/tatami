@@ -55,7 +55,7 @@ public class Tweet
 	private String gravatar;
 
 	@Column(name = "removed")
-	private Boolean removed;
+	private Boolean removed = new Boolean(false);
 
 	public String getPrettyPrintTweetDate()
 	{

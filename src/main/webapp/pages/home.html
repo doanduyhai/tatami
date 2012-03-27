@@ -50,16 +50,31 @@
 						<li>
 							<a id="tagTab" href="#tagLinePanel" data-toggle="tab"><i class="icon-tag"></i> Tag Tweets</a>
 						</li>
-						<li>
-							<a id="chartTab" href="#chartPanel" data-toggle="tab">Tweets of the day Pie chart</a>
-						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Statistics <b class="caret"></b></a>
+				            <ul class="dropdown-menu">
+				            	<li><a id="piechartTab" href="#piechartPanel" data-toggle="tab">Tweets of the day (pie chart)</a></li>
+				            	<li><a id="punchchartTab" href="#punchchartPanel" data-toggle="tab">Tweets of the week (punch chart)</a></li>
+				            </ul>
+						</li>						
 					</ul>
 					<div id="tweetsPanel" class="tab-content alert alert-success">
 						<div class="tab-pane active" id="timeLinePanel"></div>
 						<div class="tab-pane" id="favLinePanel"></div>
 						<div class="tab-pane" id="userLinePanel"></div>
 						<div class="tab-pane" id="tagLinePanel"></div>
-						<div class="tab-pane" id="chartPanel"></div>
+						<div class="tab-pane" id="piechartPanel">
+							<section id="day_statistics">
+								<h2>Day tweets statistics</h2>
+								<div id="piechart_div" style="width: 640px; height: 400px;"></div>
+							</section>
+						</div>
+						<div class="tab-pane" id="punchchartPanel">
+							<section id="week_statistics">
+								<h2>Week tweets statistics</h2>
+								<div id="punchchart_div" style="width: 800px; height: 300px;"></div>
+							</section>						
+						</div>
 					</div>
 				</div>
 			</div>
@@ -72,8 +87,9 @@
 
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
-        resetNbTweets();
-		
+
+        google.load("visualization", "1", {packages:["corechart"]});
+        
         !function ( $ ) {
         	// left panel
         	loadHome();
@@ -88,19 +104,17 @@
 		    });
 
 		    // right panel
-		    loadTimeline();
-
+		    loadFavoritesline();
+		    loadTagsline();
+		    loadTimeline();		    
+		    
             // auto-refresh
 		    $('a[data-toggle="tab"]').on('show', function(e) {
-		    	if (e.target.hash == '#timeLinePanel') {
-		    		loadTimeline();
-		    	}
-		    	else if(e.target.hash == '#favLinePanel') {
-		    		loadFavoritesline();
-		    	}
-		    	else if(e.target.hash == '#userLinePanel') {
-		    		loadUserline();
-		    	}	    	
+		    	if (e.target.hash == '#piechartPanel') {
+					refreshPieChart();
+		    	} else if (e.target.hash == '#punchchartPanel') {
+					refreshPunchChart();
+		        }
 		    });
 		    
 		    // browser's refresh shortcut override

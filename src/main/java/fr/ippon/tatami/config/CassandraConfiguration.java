@@ -2,10 +2,10 @@ package fr.ippon.tatami.config;
 
 import static fr.ippon.tatami.config.ColumnFamilyKeys.COUNTER_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.DAYLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWERS_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.FRIENDS_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TAGLINE_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TIMELINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TWEET_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.USERLINE_CF;
@@ -71,6 +71,7 @@ public class CassandraConfiguration
 			addColumnFamily(cluster, FOLLOWERS_CF);
 			addColumnFamily(cluster, TWEET_CF);
 			addColumnFamily(cluster, DAYLINE_CF);
+			System.out.println(" FAV LINE");
 			addColumnFamily(cluster, FAVLINE_CF);
 			addColumnFamily(cluster, TAGLINE_CF);
 			addColumnFamily(cluster, TIMELINE_CF);

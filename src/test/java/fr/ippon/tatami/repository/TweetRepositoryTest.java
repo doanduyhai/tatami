@@ -1,6 +1,7 @@
 package fr.ippon.tatami.repository;
 
 import static fr.ippon.tatami.config.ColumnFamilyKeys.DAYLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TAGLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TIMELINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.USERLINE_CF;
@@ -82,6 +83,20 @@ public class TweetRepositoryTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "testCreateTweet")
+	public void testAddTweetToFavoriteline()
+	{
+		Tweet tweet = this.tweetRepository.findTweetById(newTweetId);
+		this.tweetRepository.addTweetToFavoritesline(tweet, "test");
+
+		ColumnSlice<Long, String> result = createSliceQuery(keyspace, StringSerializer.get(), LongSerializer.get(), StringSerializer.get())
+				.setColumnFamily(FAVLINE_CF).setKey("test").setRange(null, null, true, 10).execute().get();
+
+		assertNotNull(result, "result");
+		assertTrue(result.getColumns().size() > 0, " result size > 0");
+		assertEquals(result.getColumns().get(0).getValue(), tweet.getTweetId(), "tweetId");
+	}
+
+	@Test(dependsOnMethods = "testCreateTweet")
 	public void testAddTweetToDayline()
 	{
 		Tweet tweet = this.tweetRepository.findTweetById(newTweetId);
@@ -127,6 +142,19 @@ public class TweetRepositoryTest extends AbstractCassandraTatamiTest
 	public void testGetTimeline()
 	{
 		Collection<String> tweets = this.tweetRepository.getTimeline("test", 1);
+
+		assertNotNull(tweets, "tweets");
+		assertTrue(tweets.size() > 0, "tweets.size() >0");
+
+		Tweet tweet = this.entityManager.find(Tweet.class, tweets.iterator().next());
+		assertEquals(tweet.getLogin(), "test", "tweet.getLogin()");
+		assertEquals(tweet.getContent(), "My First tweet to #jdubois", "tweet.getContent()");
+	}
+
+	@Test(dependsOnMethods = "testAddTweetToFavoriteline")
+	public void testGetFavoriteline()
+	{
+		Collection<String> tweets = this.tweetRepository.getFavoritesline("test");
 
 		assertNotNull(tweets, "tweets");
 		assertTrue(tweets.size() > 0, "tweets.size() >0");

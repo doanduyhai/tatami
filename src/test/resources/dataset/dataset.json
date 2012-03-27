@@ -446,6 +446,23 @@
         }]
     },
     {
+        "name" : "Favline",
+        "keyType" : "UTF8Type",
+        "comparatorType" : "LongType",
+        "defaultColumnValueType" : "UTF8Type",
+        "rows" : [{
+        	"key" : "jdubois",
+        	"columns" : [{
+        		"name" : "0",
+        		"value" : "tweetId1"
+        	},
+        	{
+        		"name" : "1",
+        		"value" : "tweetId2"
+        	}]
+        }]
+    },    
+    {
         "name" : "Timeline",
         "keyType" : "UTF8Type",
         "comparatorType" : "LongType",

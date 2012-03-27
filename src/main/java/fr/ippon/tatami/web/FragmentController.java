@@ -87,7 +87,7 @@ public class FragmentController
 		Collection<String> exceptions = userService.getFriendsForUser(login);
 		exceptions.add(login);
 
-		Collection<Tweet> tweets = timelineService.getDayline(null);
+		Collection<Tweet> tweets = timelineService.getDayline("");
 		Map<String, User> users = new HashMap<String, User>();
 		for (Tweet tweet : tweets)
 		{
@@ -114,7 +114,7 @@ public class FragmentController
 	public String userLineFragment(@PathVariable("login")
 	String targetUserLogin, Model model)
 	{
-		Collection<Tweet> tweets = timelineService.getUserline(targetUserLogin, TatamiConstants.DEFAULT_TWEET_NUMBER);
+		Collection<Tweet> tweets = timelineService.getUserline(targetUserLogin, TatamiConstants.DEFAULT_TWEET_LIST_SIZE);
 		log.info("Listing {} tweets for user {}", tweets.size(), targetUserLogin);
 		model.addAttribute("userTweets", tweets);
 		return "fragments/userline";
@@ -126,5 +126,38 @@ public class FragmentController
 		User currentUser = userService.getCurrentUser();
 		model.addAttribute("favoriteTweets", timelineService.getFavoritesline(currentUser.getLogin()));
 		return "fragments/favline";
+	}
+
+	@RequestMapping(value = "/fragments/{nbTweets}/tagline")
+	public String tagLineFragment(@PathVariable("nbTweets")
+	int nbTweets, Model model)
+	{
+		if (nbTweets <= 0)
+		{
+			nbTweets = TatamiConstants.DEFAULT_TAG_LIST_SIZE;
+		}
+
+		log.debug("REST request to get a tag tweet list ( {} sized).", nbTweets);
+
+		model.addAttribute("tagTweets", timelineService.getTagline(null, nbTweets));
+
+		return "fragments/tagline";
+	}
+
+	@RequestMapping(value = "/fragments/{tag}/{nbTweets}/tagline")
+	public String tagLineFragment(@PathVariable("tag")
+	String tag, @PathVariable("nbTweets")
+	int nbTweets, Model model)
+	{
+		if (nbTweets <= 0)
+		{
+			nbTweets = TatamiConstants.DEFAULT_TAG_LIST_SIZE;
+		}
+
+		log.debug("REST request to get a  tweet list ( {} sized) with tag {}", nbTweets, tag);
+
+		model.addAttribute("tagTweets", timelineService.getTagline(tag, nbTweets));
+
+		return "fragments/tagline";
 	}
 }

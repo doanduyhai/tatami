@@ -38,8 +38,6 @@
 								<em th:text="${'@' + tweet.login}">@login</em>
 								<br/>
 							</a>
-								
-							<br/>
 							<span th:inline="text">	
 								[[${tweet.content.replaceAll("@(\w+)","__${userLinkPattern}__")
 									.replaceAll("#(\w+)","__${tagLinkPattern}__")}]]

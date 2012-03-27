@@ -33,7 +33,11 @@ public class TatamiController
 	public String tatami(Model model)
 	{
 		// Set the default nb tweets value to the model to be defined as Javascript constant
-		model.addAttribute("defaultNbTweets", TatamiConstants.DEFAULT_TWEET_NUMBER);
+		model.addAttribute("defaultNbTweets", TatamiConstants.DEFAULT_TWEET_LIST_SIZE);
+
+		// Set the default nb tags value to the model to be defined as Javascript constant
+		model.addAttribute("defaultNbTags", TatamiConstants.DEFAULT_TAG_LIST_SIZE);
+
 		return "pages/home";
 	}
 

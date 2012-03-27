@@ -9,7 +9,8 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import fr.ippon.tatami.domain.Tweet;
@@ -25,7 +26,7 @@ import fr.ippon.tatami.service.util.TatamiConstants;
  * @author Julien Dubois
  */
 @Service
-public class TimelineService
+public class TimelineService implements InitializingBean
 {
 
 	private final Logger log = LoggerFactory.getLogger(TimelineService.class);
@@ -45,7 +46,9 @@ public class TimelineService
 	@Inject
 	private AuthenticationService authenticationService;
 
-	@Value("${hashtag.default}")
+	@Inject
+	Environment env;
+
 	private String hashtagDefault;
 
 	private static final SimpleDateFormat DAYLINE_KEY_FORMAT = new SimpleDateFormat("ddMMyyyy");
@@ -58,13 +61,16 @@ public class TimelineService
 		User currentUser = authenticationService.getCurrentUser();
 
 		Tweet tweet = tweetRepository.createTweet(currentUser.getLogin(), content);
+		// registering
 		tweetRepository.addTweetToDayline(tweet, DAYLINE_KEY_FORMAT.format(tweet.getTweetDate()));
 		tweetRepository.addTweetToUserline(tweet);
 		tweetRepository.addTweetToTimeline(currentUser.getLogin(), tweet);
+		// spreading
 		for (String followerLogin : followerRepository.findFollowersForUser(currentUser.getLogin()))
 		{
 			tweetRepository.addTweetToTimeline(followerLogin, tweet);
 		}
+		// referencing
 		tweetRepository.addTweetToTagline(tweet);
 		counterRepository.incrementTweetCounter(currentUser.getLogin());
 
@@ -79,7 +85,7 @@ public class TimelineService
 	 * The dayline contains a day's tweets
 	 * 
 	 * @param date
-	 *            the day to retrieve the tweets of
+	 *            the day's name to retrieve the tweets of
 	 * @return a tweets list
 	 */
 	public Collection<Tweet> getDayline(String date)
@@ -89,6 +95,22 @@ public class TimelineService
 			date = DAYLINE_KEY_FORMAT.format(new Date());
 		}
 		Collection<String> tweetIds = tweetRepository.getDayline(date);
+
+		return this.buildTweetsList(tweetIds);
+	}
+
+	/**
+	 * The dayline contains a day's tweets
+	 * 
+	 * @param date
+	 *            the day to retrieve the tweets of
+	 * @return a tweets list
+	 */
+	public Collection<Tweet> getDayline(Date date)
+	{
+		if (date == null)
+			date = new Date();
+		Collection<String> tweetIds = tweetRepository.getDayline(DAYLINE_KEY_FORMAT.format(date));
 
 		return this.buildTweetsList(tweetIds);
 	}
@@ -218,8 +240,31 @@ public class TimelineService
 		return this.buildTweetsList(tweetIds);
 	}
 
+	public boolean removeTweet(String tweetId)
+	{
+		log.debug("Removing tweet : {} ", tweetId);
+
+		Tweet tweet = tweetRepository.findTweetById(tweetId);
+
+		User currentUser = authenticationService.getCurrentUser();
+		if (tweet.getLogin().equals(currentUser.getLogin()) && !Boolean.TRUE.equals(tweet.getRemoved()))
+		{
+			tweetRepository.removeTweet(tweet);
+			counterRepository.decrementTweetCounter(currentUser.getLogin());
+			return true;
+		}
+		return false;
+	}
+
 	public void setAuthenticationService(AuthenticationService authenticationService)
 	{
 		this.authenticationService = authenticationService;
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception
+	{
+		this.hashtagDefault = env.getProperty("hashtag.default");
+
 	}
 }

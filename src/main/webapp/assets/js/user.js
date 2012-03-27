@@ -1,12 +1,12 @@
 var nbTweets = defaultNbTweets;
 
-function resetNbTweets() {
-	nbTweets = defaultNbTweets;
-}
-
-function incrementNbTweets() {
-	nbTweets += 10;
-}
+//function resetNbTweets() {
+//	nbTweets = defaultNbTweets;
+//}
+//
+//function incrementNbTweets() {
+//	nbTweets += 10;
+//}
 
 function loadHome(callBack)
 {
@@ -61,12 +61,13 @@ function followUser(loginToFollow) {
             updateUserCounters();
             $('#followSuccess').find('span').remove();
             $('#followSuccess').fadeIn("fast").append('<span>You are now following '+loginToFollow+'</span>');
-            setTimeout($('#followSuccess').fadeOut(5000), 5000);
+            $('#followSuccess').delay(2000).fadeOut(5000);
+            refreshFollowableUsers();
         },
     	error: function(xhr, ajaxOptions, thrownError) {
     		$('#followError').find('span').remove();
     		$('#followError').fadeIn("fast").append('<span>'+thrownError+'</span>');
-            setTimeout($('#followError').fadeOut(5000), 2000);
+            $('#followError').delay(2000).fadeOut(5000);
     	}
 	});
 
@@ -85,7 +86,8 @@ function removeFriend(friend) {
         	updateUserCounters();
         	$('#followSuccess').find('span').remove();
         	$('#followSuccess').fadeIn("fast").append('<span>You no longer follow '+friend+'</span>');
-            setTimeout($('#followSuccess').fadeOut(5000), 5000);
+            $('#followSuccess').delay(2000).fadeOut(5000);
+            loadFollowableUsers();
         }
 	});
 }
@@ -97,7 +99,11 @@ function addFavoriteTweet(tweet) {
 		type: 'GET',
 		url: "rest/likeTweet/" + tweet,
 		dataType: "json",
-        success: function(){ $('#favTab').tab('show'); }
+        success: function()
+        {
+        	$('#favTab').tab('show');
+        	loadFavoritesline();
+        }
     });	
 }
 
@@ -141,22 +147,20 @@ function bindTweetListeners($target)
 		loadUserline(target);
 		return false;
 	});
-		
+	
+	$target.find('a[data-tag]').click(function(e)
+	{
+		var target = jQuery(e.currentTarget).attr('data-tag');
+		loadTagsline(target);
+		return false;
+	});
 }
 
 function loadTimeline(nbTweets)
 {
 	if(nbTweets == null)
 	{
-		if(defaultNbTweets != null)
-		{
-			nbTweets = defaultNbTweets;
-		}
-		else
-		{
-			alert('defaultNbTweets is null');
-			return false;
-		}	
+		nbTweets = defaultNbTweets;
 	}
 
 	$('#timeLinePanel').empty();
@@ -204,6 +208,27 @@ function loadFavoritesline()
 	});	
 }
 
+function loadTagsline(tag)
+{
+	$('#tagLinePanel').empty();
+	$('#tagTab').tab('show');	
+	
+	if(tag != null)
+	{
+		$('#tagLinePanel').load('fragments/'+tag+'/'+defaultNbTags+'/tagline.html #tagline',function()
+		{
+			bindTweetListeners($('#tagline'));
+		});
+	}	
+	else
+	{
+		$('#tagLinePanel').load('fragments/'+defaultNbTags+'/tagline.html #tagline',function()
+		{
+			bindTweetListeners($('#tagline'));
+		});		
+	}	
+}
+
 function loadWhoToFollow()
 {
 	$('#followUserContent').empty();
@@ -217,8 +242,15 @@ function loadWhoToFollow()
 //			return false;
 //		});
 	});
-	
-	
+}
+
+function refreshFollowableUsers()
+{
+	$('#followableUsers').empty();
+	$('#followableUsers').load('fragments/followUser.html #followableUsers',function()
+	{
+		bindTweetListeners($('#followableUsers'));
+	});	
 }
 
 function updateUserCounters()
