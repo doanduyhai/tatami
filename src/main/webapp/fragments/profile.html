@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">
+<div id="profileContent">
+	<form id="updateUserForm">
+	    <fieldset>	
+	    	<label>Email :</label> 
+	    	<input id="emailInput" name="email" type="email" required="required" 
+	    		placeholder="Enter e-mail..." class="input-xlarge"
+	    		th:value="${currentUser.email}"/>
+
+	        <label>First name :</label> 
+	        <input id="firstNameInput" name="firstName" type="text"
+	        	placeholder="Enter first name..." class="input-xlarge"
+	        	th:value="${currentUser.firstName}"/>
+	        <label>Last name :</label> <input id="lastNameInput" name="lastName" type="text"
+				placeholder="Enter last name..." class="input-xlarge"
+				th:value="${currentUser.lastName}"/>
+	    </fieldset>
+	    <button type="submit" class="btn btn-primary">Update</button>
+	</form>
+</div>
+</html>
+

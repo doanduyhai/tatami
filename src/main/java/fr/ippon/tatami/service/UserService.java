@@ -1,9 +1,12 @@
 package fr.ippon.tatami.service;
 
+import java.util.Collection;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import fr.ippon.tatami.service.util.GravatarUtil;
  * @author Julien Dubois
  */
 @Service
+@DependsOn(value = "authenticationService")
 public class UserService
 {
 
@@ -38,24 +42,31 @@ public class UserService
 	@Inject
 	private CounterRepository counterRepository;
 
+	@Inject
+	private AuthenticationService authenticationService;
+
 	public User getUserByLogin(String login)
 	{
-		log.debug("Looking for user with login {} ", login);
+		log.debug("Looking for user with login : {} ", login);
+
 		return userRepository.findUserByLogin(login);
 	}
 
 	public User getUserProfileByLogin(String login)
 	{
 		User user = getUserByLogin(login);
-		user.setTweetCount(counterRepository.getTweetCounter(login));
-		user.setFollowersCount(counterRepository.getFollowersCounter(login));
-		user.setFriendsCount(counterRepository.getFriendsCounter(login));
+		if (user != null)
+		{
+			user.setTweetCount(counterRepository.getTweetCounter(login));
+			user.setFollowersCount(counterRepository.getFollowersCounter(login));
+			user.setFriendsCount(counterRepository.getFriendsCounter(login));
+		}
 		return user;
 	}
 
 	public void updateUser(User user)
 	{
-		User currentUser = getCurrentUser();
+		User currentUser = authenticationService.getCurrentUser();
 		if (currentUser.getLogin().equals(user.getLogin()))
 		{
 			user.setGravatar(GravatarUtil.getHash(user.getEmail()));
@@ -78,11 +89,10 @@ public class UserService
 
 	public void followUser(String loginToFollow)
 	{
-		log.debug("Adding friend : {} ", loginToFollow);
+		log.debug("Adding friend : {}", loginToFollow);
 
-		User currentUser = getCurrentUser();
+		User currentUser = authenticationService.getCurrentUser();
 		User followedUser = getUserByLogin(loginToFollow);
-
 		if (followedUser != null && !followedUser.equals(currentUser))
 		{
 			boolean userAlreadyFollowed = false;
@@ -93,7 +103,6 @@ public class UserService
 					if (alreadyFollowingTest.equals(loginToFollow))
 					{
 						userAlreadyFollowed = true;
-						break;
 					}
 				}
 			}
@@ -107,14 +116,16 @@ public class UserService
 		}
 		else
 		{
-			log.debug("Followed user does not exist : {}", loginToFollow);
+			log.debug("Followed user does not exist : {} ", loginToFollow);
 		}
 	}
 
 	public void forgetUser(String login)
 	{
-		log.debug("Removing followed user : {}", login);
-		User currentUser = getCurrentUser();
+
+		log.debug("Removing followed user : {} ", login);
+
+		User currentUser = authenticationService.getCurrentUser();
 		User followedUser = getUserByLogin(login);
 		if (followedUser != null)
 		{
@@ -124,7 +135,6 @@ public class UserService
 				if (alreadyFollowingTest.equals(login))
 				{
 					userAlreadyFollowed = true;
-					break;
 				}
 			}
 			if (userAlreadyFollowed)
@@ -141,6 +151,13 @@ public class UserService
 		}
 	}
 
+	public Collection<String> getFriendsForUser(String login)
+	{
+		log.debug("Retrieving followed users : {}", login);
+
+		return friendRepository.findFriendsForUser(login);
+	}
+
 	public User getCurrentUser()
 	{
 		SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -148,5 +165,11 @@ public class UserService
 				.getAuthentication().getPrincipal();
 
 		return getUserByLogin(springSecurityUser.getUsername());
+
+	}
+
+	public void setAuthenticationService(AuthenticationService authenticationService)
+	{
+		this.authenticationService = authenticationService;
 	}
 }

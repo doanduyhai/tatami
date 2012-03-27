@@ -1,6 +1,6 @@
 package fr.ippon.tatami.repository.cassandra;
 
-import static fr.ippon.tatami.application.config.ColumnFamilyKeys.FOLLOWERS_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWERS_CF;
 
 import java.util.ArrayList;
 import java.util.Calendar;

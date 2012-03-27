@@ -13,14 +13,19 @@
 			<div class="span4">
 				<div class="tabbable">
                     <ul class="nav nav-tabs">
-						<li class="active"><a id="defaultTab" href="#homeTabContent" data-toggle="pill">Show profile</a></li>
-						<li><a href="#profileTabContent" data-toggle="pill">Update Profile</a></li>
+						<li class="active">
+							<a id="defaultTab" href="#homeTabContent" data-toggle="pill">Show profile</a>
+						</li>
+						<li>
+							<a href="#profileTabContent" data-toggle="pill"><i class="icon-edit"></i>Update Profile</a>
+						</li>
 					</ul>
 					<div id="userDetailsPanel" class="tab-content alert alert-info">
 						<div class="tab-pane active" id="homeTabContent">
 									
 						</div>
-						<div class="tab-pane" id="profileTabContent"></div>
+						<div class="tab-pane" id="profileTabContent">					
+						</div>
 					</div>
 				</div>
                 <div>
@@ -33,51 +38,74 @@
 			<div class="span8">
 				<div class="tabbable">
 					<ul class="nav nav-tabs">
-						<li class="active"><a id="mainTab" href="#timeLinePanel" data-toggle="tab">Tweets</a></li>
-						<li><a id="userTab" href="#userLinePanel" data-toggle="tab">Other User Tweets</a></li>
-						<li><a id="chartTab" href="#view3Content" data-toggle="tab">Time chart</a></li>
+						<li class="active">
+							<a id="mainTab" href="#timeLinePanel" data-toggle="tab">Tweets</a>
+						</li>
+						<li>
+							<a id="favTab" href="#favLinePanel" data-toggle="tab"><i class="icon-heart"></i> Favorite Tweets</a>
+						</li>
+						<li>
+							<a id="userTab" href="#userLinePanel" data-toggle="tab"><i class="icon-user"></i> Other User Tweets</a>
+						</li>
+						<li>
+							<a id="tagTab" href="#tagLinePanel" data-toggle="tab"><i class="icon-tag"></i> Tag Tweets</a>
+						</li>
+						<li>
+							<a id="chartTab" href="#chartPanel" data-toggle="tab">Tweets of the day Pie chart</a>
+						</li>
 					</ul>
 					<div id="tweetsPanel" class="tab-content alert alert-success">
 						<div class="tab-pane active" id="timeLinePanel"></div>
+						<div class="tab-pane" id="favLinePanel"></div>
 						<div class="tab-pane" id="userLinePanel"></div>
-						<div class="tab-pane" id="view3Content"></div>
+						<div class="tab-pane" id="tagLinePanel"></div>
+						<div class="tab-pane" id="chartPanel"></div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<footer th:substituteby="templates/global :: footer"></footer>
-	<script type="text/javascript" src="/assets/js/tatami.js" th:src="@{/assets/js/tatami.js}"></script>
-	<script type="text/javascript" src="/assets/js/profile.js" th:src="@{/assets/js/profile.js}"></script>
-	<script type="text/javascript" src="/assets/js/shortcut.js" th:src="@{/assets/js/shortcut.js}"></script>	
-
+	<footer id="center-footer" th:substituteby="templates/global :: footer"></footer>
+	<footer id="home-javascript" th:substituteby="templates/global :: home-javascript"></footer>
+	
 
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
-        var login =  /*[[${sec.principal.username}]]*/ "jdubois";
         resetNbTweets();
 		
         !function ( $ ) {
         	// left panel
-			//$('#homeTabContent').load('/assets/fragments/home.html', refreshProfile());
         	loadHome();
-			$('#profileTabContent').load('assets/fragments/profile.html');
-            $('#followUserContent').load('assets/fragments/followUser.html', whoToFollow());
-        	// auto-refresh
+        	loadProfile();
+        	loadWhoToFollow();
+        	
+            // auto-refresh
 		    $('a[data-toggle="pill"]').on('show', function(e) {
 		    	if (e.target.hash == '#homeTabContent') {
-					refreshProfile();
-		    	} else if (e.target.hash == '#profileTabContent') {
-		        	displayProfile();
-		        }
+		    		updateUserCounters();
+		    	} 
 		    });
 
 		    // right panel
-			$('#timeLinePanel').load('assets/fragments/timeline.html', listTweets(true));
+		    loadTimeline();
+
+            // auto-refresh
+		    $('a[data-toggle="tab"]').on('show', function(e) {
+		    	if (e.target.hash == '#timeLinePanel') {
+		    		loadTimeline();
+		    	}
+		    	else if(e.target.hash == '#favLinePanel') {
+		    		loadFavoritesline();
+		    	}
+		    	else if(e.target.hash == '#userLinePanel') {
+		    		loadUserline();
+		    	}	    	
+		    });
+		    
 		    // browser's refresh shortcut override
 			shortcut.add("Ctrl+R", function() {
-				listTweets(true);
+				loadTimeline();
 			});
 
 		    // infinite scroll
@@ -86,8 +114,6 @@
 					listTweets(false);
 				}
 			});
-
-			$('#userLinePanel').load('assets/fragments/userline.html');
         }( window.jQuery );
         /*]]>*/
 	</script>

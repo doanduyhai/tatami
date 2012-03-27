@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.service.TimelineService;
+import fr.ippon.tatami.service.util.TatamiConstants;
 
 /**
  * REST controller for managing tweets.
@@ -30,23 +31,23 @@ public class TweetController
 	@Inject
 	private TimelineService timelineService;
 
-	@RequestMapping(value = "/rest/tweets/{login}/{nbTweets}", method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public Collection<Tweet> listTweets(@PathVariable("login")
-	String login, @PathVariable("nbTweets")
-	String nbTweets)
-	{
-		log.debug("REST request to get the tweet list ( {} sized).", nbTweets);
-		try
-		{
-			return timelineService.getTimeline(login, Integer.parseInt(nbTweets));
-		}
-		catch (NumberFormatException e)
-		{
-			log.warn("Page size undefined ; sizing to default", e);
-			return timelineService.getTimeline(login, 20);
-		}
-	}
+	// @RequestMapping(value = "/rest/tweets/{login}/{nbTweets}", method = RequestMethod.GET, produces = "application/json")
+	// @ResponseBody
+	// public Collection<Tweet> listTweets(@PathVariable("login")
+	// String login, @PathVariable("nbTweets")
+	// String nbTweets)
+	// {
+	// log.debug("REST request to get the tweet list ({} sized).", nbTweets);
+	// try
+	// {
+	// return timelineService.getTimeline(login, Integer.parseInt(nbTweets));
+	// }
+	// catch (NumberFormatException e)
+	// {
+	// log.warn("Page size undefined ; sizing to default", e);
+	// return timelineService.getTimeline(login, TatamiConstants.DEFAULT_TWEET_NUMBER);
+	// }
+	// }
 
 	@RequestMapping(value = "/rest/ownTweets/{login}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
@@ -54,14 +55,15 @@ public class TweetController
 	String login)
 	{
 		log.debug("REST request to get the own tweet list ( {} ).", login);
-		return timelineService.getUserline(login, 20);
+		return timelineService.getUserline(login, TatamiConstants.DEFAULT_TWEET_NUMBER);
 	}
 
 	@RequestMapping(value = "/rest/tweets", method = RequestMethod.POST)
-	public void postTweet(@RequestBody
+	@ResponseBody
+	public Tweet postTweet(@RequestBody
 	String content)
 	{
 		log.debug("REST request to add tweet : {}", content);
-		timelineService.postTweet(content);
+		return timelineService.postTweet(content);
 	}
 }

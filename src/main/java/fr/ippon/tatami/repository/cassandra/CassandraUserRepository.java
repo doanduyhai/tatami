@@ -1,7 +1,8 @@
 package fr.ippon.tatami.repository.cassandra;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
+
+import me.prettyprint.hom.EntityManagerImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class CassandraUserRepository implements UserRepository
 	private final Logger log = LoggerFactory.getLogger(CassandraUserRepository.class);
 
 	@Inject
-	private EntityManager em;
+	private EntityManagerImpl em;
 
 	@Override
 	public void createUser(User user)
@@ -51,4 +52,5 @@ public class CassandraUserRepository implements UserRepository
 			return null;
 		}
 	}
+
 }

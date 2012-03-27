@@ -1,28 +1,23 @@
 package fr.ippon.tatami.web;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import fr.ippon.tatami.service.UserService;
+import fr.ippon.tatami.service.util.TatamiConstants;
 
 /**
  * Main tatami page.
  * 
- * @author Julien Dubois
+ * @author Duy Hai DOAN
  */
 @Controller
 public class TatamiController
 {
 
 	private final Logger log = LoggerFactory.getLogger(TatamiController.class);
-
-	@Inject
-	UserService userService;
 
 	@RequestMapping("/login")
 	public String welcome()
@@ -35,8 +30,10 @@ public class TatamiController
 			"/",
 			"/home"
 	})
-	public String tatami()
+	public String tatami(Model model)
 	{
+		// Set the default nb tweets value to the model to be defined as Javascript constant
+		model.addAttribute("defaultNbTweets", TatamiConstants.DEFAULT_TWEET_NUMBER);
 		return "pages/home";
 	}
 
@@ -44,12 +41,5 @@ public class TatamiController
 	public String about()
 	{
 		return "pages/about";
-	}
-
-	@RequestMapping(value = "/fragments/user")
-	public String homeFragment(Model model)
-	{
-		model.addAttribute("currentUser", userService.getCurrentUser());
-		return "fragments/user";
 	}
 }

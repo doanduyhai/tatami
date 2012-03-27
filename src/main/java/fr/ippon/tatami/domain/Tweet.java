@@ -54,6 +54,9 @@ public class Tweet
 
 	private String gravatar;
 
+	@Column(name = "removed")
+	private Boolean removed;
+
 	public String getPrettyPrintTweetDate()
 	{
 		Duration duration = new Duration(Calendar.getInstance().getTimeInMillis() - tweetDate.getTime());
@@ -147,4 +150,15 @@ public class Tweet
 	{
 		this.gravatar = gravatar;
 	}
+
+	public Boolean getRemoved()
+	{
+		return removed;
+	}
+
+	public void setRemoved(Boolean removed)
+	{
+		this.removed = removed;
+	}
+
 }

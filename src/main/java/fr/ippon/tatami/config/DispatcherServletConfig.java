@@ -1,4 +1,4 @@
-package fr.ippon.tatami.application.config;
+package fr.ippon.tatami.config;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ import fr.ippon.tatami.web.interceptor.SecurityInterceptor;
 
 @Configuration
 @ComponentScan(basePackages = "fr.ippon.tatami.web")
-public class SpringMVCConfig extends WebMvcConfigurationSupport
+public class DispatcherServletConfig extends WebMvcConfigurationSupport
 {
 
 	@Bean

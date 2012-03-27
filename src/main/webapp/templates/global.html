@@ -92,12 +92,23 @@
        		<script type="text/javascript" src="assets/js/jquery.js" th:src="@{/assets/js/jquery.js}"></script>
        		<script type="text/javascript" src="assets/js/less-1.2.1.js" th:src="@{/assets/js/less-1.2.1.js}"></script>
 			<script type="text/javascript" src="assets/js/bootstrap.js" th:src="@{/assets/js/bootstrap.js}"></script>
+			<script type="text/javascript" th:inline="javascript">
+				/*<![CDATA[*/
+        		var login =  /*[[${sec.principal.username}]]*/ "jdubois";
+            	/*]]>*/
+        	</script>        		
 		</footer>
 		
-		<div id="home-javascript" th:fragment="home-javascript">		
-			<script type="text/javascript" src="/assets/js/tatami.js" th:src="@{/assets/js/tatami.js}"></script>
-			<script type="text/javascript" src="/assets/js/profile.js" th:src="@{/assets/js/profile.js}"></script>
-			<script type="text/javascript" src="/assets/js/shortcut.js" th:src="@{/assets/js/shortcut.js}"></script>			
+		<div id="home-javascript" th:fragment="home-javascript">
+			<script type="text/javascript" th:inline="javascript">
+				/*<![CDATA[*/
+				
+				// Retrieve the default Nb Tweets value from the server				           
+				var defaultNbTweets = /*[[${defaultNbTweets}]]*/ 10;
+            	/*]]>*/
+        	</script>				
+			<script type="text/javascript" src="/assets/js/user.js" th:src="@{/assets/js/user.js}"></script>
+			<script type="text/javascript" src="/assets/js/shortcut.js" th:src="@{/assets/js/shortcut.js}"></script>  
 		</div>
 	</body>
 </html>

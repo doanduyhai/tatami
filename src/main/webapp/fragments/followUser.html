@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">
+<section id="followline">
+    <div>
+        <i class="icon-zoom-in"></i><strong>Follow another user...</strong>
+
+        <form class="form-search" >
+            <input id="followUserInput" type="text" class="input-large search-query"
+                   placeholder="Type the login to follow..." required="required"/>
+            <button type="submit" class="btn btn-primary">Follow</button>
+        </form>
+        <div class="alert alert-success alert-block" id="followSuccess" style="display: none;">
+        	<a class="close" data-dismiss="alert">&times;</a>
+        </div>
+        <div class="alert alert-error alert-block" id="followError" style="display: none;">
+        	<a class="close" data-dismiss="alert">&times;</a>
+        </div>        
+    </div>
+
+    <div>
+       <i class="icon-random"></i> <strong>Who to follow</strong>
+        <table class="table table-striped">
+            <tbody id="suggestions">
+            	<tr th:if="${tweets.size() == 0}">
+					<td colSpan="2">
+						No one new tweeted yet today...
+					</td>            	
+            	</tr>
+            	<tr valign="top" th:each="tweet : ${tweets}">
+            		<td>
+            			<a href="#" style="text-decoration:none"
+            				th:attr="data-user=${tweet.login},title='Show '+${tweet.login}+' tweets'" 
+            			>
+            				<img id="tweetGravatar" 
+								src="http://www.gravatar.com/avatar/012411?s=32"
+								th:src="${'http://www.gravatar.com/avatar/'+tweet.gravatar+'?s=32'}"></img>
+							<em th:text="${'@'+tweet.login}">@login</em>
+						</a>		
+            		</td>
+            		<td class="tweetFriend">
+            			<a href="#" th:attr="data-follow=${tweet.login}" title="Follow">
+            				<i class="icon-star"></i>
+            			</a>
+            		</td>
+            	</tr>
+            </tbody>
+	    </table>
+    </div>
+</section>
+</html>

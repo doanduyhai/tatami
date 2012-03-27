@@ -1,6 +1,6 @@
 package fr.ippon.tatami.repository.cassandra;
 
-import static fr.ippon.tatami.application.config.ColumnFamilyKeys.COUNTER_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.COUNTER_CF;
 import static me.prettyprint.hector.api.factory.HFactory.createCounterColumn;
 
 import javax.inject.Inject;
