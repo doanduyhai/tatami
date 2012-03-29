@@ -4,14 +4,19 @@ import fr.ippon.tatami.domain.User;
 
 /**
  * The User Respository.
- *
+ * 
  * @author Julien Dubois
  */
-public interface UserRepository {
+public interface UserRepository
+{
 
-    void createUser(User user);
+	void createUser(User user);
 
-    void updateUser(User user);
+	void updateUser(User user);
 
-    User findUserByLogin(String login);
+	User findUserByLogin(String login);
+
+	void addFavoriteToUser(User user, String favoriteTweetId);
+
+	void removeFavoriteFromUser(User user, String favoriteTweetId);
 }

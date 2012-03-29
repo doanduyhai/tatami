@@ -1,27 +1,17 @@
 package fr.ippon.tatami.repository.cassandra;
 
-import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWERS_CF;
-
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import me.prettyprint.cassandra.serializers.LongSerializer;
-import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.template.ColumnFamilyResult;
-import me.prettyprint.cassandra.service.template.ColumnFamilyTemplate;
-import me.prettyprint.cassandra.service.template.ThriftColumnFamilyTemplate;
-import me.prettyprint.hector.api.Keyspace;
-import me.prettyprint.hector.api.factory.HFactory;
-import me.prettyprint.hector.api.mutation.Mutator;
+import me.prettyprint.hom.EntityManagerImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import fr.ippon.tatami.domain.User;
+import fr.ippon.tatami.domain.UserFollowers;
 import fr.ippon.tatami.repository.FollowerRepository;
 
 /**
@@ -35,41 +25,51 @@ public class CassandraFollowerRepository implements FollowerRepository
 
 	private final Logger log = LoggerFactory.getLogger(CassandraFollowerRepository.class);
 
-	ColumnFamilyTemplate<String, String> template;
-
 	@Inject
-	private Keyspace keyspaceOperator;
-
-	@PostConstruct
-	public void init()
-	{
-		template = new ThriftColumnFamilyTemplate<String, String>(keyspaceOperator, FOLLOWERS_CF, StringSerializer.get(), StringSerializer.get());
-	}
+	private EntityManagerImpl em;
 
 	@Override
 	public void addFollower(String login, String followerLogin)
 	{
-		Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, StringSerializer.get());
-		mutator.insert(login, FOLLOWERS_CF,
-				HFactory.createColumn(followerLogin, Calendar.getInstance().getTimeInMillis(), StringSerializer.get(), LongSerializer.get()));
+		User user = em.find(User.class, login);
+		UserFollowers userFollowers = em.find(UserFollowers.class, login);
+		if (userFollowers == null)
+		{
+			userFollowers = new UserFollowers();
+			userFollowers.setLogin(user.getLogin());
+		}
+
+		userFollowers.getFollowers().add(followerLogin);
+		user.incrementFollowersCount();
+		em.persist(user);
+		em.persist(userFollowers);
 	}
 
 	@Override
 	public void removeFollower(String login, String followerLogin)
 	{
-		Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, StringSerializer.get());
-		mutator.delete(login, FOLLOWERS_CF, followerLogin, StringSerializer.get());
+		User user = em.find(User.class, login);
+		UserFollowers userFollowers = em.find(UserFollowers.class, login);
+		if (userFollowers == null)
+		{
+			// TODO Functional exception
+			return;
+		}
+
+		userFollowers.getFollowers().remove(followerLogin);
+		user.decrementFollowersCount();
+		em.persist(user);
+		em.persist(userFollowers);
 	}
 
 	@Override
 	public Collection<String> findFollowersForUser(String login)
 	{
-		ColumnFamilyResult<String, String> result = template.queryColumns(login);
-		Collection<String> followers = new ArrayList<String>();
-		for (String columnName : result.getColumnNames())
+		UserFollowers userFollowers = em.find(UserFollowers.class, login);
+		if (userFollowers != null)
 		{
-			followers.add(columnName);
+			return userFollowers.getFollowers();
 		}
-		return followers;
+		return null;
 	}
 }

@@ -53,4 +53,13 @@ public class CassandraUserRepository implements UserRepository
 		}
 	}
 
+	public void addFavoriteToUser(User user, String favoriteTweetId)
+	{
+
+	}
+
+	public void removeFavoriteFromUser(User user, String favoriteTweetId)
+	{
+
+	}
 }

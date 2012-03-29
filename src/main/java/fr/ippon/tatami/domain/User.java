@@ -38,11 +38,65 @@ public class User
 	@Column(name = "lastName")
 	private String lastName;
 
-	private long tweetCount;
+	@Column(name = "tweetCount")
+	private long tweetCount = 0;
 
-	private long friendsCount;
+	@Column(name = "friendsCount")
+	private long friendsCount = 0;
 
-	private long followersCount;
+	@Column(name = "followersCount")
+	private long followersCount = 0;
+
+	@Column(name = "favoritesCount")
+	private long favoritesCount = 0;
+
+	public void incrementTweetCount()
+	{
+		this.tweetCount++;
+	}
+
+	public void decrementTweetCount()
+	{
+		this.tweetCount--;
+		if (this.tweetCount < 0)
+			this.tweetCount = 0;
+	}
+
+	public void incrementFriendsCount()
+	{
+		this.friendsCount++;
+	}
+
+	public void decrementFriendsCount()
+	{
+		this.friendsCount--;
+		if (this.friendsCount < 0)
+			this.friendsCount = 0;
+	}
+
+	public void incrementFollowersCount()
+	{
+		this.followersCount++;
+	}
+
+	public void decrementFollowersCount()
+	{
+		this.followersCount--;
+		if (this.followersCount < 0)
+			this.followersCount = 0;
+	}
+
+	public void incrementFavoritesCount()
+	{
+		this.favoritesCount++;
+	}
+
+	public void decrementFavoritesCount()
+	{
+		this.favoritesCount--;
+		if (this.favoritesCount < 0)
+			this.favoritesCount = 0;
+	}
 
 	public String getLogin()
 	{
@@ -123,4 +177,15 @@ public class User
 	{
 		this.followersCount = followersCount;
 	}
+
+	public long getFavoritesCount()
+	{
+		return favoritesCount;
+	}
+
+	public void setFavoritesCount(long favoritesCount)
+	{
+		this.favoritesCount = favoritesCount;
+	}
+
 }

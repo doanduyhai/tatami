@@ -1,27 +1,17 @@
 package fr.ippon.tatami.repository.cassandra;
 
-import static fr.ippon.tatami.config.ColumnFamilyKeys.FRIENDS_CF;
-
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import me.prettyprint.cassandra.serializers.LongSerializer;
-import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.template.ColumnFamilyResult;
-import me.prettyprint.cassandra.service.template.ColumnFamilyTemplate;
-import me.prettyprint.cassandra.service.template.ThriftColumnFamilyTemplate;
-import me.prettyprint.hector.api.Keyspace;
-import me.prettyprint.hector.api.factory.HFactory;
-import me.prettyprint.hector.api.mutation.Mutator;
+import me.prettyprint.hom.EntityManagerImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import fr.ippon.tatami.domain.User;
+import fr.ippon.tatami.domain.UserFriends;
 import fr.ippon.tatami.repository.FriendRepository;
 
 /**
@@ -35,41 +25,52 @@ public class CassandraFriendRepository implements FriendRepository
 
 	private final Logger log = LoggerFactory.getLogger(CassandraFriendRepository.class);
 
-	ColumnFamilyTemplate<String, String> template;
-
 	@Inject
-	private Keyspace keyspaceOperator;
-
-	@PostConstruct
-	public void init()
-	{
-		template = new ThriftColumnFamilyTemplate<String, String>(keyspaceOperator, FRIENDS_CF, StringSerializer.get(), StringSerializer.get());
-	}
+	private EntityManagerImpl em;
 
 	@Override
 	public void addFriend(String login, String friendLogin)
 	{
-		Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, StringSerializer.get());
-		mutator.insert(login, FRIENDS_CF,
-				HFactory.createColumn(friendLogin, Calendar.getInstance().getTimeInMillis(), StringSerializer.get(), LongSerializer.get()));
+		User user = em.find(User.class, login);
+		UserFriends userFriends = em.find(UserFriends.class, login);
+		if (userFriends == null)
+		{
+			userFriends = new UserFriends();
+			userFriends.setLogin(login);
+		}
+
+		userFriends.getFriends().add(friendLogin);
+		user.incrementFriendsCount();
+		em.persist(user);
+		em.persist(userFriends);
 	}
 
 	@Override
 	public void removeFriend(String login, String friendLogin)
 	{
-		Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, StringSerializer.get());
-		mutator.delete(login, FRIENDS_CF, friendLogin, StringSerializer.get());
+		User user = em.find(User.class, login);
+		UserFriends userFriends = em.find(UserFriends.class, login);
+		if (userFriends == null)
+		{
+			// TODO Functional exception
+			return;
+		}
+
+		userFriends.getFriends().remove(friendLogin);
+		user.decrementFriendsCount();
+		em.persist(user);
+		em.persist(userFriends);
 	}
 
 	@Override
 	public Collection<String> findFriendsForUser(String login)
 	{
-		ColumnFamilyResult<String, String> result = template.queryColumns(login);
-		Collection<String> friends = new ArrayList<String>();
-		for (String columnName : result.getColumnNames())
+		UserFriends userFriends = em.find(UserFriends.class, login);
+		if (userFriends != null)
 		{
-			friends.add(columnName);
+			return userFriends.getFriends();
 		}
-		return friends;
+		return null;
+
 	}
 }

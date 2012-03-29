@@ -3,218 +3,48 @@
      "columnFamilies" : [{
         "name" : "User",
         "keyType" : "UTF8Type",
-        "comparatorType" : "UTF8Type",
-        "defaultColumnValueType" : "UTF8Type",
-        "rows" : [{
-            "key" : "jdubois",
-            "columns" : [{
-                "name" : "email",
-                "value" : "jdubois@ippon.fr"
-            },
-            {
-                "name" : "gravatar",
-                "value" : "gravatar"
-            },
-            {
-                "name" : "firstName",
-                "value" : "Julien"
-            },
-            {
-                "name" : "lastName",
-                "value" : "Dubois"
-            }]
-        },
-        {
-            "key" : "uuser",
-            "columns" : [{
-                "name" : "email",
-                "value" : "uuser@ippon.fr"
-            },
-            {
-                "name" : "gravatar",
-                "value" : "gravatar"
-            },
-            {
-                "name" : "firstName",
-                "value" : "Update"
-            },
-            {
-                "name" : "lastName",
-                "value" : "User"
-            }]
-        },
-        {
-            "key" : "userWhoWantToFollow",
-            "columns" : [{
-                "name" : "email",
-                "value" : "userWhoWantToFollow@ippon.fr"
-            },
-            {
-                "name" : "gravatar",
-                "value" : "gravatar"
-            },
-            {
-                "name" : "firstName",
-                "value" : "User"
-            },
-            {
-                "name" : "lastName",
-                "value" : "WhoWantToFollow"
-            }]
-        },
-        {
-            "key" : "userWhoWillBeFollowed",
-            "columns" : [{
-                "name" : "email",
-                "value" : "userWhoWillBeFollowed@ippon.fr"
-            },
-            {
-                "name" : "gravatar",
-                "value" : "gravatar"
-            },
-            {
-                "name" : "firstName",
-                "value" : "User"
-            },
-            {
-                "name" : "lastName",
-                "value" : "WhoWillBeFollowed"
-            }]
-        },
-        {
-            "key" : "userWhoFollow",
-            "columns" : [{
-                "name" : "email",
-                "value" : "userWhoFollow@ippon.fr"
-            },
-            {
-                "name" : "gravatar",
-                "value" : "gravatar"
-            },
-            {
-                "name" : "firstName",
-                "value" : "User"
-            },
-            {
-                "name" : "lastName",
-                "value" : "WhoFollow"
-            }]
-        },
-        {
-            "key" : "userWhoIsFollowed",
-            "columns" : [{
-                "name" : "email",
-                "value" : "userWhoIsFollowed@ippon.fr"
-            },
-            {
-                "name" : "gravatar",
-                "value" : "gravatar"
-            },
-            {
-                "name" : "firstName",
-                "value" : "User"
-            },
-            {
-                "name" : "lastName",
-                "value" : "WhoIsFollowed"
-            }]
-        },
-        {
-            "key" : "userWhoWantToForget",
-            "columns" : [{
-                "name" : "email",
-                "value" : "userWhoWantToForget@ippon.fr"
-            },
-            {
-                "name" : "gravatar",
-                "value" : "gravatar"
-            },
-            {
-                "name" : "firstName",
-                "value" : "User"
-            },
-            {
-                "name" : "lastName",
-                "value" : "WhoWantToForget"
-            }]
-        },
-        {
-            "key" : "userToForget",
-            "columns" : [{
-                "name" : "email",
-                "value" : "userToForget@ippon.fr"
-            },
-            {
-                "name" : "gravatar",
-                "value" : "gravatar"
-            },
-            {
-                "name" : "firstName",
-                "value" : "User"
-            },
-            {
-                "name" : "lastName",
-                "value" : "ToForget"
-            }]
-        },
-        {
-            "key" : "userWithTweets",
-            "columns" : [{
-                "name" : "email",
-                "value" : "userWithUserlinet@ippon.fr"
-            },
-            {
-                "name" : "gravatar",
-                "value" : "gravatar"
-            },
-            {
-                "name" : "firstName",
-                "value" : "User"
-            },
-            {
-                "name" : "lastName",
-                "value" : "WithUserline"
-            }]
-        },
-        {
-            "key" : "userWhoPostTweet",
-            "columns" : [{
-                "name" : "email",
-                "value" : "userWhoPostTweet@ippon.fr"
-            },
-            {
-                "name" : "gravatar",
-                "value" : "gravatar"
-            },
-            {
-                "name" : "firstName",
-                "value" : "User"
-            },
-            {
-                "name" : "lastName",
-                "value" : "WhoPostTweet"
-            }]
-        },
-        {
-            "key" : "userWhoReadTweet",
-            "columns" : [{
-                "name" : "email",
-                "value" : "userWhoReadTweet@ippon.fr"
-            },
-            {
-                "name" : "gravatar",
-                "value" : "gravatar"
-            },
-            {
-                "name" : "firstName",
-                "value" : "User"
-            },
-            {
-                "name" : "lastName",
-                "value" : "WhoReadTweet"
-            }]
-        }]
+        "comparatorType" : "UTF8Type"
     },
+    {
+        "name" : "UserFriends",
+        "keyType" : "UTF8Type",
+        "comparatorType" : "UTF8Type"
+    },
+    {
+        "name" : "UserFollowers",
+        "keyType" : "UTF8Type",
+        "comparatorType" : "UTF8Type"
+    },    
+    {
+        "name" : "FavoriteLine",
+        "keyType" : "UTF8Type",
+        "comparatorType" : "UTF8Type"
+    },
+    {
+        "name" : "TagLine",
+        "keyType" : "UTF8Type",
+        "comparatorType" : "UTF8Type"
+    },
+    {
+        "name" : "DayLine",
+        "keyType" : "UTF8Type",
+        "comparatorType" : "UTF8Type"
+    },
+    {
+        "name" : "WeekLine",
+        "keyType" : "UTF8Type",
+        "comparatorType" : "UTF8Type"
+    },  
+    {
+        "name" : "MonthLine",
+        "keyType" : "UTF8Type",
+        "comparatorType" : "UTF8Type"
+    },  
+    {
+        "name" : "YearLine",
+        "keyType" : "UTF8Type",
+        "comparatorType" : "UTF8Type"
+    },                              
     {
         "name" : "Counter",
         "keyType" : "UTF8Type",

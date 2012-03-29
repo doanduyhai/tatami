@@ -33,7 +33,7 @@
 						<article>
 							<strong th:if="${currentUser.login != tweet.login}"
 									th:text="${tweet.firstName +' '+tweet.lastName}">firstName lastname</strong>&nbsp;
-							<a href="#" th:attr="data-target=${tweet.login},title=${'Show '+tweet.login+' tweets'"
+							<a href="#" th:attr="data-target=${tweet.login},title=${'Show '+tweet.login+' tweets'}"
 								th:if="${currentUser.login != tweet.login}">
 								<em th:text="${'@' + tweet.login}">@login</em>
 								<br/>

@@ -16,8 +16,11 @@ import org.testng.annotations.BeforeSuite;
 import fr.ippon.tatami.config.ApplicationTestConfiguration;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.CounterRepository;
+import fr.ippon.tatami.repository.FavoriteRepository;
 import fr.ippon.tatami.repository.FollowerRepository;
 import fr.ippon.tatami.repository.FriendRepository;
+import fr.ippon.tatami.repository.StatsRepository;
+import fr.ippon.tatami.repository.TagRepository;
 import fr.ippon.tatami.repository.TweetRepository;
 import fr.ippon.tatami.repository.UserRepository;
 import fr.ippon.tatami.service.TimelineService;
@@ -46,6 +49,15 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 
 	@Inject
 	protected FollowerRepository followerRepository;
+
+	@Inject
+	protected FavoriteRepository favoriteRepository;
+
+	@Inject
+	protected TagRepository tagRepository;
+
+	@Inject
+	protected StatsRepository statsRepository;
 
 	@Inject
 	protected CounterRepository counterRepository;

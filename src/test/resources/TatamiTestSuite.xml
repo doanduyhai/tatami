@@ -6,14 +6,16 @@
       <class name="fr.ippon.tatami.repository.TweetRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.FriendRepositoryTest"/>      
       <class name="fr.ippon.tatami.repository.FollowerRepositoryTest"/>
-      <class name="fr.ippon.tatami.repository.CounterRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.FavoriteRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.TagRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.StatsRepositoryTest"/>      
     </classes>
   </test>
    
-  <test name="serviceTests">
-    <classes>
-   	  <class name="fr.ippon.tatami.service.UserServiceTest"/>
-   	  <class name="fr.ippon.tatami.service.TimelineServiceTest"/>
-    </classes>
-  </test> 
+<!--   <test name="serviceTests"> -->
+<!--     <classes> -->
+<!--    	  <class name="fr.ippon.tatami.service.UserServiceTest"/> -->
+<!--    	  <class name="fr.ippon.tatami.service.TimelineServiceTest"/> -->
+<!--     </classes> -->
+<!--   </test>  -->
 </suite> 
