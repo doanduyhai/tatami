@@ -17,7 +17,7 @@ import fr.ippon.tatami.repository.UserRepository;
  * @author Julien Dubois
  */
 @Repository
-public class CassandraUserRepository implements UserRepository
+public class CassandraUserRepository extends CassandraAbstractRepository implements UserRepository
 {
 
 	private final Logger log = LoggerFactory.getLogger(CassandraUserRepository.class);
@@ -51,15 +51,5 @@ public class CassandraUserRepository implements UserRepository
 			log.debug("Exception while looking for user {} : ", login, e.getMessage());
 			return null;
 		}
-	}
-
-	public void addFavoriteToUser(User user, String favoriteTweetId)
-	{
-
-	}
-
-	public void removeFavoriteFromUser(User user, String favoriteTweetId)
-	{
-
 	}
 }

@@ -1,8 +1,6 @@
 package fr.ippon.tatami.domain;
 
-import java.util.Set;
-import java.util.TreeSet;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -13,17 +11,27 @@ import lombok.ToString;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
-@Table(name = "TagLine")
+@Table(name = "TagLineCount")
 @EqualsAndHashCode(of = "tag")
 @ToString(of = "tag")
-public class TagLine
+public class TagLineCount
 {
 	@NotEmpty
 	@Id
 	private String tag;
 
-	@me.prettyprint.hom.annotations.Column(name = "tweetIds")
-	private Set<String> tweetIds = new TreeSet<String>();
+	@Column(name = "tweetCount")
+	private long tweetCount = 0;
+
+	public void incrementTweetCount()
+	{
+		this.tweetCount++;
+	}
+
+	public void decrementTweetCount()
+	{
+		this.tweetCount--;
+	}
 
 	public String getTag()
 	{
@@ -35,14 +43,14 @@ public class TagLine
 		this.tag = tag;
 	}
 
-	public Set<String> getTweetIds()
+	public long getTweetCount()
 	{
-		return tweetIds;
+		return tweetCount;
 	}
 
-	public void setTweetIds(Set<String> tweetIds)
+	public void setTweetCount(long tweetCount)
 	{
-		this.tweetIds = tweetIds;
+		this.tweetCount = tweetCount;
 	}
 
 }

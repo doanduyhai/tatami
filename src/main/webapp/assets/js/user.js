@@ -23,18 +23,25 @@ function loadHome(callBack)
 }
 
 function updateProfile() {
+	
+	$('#userProfileErrorPanel').hide();
+	
 	$.ajax({
 		type: 'POST',
 		url: "rest/users/" + login,
-		contentType: "application/json",
+		contentType: "application/json; charset=UTF-8",
 		data: JSON.stringify($("#updateUserForm").serializeObject()),
 		dataType: "json",
-		success: function() {
+		success: function(data) {
 			loadHome(function()
 			{
 				$('#defaultTab').tab('show');
 			});
-		}	
+		},
+		error: function(jqXHR, textStatus, errorThrown)
+		{
+			$('#userProfileErrorPanel').find('#errorMessage').empty().html(jqXHR.responseText).end().show();
+		}
 	});
 	return false;
 }
@@ -53,7 +60,7 @@ function followUser(loginToFollow) {
 	$.ajax({
 		type: 'POST',
 		url: "rest/users/" + login + "/followUser",
-		contentType: "application/json",
+		contentType: "application/json; charset=UTF-8",
 		data: loginToFollow,
 		dataType: "json",
         success: function(data) {
@@ -79,7 +86,7 @@ function removeFriend(friend) {
 	$.ajax({
 		type: 'POST',
 		url: "rest/users/" + login + "/removeFriend",
-		contentType: "application/json",
+		contentType: "application/json;  charset=UTF-8",
 		data: friend,
 		dataType: "json",
         success: function(data) {
@@ -268,27 +275,27 @@ function updateUserCounters()
 }
 
 function tweet() {
-	if ($.trim($('#tweetContent').val()) == "") {
-		$('#tweetValidationMessage').show();
-		return false;
-	}
-	else
-	{
-		$('#tweetValidationMessage').hide();
-		$.ajax({
-	        type: 'POST',
-	        url: "rest/tweets",
-	        contentType: "application/json",
-	        data: $("#tweetContent").val(),
-	        dataType: "json",
-	        success: function(data) {
-	            $("#tweetContent").slideUp().val("").slideDown('fast');
-	            updateUserCounters();
-	            loadTimeline();
-	            loadWhoToFollow();
-	        }
-	    });
-	}	
+
+	$('#tweetValidationMessage').hide();
+	$.ajax({
+        type: 'POST',
+        url: "rest/tweets",
+        contentType: "application/json;  charset=UTF-8",
+        //data: $("#tweetContent").val(),
+        data:  JSON.stringify($("#tweetForm").serializeObject()),
+        dataType: "json",
+        success: function(data) {
+            $("#tweetContent").slideUp().val("").slideDown('fast');
+            updateUserCounters();
+            loadTimeline();
+            loadWhoToFollow();
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+		{
+			$('#tweetErrorPanel').find('#errorMessage').empty().html(jqXHR.responseText).end().show();
+		}
+    });
+		
 	return false;
 }
 
@@ -300,9 +307,9 @@ $.fn.serializeObject = function() {
             if (!o[this.name].push) {
                 o[this.name] = [o[this.name]];
             }
-            o[this.name].push(this.value || '');
+            o[this.name].push($.trim(this.value) || '');
         } else {
-            o[this.name] = this.value || '';
+            o[this.name] = $.trim(this.value) || '';
         }
     });
     return o;

@@ -2,20 +2,22 @@
 <suite name="tatamiTestSuite" parallel="false">
   <test name="repositoryTests">
     <classes>
-      <class name="fr.ippon.tatami.repository.UserRepositoryTest"/>   
-      <class name="fr.ippon.tatami.repository.TweetRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.UserRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.TweetRepositoryTest"/>   
       <class name="fr.ippon.tatami.repository.FriendRepositoryTest"/>      
       <class name="fr.ippon.tatami.repository.FollowerRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.FavoriteRepositoryTest"/>
-      <class name="fr.ippon.tatami.repository.TagRepositoryTest"/>
-      <class name="fr.ippon.tatami.repository.StatsRepositoryTest"/>      
+      <class name="fr.ippon.tatami.repository.TagLineRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.UserLineRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.TimeLineRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.StatsRepositoryTest"/>          
     </classes>
   </test>
    
-<!--   <test name="serviceTests"> -->
-<!--     <classes> -->
-<!--    	  <class name="fr.ippon.tatami.service.UserServiceTest"/> -->
-<!--    	  <class name="fr.ippon.tatami.service.TimelineServiceTest"/> -->
-<!--     </classes> -->
-<!--   </test>  -->
+  <test name="serviceTests">
+    <classes>
+   	  <class name="fr.ippon.tatami.service.UserServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.TimelineServiceTest"/>
+    </classes>
+  </test> 
 </suite> 

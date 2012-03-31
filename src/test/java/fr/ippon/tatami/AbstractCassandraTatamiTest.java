@@ -1,28 +1,38 @@
 package fr.ippon.tatami;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import javax.inject.Inject;
 
+import me.prettyprint.cassandra.serializers.LongSerializer;
+import me.prettyprint.cassandra.serializers.ObjectSerializer;
+import me.prettyprint.cassandra.serializers.StringSerializer;
+import me.prettyprint.cassandra.serializers.TimeUUIDSerializer;
 import me.prettyprint.hector.api.Keyspace;
+import me.prettyprint.hector.api.Serializer;
 import me.prettyprint.hom.EntityManagerImpl;
 
-import org.cassandraunit.DataLoader;
-import org.cassandraunit.dataset.json.ClassPathJsonDataSet;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.BeforeSuite;
 
+import com.eaio.uuid.UUID;
+
 import fr.ippon.tatami.config.ApplicationTestConfiguration;
 import fr.ippon.tatami.domain.User;
-import fr.ippon.tatami.repository.CounterRepository;
 import fr.ippon.tatami.repository.FavoriteRepository;
 import fr.ippon.tatami.repository.FollowerRepository;
 import fr.ippon.tatami.repository.FriendRepository;
 import fr.ippon.tatami.repository.StatsRepository;
-import fr.ippon.tatami.repository.TagRepository;
+import fr.ippon.tatami.repository.TagLineRepository;
+import fr.ippon.tatami.repository.TimeLineRepository;
 import fr.ippon.tatami.repository.TweetRepository;
+import fr.ippon.tatami.repository.UserLineRepository;
 import fr.ippon.tatami.repository.UserRepository;
+import fr.ippon.tatami.service.AuthenticationService;
 import fr.ippon.tatami.service.TimelineService;
 import fr.ippon.tatami.service.UserService;
 
@@ -54,19 +64,30 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 	protected FavoriteRepository favoriteRepository;
 
 	@Inject
-	protected TagRepository tagRepository;
+	protected TagLineRepository tagLineRepository;
 
 	@Inject
 	protected StatsRepository statsRepository;
 
 	@Inject
-	protected CounterRepository counterRepository;
+	protected UserLineRepository userLineRepository;
+
+	@Inject
+	protected TimeLineRepository timeLineRepository;
 
 	@Inject
 	protected UserService userService;
 
 	@Inject
 	protected TimelineService timelineService;
+
+	protected static final Serializer<String> se = StringSerializer.get();
+
+	protected static final Serializer<Long> le = LongSerializer.get();
+
+	protected static final Serializer<Object> oe = ObjectSerializer.get();
+
+	protected static final Serializer<UUID> te = TimeUUIDSerializer.get();
 
 	@BeforeSuite
 	public void prepareCassandraCluster() throws Exception
@@ -77,25 +98,18 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 			/* create structure and load data */
 			String clusterName = "Tatami cluster";
 			String host = "localhost:9171";
-			DataLoader dataLoader = new DataLoader(clusterName, host);
-			dataLoader.load(new ClassPathJsonDataSet("dataset/dataset.json"));
+			// DataLoader dataLoader = new DataLoader(clusterName, host);
+			// dataLoader.load(new ClassPathJsonDataSet("dataset/dataset.json"));
 			isInitialized = true;
 		}
 		super.springTestContextPrepareTestInstance();
 	}
 
-	protected User constructAUser(String login, String email, String firstName, String lastName)
+	protected void mockAuthenticatedUser(User targetUser)
 	{
-		User user = new User();
-		user.setLogin(login);
-		user.setEmail(email);
-		user.setFirstName(firstName);
-		user.setLastName(lastName);
-		return user;
-	}
-
-	protected User constructAUser(String login, String email)
-	{
-		return constructAUser(login, email, null, null);
+		AuthenticationService mockAuthenticationService = mock(AuthenticationService.class);
+		when(mockAuthenticationService.getCurrentUser()).thenReturn(targetUser);
+		userService.setAuthenticationService(mockAuthenticationService);
+		timelineService.setAuthenticationService(mockAuthenticationService);
 	}
 }
