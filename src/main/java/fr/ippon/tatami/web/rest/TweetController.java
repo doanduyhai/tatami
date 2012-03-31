@@ -42,7 +42,6 @@ import fr.ippon.tatami.service.util.TatamiConstants;
 @Controller
 public class TweetController extends AbstractRESTController
 {
-
 	private final Logger log = LoggerFactory.getLogger(TweetController.class);
 
 	@Inject
