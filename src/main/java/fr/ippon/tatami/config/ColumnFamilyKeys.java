@@ -24,11 +24,13 @@ public class ColumnFamilyKeys
 
 	public final static String FAVLINE_CF = "FavoriteLine";
 
-	public final static String TAGLINE_CF = "DayLine";
+	public final static String TAGLINE_CF = "TagLine";
 
-	public final static String TIMELINE_CF = "Timeline";
+	public final static String TAGLINE_COUNT_CF = "TagLineCount";
 
-	public final static String USERLINE_CF = "Userline";
+	public final static String TIMELINE_CF = "TimeLine";
+
+	public final static String USERLINE_CF = "UserLine";
 
 	public final static String COUNTER_CF = "Counter";
 }

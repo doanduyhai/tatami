@@ -4,10 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
@@ -22,24 +24,32 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class User
 {
 
-	@NotEmpty
+	@NotEmpty(message = "User 'login' should not be empty")
 	@Id
 	private String login;
 
+	@Email(message = "User 'email' is invalid")
 	@Column(name = "email")
 	private String email;
 
 	@Column(name = "gravatar")
 	private String gravatar;
 
+	// (?<!-) is a negative look-behind construct, meaning that the end of line ($) shoud NOT be preceded by a dash -
+	@Pattern(regexp = "^[a-zA-Z][ a-zA-Z-]{1,29}(?<!-)$", message = "User 'firstName' should only contains a-z,A-Z,-, should start/finish by a character and should not exceed 30 characters")
 	@Column(name = "firstName")
 	private String firstName;
 
+	// (?<!-) is a negative look-behind construct, meaning that the end of line ($) shoud NOT be preceded by a dash -
+	@Pattern(regexp = "^[a-zA-Z][ a-zA-Z-]{1,29}(?<!-)$", message = "User 'lastName' should only contains a-z,A-Z,-, should start/finish by a character and should not exceed 30 characters")
 	@Column(name = "lastName")
 	private String lastName;
 
 	@Column(name = "tweetCount")
 	private long tweetCount = 0;
+
+	@Column(name = "timelineTweetCount")
+	private long timelineTweetCount = 0;
 
 	@Column(name = "friendsCount")
 	private long friendsCount = 0;
@@ -60,6 +70,18 @@ public class User
 		this.tweetCount--;
 		if (this.tweetCount < 0)
 			this.tweetCount = 0;
+	}
+
+	public void incrementTimelineTweetCount()
+	{
+		this.timelineTweetCount++;
+	}
+
+	public void decrementTimelineTweetCount()
+	{
+		this.timelineTweetCount--;
+		if (this.timelineTweetCount < 0)
+			this.timelineTweetCount = 0;
 	}
 
 	public void incrementFriendsCount()
@@ -186,6 +208,16 @@ public class User
 	public void setFavoritesCount(long favoritesCount)
 	{
 		this.favoritesCount = favoritesCount;
+	}
+
+	public long getTimelineTweetCount()
+	{
+		return timelineTweetCount;
+	}
+
+	public void setTimelineTweetCount(long timelineTweetCount)
+	{
+		this.timelineTweetCount = timelineTweetCount;
 	}
 
 }

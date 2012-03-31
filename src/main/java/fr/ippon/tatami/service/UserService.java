@@ -7,12 +7,9 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import fr.ippon.tatami.domain.User;
-import fr.ippon.tatami.repository.CounterRepository;
 import fr.ippon.tatami.repository.FollowerRepository;
 import fr.ippon.tatami.repository.FriendRepository;
 import fr.ippon.tatami.repository.UserRepository;
@@ -40,9 +37,6 @@ public class UserService
 	private FriendRepository friendRepository;
 
 	@Inject
-	private CounterRepository counterRepository;
-
-	@Inject
 	private AuthenticationService authenticationService;
 
 	public User getUserByLogin(String login)
@@ -52,38 +46,31 @@ public class UserService
 		return userRepository.findUserByLogin(login);
 	}
 
-	public User getUserProfileByLogin(String login)
-	{
-		User user = getUserByLogin(login);
-		if (user != null)
-		{
-			user.setTweetCount(counterRepository.getTweetCounter(login));
-			user.setFollowersCount(counterRepository.getFollowersCounter(login));
-			user.setFriendsCount(counterRepository.getFriendsCounter(login));
-		}
-		return user;
-	}
-
-	public void updateUser(User user)
+	public void updateUser(User updatedUser)
 	{
 		User currentUser = authenticationService.getCurrentUser();
-		if (currentUser.getLogin().equals(user.getLogin()))
+		if (currentUser.getLogin().equals(updatedUser.getLogin()))
 		{
-			user.setGravatar(GravatarUtil.getHash(user.getEmail()));
-			userRepository.updateUser(user);
+			currentUser.setEmail(updatedUser.getEmail());
+			currentUser.setGravatar(GravatarUtil.getHash(updatedUser.getEmail()));
+			currentUser.setFirstName(updatedUser.getFirstName());
+			currentUser.setLastName(updatedUser.getLastName());
+			userRepository.updateUser(currentUser);
 		}
 		else
 		{
-			log.info("Security alert : user {} tried to update user {} ", currentUser.getLogin(), user);
+			log.info("Security alert : user {} tried to update user {} ", currentUser.getLogin(), updatedUser);
 		}
+	}
+
+	public void updateRandomUser(User user)
+	{
+		userRepository.updateUser(user);
 	}
 
 	public void createUser(User user)
 	{
 		user.setGravatar(GravatarUtil.getHash(user.getEmail()));
-		counterRepository.createTweetCounter(user.getLogin());
-		counterRepository.createFriendsCounter(user.getLogin());
-		counterRepository.createFollowersCounter(user.getLogin());
 		userRepository.createUser(user);
 	}
 
@@ -92,26 +79,15 @@ public class UserService
 		log.debug("Adding friend : {}", loginToFollow);
 
 		User currentUser = authenticationService.getCurrentUser();
+		Collection<String> friends = this.friendRepository.findFriendsForUser(currentUser);
 		User followedUser = getUserByLogin(loginToFollow);
+
 		if (followedUser != null && !followedUser.equals(currentUser))
 		{
-			boolean userAlreadyFollowed = false;
-			if (counterRepository.getFriendsCounter(currentUser.getLogin()) > 0)
+			if (!friends.contains(followedUser.getLogin()))
 			{
-				for (String alreadyFollowingTest : friendRepository.findFriendsForUser(currentUser.getLogin()))
-				{
-					if (alreadyFollowingTest.equals(loginToFollow))
-					{
-						userAlreadyFollowed = true;
-					}
-				}
-			}
-			if (!userAlreadyFollowed)
-			{
-				friendRepository.addFriend(currentUser.getLogin(), followedUser.getLogin());
-				counterRepository.incrementFriendsCounter(currentUser.getLogin());
-				followerRepository.addFollower(followedUser.getLogin(), currentUser.getLogin());
-				counterRepository.incrementFollowersCounter(followedUser.getLogin());
+				friendRepository.addFriend(currentUser, followedUser);
+				followerRepository.addFollower(followedUser, currentUser);
 			}
 		}
 		else
@@ -122,27 +98,20 @@ public class UserService
 
 	public void forgetUser(String login)
 	{
-
 		log.debug("Removing followed user : {} ", login);
 
 		User currentUser = authenticationService.getCurrentUser();
+		Collection<String> friends = this.friendRepository.findFriendsForUser(currentUser);
+
 		User followedUser = getUserByLogin(login);
+
 		if (followedUser != null)
 		{
-			boolean userAlreadyFollowed = false;
-			for (String alreadyFollowingTest : friendRepository.findFriendsForUser(currentUser.getLogin()))
+			if (friends.contains(followedUser.getLogin()))
 			{
-				if (alreadyFollowingTest.equals(login))
-				{
-					userAlreadyFollowed = true;
-				}
-			}
-			if (userAlreadyFollowed)
-			{
-				friendRepository.removeFriend(currentUser.getLogin(), followedUser.getLogin());
-				counterRepository.decrementFriendsCounter(currentUser.getLogin());
-				followerRepository.removeFollower(followedUser.getLogin(), currentUser.getLogin());
-				counterRepository.decrementFollowersCounter(followedUser.getLogin());
+				friendRepository.removeFriend(currentUser, followedUser);
+				followerRepository.removeFollower(followedUser, currentUser);
+
 			}
 		}
 		else
@@ -155,21 +124,43 @@ public class UserService
 	{
 		log.debug("Retrieving followed users : {}", login);
 
-		return friendRepository.findFriendsForUser(login);
+		User user = userRepository.findUserByLogin(login);
+
+		return friendRepository.findFriendsForUser(user);
+	}
+
+	public Collection<String> getFollowersForUser(String login)
+	{
+		log.debug("Retrieving followed users : {}", login);
+
+		User user = userRepository.findUserByLogin(login);
+
+		return followerRepository.findFollowersForUser(user);
 	}
 
 	public User getCurrentUser()
 	{
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		org.springframework.security.core.userdetails.User springSecurityUser = (org.springframework.security.core.userdetails.User) securityContext
-				.getAuthentication().getPrincipal();
-
-		return getUserByLogin(springSecurityUser.getUsername());
-
+		return authenticationService.getCurrentUser();
 	}
 
 	public void setAuthenticationService(AuthenticationService authenticationService)
 	{
 		this.authenticationService = authenticationService;
 	}
+
+	public void setFollowerRepository(FollowerRepository followerRepository)
+	{
+		this.followerRepository = followerRepository;
+	}
+
+	public void setFriendRepository(FriendRepository friendRepository)
+	{
+		this.friendRepository = friendRepository;
+	}
+
+	public void setUserRepository(UserRepository userRepository)
+	{
+		this.userRepository = userRepository;
+	}
+
 }

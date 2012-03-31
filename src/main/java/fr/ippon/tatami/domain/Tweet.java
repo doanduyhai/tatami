@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.Duration;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -44,6 +46,8 @@ public class Tweet
 	@Column(name = "login")
 	private String login;
 
+	@NotEmpty(message = "The tweet content should not be empty")
+	@Length(max = 140, message = "The tweet content should not exceed 140 characters")
 	@Column(name = "content")
 	private String content;
 
@@ -159,16 +163,6 @@ public class Tweet
 		this.gravatar = gravatar;
 	}
 
-	public Boolean getRemoved()
-	{
-		return removed;
-	}
-
-	public void setRemoved(Boolean removed)
-	{
-		this.removed = removed;
-	}
-
 	public Set<String> getLikers()
 	{
 		return likers;
@@ -189,4 +183,13 @@ public class Tweet
 		this.likersCount = likersCount;
 	}
 
+	public Boolean getRemoved()
+	{
+		return removed;
+	}
+
+	public void setRemoved(Boolean removed)
+	{
+		this.removed = removed;
+	}
 }

@@ -4,37 +4,53 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
-import javax.inject.Inject;
+import java.util.Collection;
+
+import me.prettyprint.cassandra.model.CqlQuery;
 
 import org.testng.annotations.Test;
 
 import fr.ippon.tatami.AbstractCassandraTatamiTest;
 import fr.ippon.tatami.domain.User;
+import fr.ippon.tatami.domain.UserFollowers;
+import fr.ippon.tatami.domain.UserFriends;
+import fr.ippon.tatami.service.util.GravatarUtil;
 
 public class UserServiceTest extends AbstractCassandraTatamiTest
 {
-
-	@Inject
-	public UserService userService;
-
 	@Test
 	public void shouldGetAUserServiceInjected()
 	{
 		assertThat(userService, notNullValue());
+
 	}
 
-	@Test
+	@Test(dependsOnMethods = "shouldGetAUserServiceInjected")
 	public void shouldGetAUserByLogin()
 	{
+		User jdubois = new User();
+		jdubois.setLogin("jdubois");
+		jdubois.setEmail("jdubois@ippon.fr");
+		jdubois.setFirstName("Julien");
+		jdubois.setLastName("DUBOIS");
+
+		this.userRepository.createUser(jdubois);
+
 		User user = userService.getUserByLogin("jdubois");
 		assertThat(user, notNullValue());
-		assertThat(user.getEmail(), is("jdubois@ippon.fr"));
-		assertThat(user.getGravatar(), is("gravatar"));
 		assertThat(user.getFirstName(), is("Julien"));
-		assertThat(user.getLastName(), is("Dubois"));
+		assertThat(user.getLastName(), is("DUBOIS"));
+		assertThat(user.getEmail(), is("jdubois@ippon.fr"));
+		assertThat(user.getTweetCount(), is(0L));
+		assertThat(user.getTimelineTweetCount(), is(0L));
+		assertThat(user.getFollowersCount(), is(0L));
+		assertThat(user.getFriendsCount(), is(0L));
+		assertThat(user.getFavoritesCount(), is(0L));
+
 	}
 
 	@Test
@@ -44,47 +60,30 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 		assertThat(user, nullValue());
 	}
 
-	@Test
-	public void shouldGetAUserProfileByLogin()
-	{
-		User user = userService.getUserProfileByLogin("jdubois");
-		assertThat(user.getEmail(), is("jdubois@ippon.fr"));
-		assertThat(user.getTweetCount(), is(2L));
-		assertThat(user.getFollowersCount(), is(3L));
-		assertThat(user.getFriendsCount(), is(4L));
-	}
-
-	@Test
-	public void shouldNotGetAUserProfileByLogin()
-	{
-		User user = userService.getUserProfileByLogin("unknownUserLogin");
-		assertThat(user, nullValue());
-	}
-
-	@Test
+	@Test(dependsOnMethods = "shouldGetAUserByLogin")
 	public void shouldUpdateUser()
 	{
-		String login = "uuser";
-		String email = "uuser@ippon.fr";
-		String firstName = "UpdatedFirstName";
-		String lastName = "UpdatedLastName";
-		User userToUpdate = constructAUser(login, email, firstName, lastName);
+		User jdubois = userService.getUserByLogin("jdubois");
+		mockAuthenticatedUser(jdubois);
 
-		mockAuthenticationOnUserServiceWithACurrentUser(login, email);
+		jdubois.setEmail("uuser@ippon.fr");
+		jdubois.setFirstName("UpdatedFirstName");
+		jdubois.setLastName("UpdatedLastName");
 
-		userService.updateUser(userToUpdate);
+		userService.updateUser(jdubois);
 
-		User updatedUser = userService.getUserByLogin(login);
+		User updatedUser = userService.getUserByLogin("jdubois");
 
-		assertThat(updatedUser.getFirstName(), is(firstName));
-		assertThat(updatedUser.getLastName(), is(lastName));
+		assertThat(updatedUser.getFirstName(), is("UpdatedFirstName"));
+		assertThat(updatedUser.getLastName(), is("UpdatedLastName"));
+		assertThat(updatedUser.getGravatar(), is(GravatarUtil.getHash("uuser@ippon.fr")));
 
 	}
 
-	@Test
+	@Test(dependsOnMethods = "shouldUpdateUser")
 	public void shouldCreateAUser()
 	{
-		String login = "nuser";
+		String login = "userToFollow";
 		String firstName = "New";
 		String lastName = "User";
 		String email = "nuser@ippon.fr";
@@ -100,7 +99,7 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 		userService.createUser(user);
 
 		/* verify */
-		User userToBeTheSame = userService.getUserProfileByLogin(login);
+		User userToBeTheSame = userService.getUserByLogin(login);
 		assertThat(userToBeTheSame.getLogin(), is(user.getLogin()));
 		assertThat(userToBeTheSame.getFirstName(), is(user.getFirstName()));
 		assertThat(userToBeTheSame.getLastName(), is(user.getLastName()));
@@ -110,100 +109,162 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 		assertThat(userToBeTheSame.getFriendsCount(), is(0L));
 	}
 
-	@Test
+	@Test(dependsOnMethods = "shouldCreateAUser")
 	public void shouldFollowUser()
 	{
 
-		mockAuthenticationOnUserServiceWithACurrentUser("userWhoWantToFollow", "userWhoWantToFollow@ippon.fr");
+		User jdubois = userService.getUserByLogin("jdubois");
+		mockAuthenticatedUser(jdubois);
 
-		userService.followUser("userWhoWillBeFollowed");
+		userService.followUser("userToFollow");
 
-		/* verify */
-		User userWhoFollow = userService.getUserProfileByLogin("userWhoWantToFollow");
-		assertThat(userWhoFollow.getFriendsCount(), is(1L));
+		User refreshedJdubois = userService.getUserByLogin("jdubois");
+		User userToFollow = userService.getUserByLogin("userToFollow");
 
-		User userWhoIsFollowed = userService.getUserProfileByLogin("userWhoWillBeFollowed");
-		assertThat(userWhoIsFollowed.getFollowersCount(), is(1L));
+		UserFriends jduboisFriends = entityManager.find(UserFriends.class, "jdubois");
+		UserFollowers userToFollowFollowers = entityManager.find(UserFollowers.class, "userToFollow");
+
+		assertNotNull(jduboisFriends, "jduboisFriends");
+		assertTrue(jduboisFriends.getFriends().size() == 1, "jduboisFriends.getFriends().size() == 1");
+		assertTrue(jduboisFriends.getFriends().contains("userToFollow"), "jduboisFriends.getFriends().contains('userToFollow')");
+		assertThat(refreshedJdubois.getFriendsCount(), is(1L));
+
+		assertNotNull(userToFollowFollowers, "userToFollowFollowers");
+		assertTrue(userToFollowFollowers.getFollowers().size() == 1, "userToFollowFollowers.getFollowers().size() == 1");
+		assertTrue(userToFollowFollowers.getFollowers().contains("jdubois"), "userToFollowFollowers.getFollowers().contains('jdubois')");
+		assertThat(userToFollow.getFollowersCount(), is(1L));
+
 	}
 
-	@Test
+	@Test(dependsOnMethods = "shouldFollowUser")
 	public void shouldNotFollowUserBecauseUserNotExist()
 	{
-
-		mockAuthenticationOnUserServiceWithACurrentUser("userWhoWantToFollow", "userWhoWantToFollow@ippon.fr");
+		User jdubois = userService.getUserByLogin("jdubois");
+		mockAuthenticatedUser(jdubois);
 
 		userService.followUser("unknownUser");
 
-		/* verify */
-		User userWhoFollow = userService.getUserProfileByLogin("userWhoWantToFollow");
-		assertThat(userWhoFollow.getFriendsCount(), is(1L));
+		User refreshedJdubois = userService.getUserByLogin("jdubois");
+		UserFriends jduboisFriends = entityManager.find(UserFriends.class, "jdubois");
+
+		assertNotNull(jduboisFriends, "jduboisFriends");
+		assertTrue(jduboisFriends.getFriends().size() == 1, "jduboisFriends.getFriends().size() == 1");
+		assertThat(refreshedJdubois.getFriendsCount(), is(1L));
 	}
 
-	@Test
+	@Test(dependsOnMethods = "shouldNotFollowUserBecauseUserNotExist")
 	public void shouldNotFollowUserBecauseUserAlreadyFollowed() throws Exception
 	{
+		User jdubois = userService.getUserByLogin("jdubois");
+		mockAuthenticatedUser(jdubois);
 
-		mockAuthenticationOnUserServiceWithACurrentUser("userWhoFollow", "userWhoFollow@ippon.fr");
+		userService.followUser("userToFollowFollowers");
 
-		userService.followUser("userWhoIsFollowed");
+		User refreshedJdubois = userService.getUserByLogin("jdubois");
+		UserFriends jduboisFriends = entityManager.find(UserFriends.class, "jdubois");
 
-		/* verify */
-		User userWhoFollow = userService.getUserProfileByLogin("userWhoFollow");
-		assertThat(userWhoFollow.getFriendsCount(), is(1L));
-		assertThat(userWhoFollow.getFollowersCount(), is(0L));
-
-		User userWhoIsFollowed = userService.getUserProfileByLogin("userWhoIsFollowed");
-		assertThat(userWhoIsFollowed.getFriendsCount(), is(0L));
-		assertThat(userWhoIsFollowed.getFollowersCount(), is(1L));
+		assertNotNull(jduboisFriends, "jduboisFriends");
+		assertTrue(jduboisFriends.getFriends().size() == 1, "jduboisFriends.getFriends().size() == 1");
+		assertThat(refreshedJdubois.getFriendsCount(), is(1L));
 	}
 
-	@Test
+	@Test(dependsOnMethods = "shouldNotFollowUserBecauseUserAlreadyFollowed")
 	public void shouldNotFollowUserBecauseSameUser() throws Exception
 	{
+		User jdubois = userService.getUserByLogin("jdubois");
+		mockAuthenticatedUser(jdubois);
 
-		mockAuthenticationOnUserServiceWithACurrentUser("userWhoWantToFollow", "userWhoWantToFollow@ippon.fr");
+		userService.followUser("jdubois");
 
-		userService.followUser("userWhoWantToFollow");
+		User refreshedJdubois = userService.getUserByLogin("jdubois");
+		UserFriends jduboisFriends = entityManager.find(UserFriends.class, "jdubois");
 
-		/* verify */
-		User userWhoFollow = userService.getUserProfileByLogin("userWhoWantToFollow");
-		assertThat(userWhoFollow.getFriendsCount(), is(1L));
-		assertThat(userWhoFollow.getFollowersCount(), is(0L));
+		assertNotNull(jduboisFriends, "jduboisFriends");
+		assertTrue(jduboisFriends.getFriends().size() == 1, "jduboisFriends.getFriends().size() == 1");
+		assertThat(refreshedJdubois.getFriendsCount(), is(1L));
 	}
 
-	@Test
+	@Test(dependsOnMethods = "shouldNotFollowUserBecauseSameUser")
+	public void shouldFindFriendsForUser()
+	{
+		Collection<String> jduboisFriends = this.userService.getFriendsForUser("jdubois");
+
+		assertNotNull(jduboisFriends, "jduboisFriends");
+		assertTrue(jduboisFriends.size() == 1, "jduboisFriends.size() == 1");
+		assertTrue(jduboisFriends.contains("userToFollow"), "jduboisFriends.contains('userToFollow')");
+	}
+
+	@Test(dependsOnMethods = "shouldFindFriendsForUser")
+	public void shouldFindFollowersForUser()
+	{
+		Collection<String> userToFollowFollowers = this.userService.getFollowersForUser("userToFollow");
+
+		assertNotNull(userToFollowFollowers, "userToFollowFollowers");
+		assertTrue(userToFollowFollowers.size() == 1, "userToFollowFollowers.size() == 1");
+		assertTrue(userToFollowFollowers.contains("jdubois"), "userToFollowFollowers.contains('jdubois')");
+	}
+
+	@Test(dependsOnMethods = "shouldFindFollowersForUser")
 	public void shouldForgetUser()
 	{
-		mockAuthenticationOnUserServiceWithACurrentUser("userWhoWantToForget", "userWhoWantToForget@ippon.fr");
+		User jdubois = userService.getUserByLogin("jdubois");
+		mockAuthenticatedUser(jdubois);
 
-		userService.forgetUser("userToForget");
+		userService.forgetUser("userToFollow");
 
-		/* verify */
-		User userWhoWantToForget = userService.getUserProfileByLogin("userWhoWantToForget");
-		assertThat(userWhoWantToForget.getFriendsCount(), is(0L));
+		User refreshedJdubois = userService.getUserByLogin("jdubois");
+		User userToFollow = userService.getUserByLogin("userToFollow");
 
-		User userToForget = userService.getUserProfileByLogin("userToForget");
-		assertThat(userToForget.getFollowersCount(), is(0L));
+		UserFriends jduboisFriends = entityManager.find(UserFriends.class, "jdubois");
+		UserFollowers userToFollowFollowers = entityManager.find(UserFollowers.class, "userToFollow");
+
+		assertNotNull(jduboisFriends, "jduboisFriends");
+		assertTrue(jduboisFriends.getFriends().size() == 0, "jduboisFriends.getFriends().size() == 0");
+		assertThat(refreshedJdubois.getFriendsCount(), is(0L));
+
+		assertNotNull(userToFollowFollowers, "userToFollowFollowers");
+		assertTrue(userToFollowFollowers.getFollowers().size() == 0, "userToFollowFollowers.getFollowers().size() == 0");
+		assertThat(userToFollow.getFollowersCount(), is(0L));
+
 	}
 
-	@Test
+	@Test(dependsOnMethods = "shouldForgetUser")
 	public void shouldNotForgetUserBecauseUserNotExist()
 	{
-		mockAuthenticationOnUserServiceWithACurrentUser("userWhoWantToForget", "userWhoWantToForget@ippon.fr");
+		User jdubois = userService.getUserByLogin("jdubois");
+		mockAuthenticatedUser(jdubois);
 
-		userService.forgetUser("unknownUser");
+		userService.forgetUser("userToFollow");
 
-		/* verify */
-		User userWhoWantToForget = userService.getUserProfileByLogin("userWhoWantToForget");
-		assertThat(userWhoWantToForget.getFriendsCount(), is(0L));
+		User refreshedJdubois = userService.getUserByLogin("jdubois");
+		UserFriends jduboisFriends = entityManager.find(UserFriends.class, "jdubois");
+
+		assertNotNull(jduboisFriends, "jduboisFriends");
+		assertTrue(jduboisFriends.getFriends().size() == 0, "jduboisFriends.getFriends().size() == 0");
+		assertThat(refreshedJdubois.getFriendsCount(), is(0L));
 	}
 
-	private void mockAuthenticationOnUserServiceWithACurrentUser(String login, String email)
+	@Test(dependsOnMethods = "shouldNotForgetUserBecauseUserNotExist")
+	public void cleanUp()
 	{
-		User authenticateUser = constructAUser(login, email);
-		AuthenticationService mockAuthenticationService = mock(AuthenticationService.class);
-		when(mockAuthenticationService.getCurrentUser()).thenReturn(authenticateUser);
-		userService.setAuthenticationService(mockAuthenticationService);
-	}
+		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, se, se, se);
+		cqlQuery.setQuery("truncate User");
+		cqlQuery.execute();
 
+		cqlQuery.setQuery("truncate UserFriends");
+		cqlQuery.execute();
+
+		cqlQuery.setQuery("truncate UserFollowers");
+		cqlQuery.execute();
+
+		User jdubois = userService.getUserByLogin("jdubois");
+		User userToFollow = userService.getUserByLogin("userToFollow");
+		UserFriends jduboisFriends = entityManager.find(UserFriends.class, "jdubois");
+		UserFollowers userToFollowFollowers = entityManager.find(UserFollowers.class, "userToFollow");
+
+		assertNull(jdubois, "jdubois");
+		assertNull(userToFollow, "userToFollow");
+		assertNull(jduboisFriends, "jduboisFriends");
+		assertNull(userToFollowFollowers, "userToFollowFollowers");
+	}
 }

@@ -3,8 +3,13 @@
 	xmlns="http://www.w3.org/1999/xhtml" 
 	xmlns:th="http://www.thymeleaf.org">
 <div id="profileContent">
+	<div id="userProfileErrorPanel" class="alert alert-error alert-block normalFont" style="display: none;">
+    	 <h4 class="alert-heading">Error!</h4>
+    	 <span id="errorMessage"></span>
+    </div>
 	<form id="updateUserForm">
-	    <fieldset>	
+	    <fieldset>
+	    	<input id="loginInput" name="login" type="hidden" th:value="${currentUser.login}"></input>
 	    	<label>Email :</label> 
 	    	<input id="emailInput" name="email" type="email" required="required" 
 	    		placeholder="Enter e-mail..." class="input-xlarge"

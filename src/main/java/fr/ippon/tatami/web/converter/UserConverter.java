@@ -18,7 +18,7 @@ public class UserConverter implements Converter<String, User>
 	@Override
 	public User convert(String login)
 	{
-		return userService.getUserProfileByLogin(login);
+		return userService.getUserByLogin(login);
 	}
 
 }

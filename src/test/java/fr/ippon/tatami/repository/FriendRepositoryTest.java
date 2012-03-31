@@ -17,19 +17,37 @@ import fr.ippon.tatami.domain.UserFriends;
 public class FriendRepositoryTest extends AbstractCassandraTatamiTest
 {
 
+	private User user;
+	private User jdubois;
+	private User tescolan;
+
 	@Test
 	public void testAddFriend()
 	{
-		User user = new User();
+		user = new User();
 		user.setLogin("test");
 		user.setEmail("test@ippon.fr");
 		user.setFirstName("firstname");
 		user.setLastName("lastname");
 
-		this.userRepository.createUser(user);
+		jdubois = new User();
+		jdubois.setLogin("jdubois");
+		jdubois.setEmail("jdubois@ippon.fr");
+		jdubois.setFirstName("Julien");
+		jdubois.setLastName("DUBOIS");
 
-		this.friendRepository.addFriend("test", "jdubois");
-		this.friendRepository.addFriend("test", "tescolan");
+		tescolan = new User();
+		tescolan.setLogin("tescolan");
+		tescolan.setEmail("tescolan@ippon.fr");
+		tescolan.setFirstName("Thomas");
+		tescolan.setLastName("ESCOLAN");
+
+		this.userRepository.createUser(user);
+		this.userRepository.createUser(jdubois);
+		this.userRepository.createUser(tescolan);
+
+		this.friendRepository.addFriend(user, jdubois);
+		this.friendRepository.addFriend(user, tescolan);
 
 		User refreshedUser = this.userRepository.findUserByLogin("test");
 		Collection<String> userFriends = this.entityManager.find(UserFriends.class, "test").getFriends();
@@ -43,7 +61,7 @@ public class FriendRepositoryTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testAddFriend")
 	public void testFindFriendsForUser()
 	{
-		Collection<String> userFriends = this.friendRepository.findFriendsForUser("test");
+		Collection<String> userFriends = this.friendRepository.findFriendsForUser(user);
 
 		assertTrue(userFriends.size() == 2, "friends.size()");
 		assertTrue(userFriends.contains("jdubois"), "userFriends has 'jdubois'");
@@ -53,22 +71,28 @@ public class FriendRepositoryTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testFindFriendsForUser")
 	public void testRemoveFriend()
 	{
-		this.friendRepository.removeFriend("test", "jdubois");
-		this.friendRepository.removeFriend("test", "tescolan");
+		this.friendRepository.removeFriend(user, jdubois);
+		this.friendRepository.removeFriend(user, tescolan);
 
 		User refreshedUser = this.userRepository.findUserByLogin("test");
-		Collection<String> userFriends = this.friendRepository.findFriendsForUser("test");
+		Collection<String> userFriends = this.friendRepository.findFriendsForUser(user);
 
 		assertTrue(userFriends.size() == 0, "userFriends.size()==0");
 		assertTrue(refreshedUser.getFriendsCount() == 0, "refreshedUser.getFriendsCount()==0");
 
 		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, StringSerializer.get(), StringSerializer.get(),
 				StringSerializer.get());
-		cqlQuery.setQuery("delete from User where KEY='test'");
+		cqlQuery.setQuery("truncate User");
 		cqlQuery.execute();
 
 		User deletedUser = this.userRepository.findUserByLogin("test");
 		assertNull(deletedUser, "deletedUser");
+
+		User deletedJdubois = this.userRepository.findUserByLogin("jdubois");
+		assertNull(deletedJdubois, "deletedJdubois");
+
+		User deletedTescolan = this.userRepository.findUserByLogin("testcolan");
+		assertNull(deletedTescolan, "deletedTescolan");
 
 	}
 }

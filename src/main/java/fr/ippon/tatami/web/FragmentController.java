@@ -41,7 +41,7 @@ public class FragmentController
 	public User getCurrentUser()
 	{
 		User user = userService.getCurrentUser();
-		return userService.getUserProfileByLogin(user.getLogin());
+		return userService.getUserByLogin(user.getLogin());
 	}
 
 	@ModelAttribute(value = "userLinkPattern")
@@ -57,8 +57,9 @@ public class FragmentController
 	}
 
 	@RequestMapping(value = "/fragments/user")
-	public String homeFragment()
+	public String homeFragment(Model model)
 	{
+
 		return "fragments/user";
 	}
 
@@ -69,8 +70,7 @@ public class FragmentController
 	}
 
 	@RequestMapping(value = "/fragments/{nbTweets}/timeline")
-	public String timelineFragment(@PathVariable("nbTweets")
-	Integer nbTweets, Model model)
+	public String timelineFragment(@PathVariable("nbTweets") Integer nbTweets, Model model)
 	{
 		User user = userService.getCurrentUser();
 		model.addAttribute("tweets", timelineService.getTimeline(user.getLogin(), nbTweets));
@@ -94,7 +94,7 @@ public class FragmentController
 			if (exceptions.contains(tweet.getLogin()))
 				continue;
 
-			users.put(tweet.getLogin(), userService.getUserProfileByLogin(tweet.getLogin()));
+			users.put(tweet.getLogin(), userService.getUserByLogin(tweet.getLogin()));
 			if (users.size() == TatamiConstants.USER_SUGGESTION_LIMIT)
 				break; // suggestions list limit
 		}
@@ -111,8 +111,7 @@ public class FragmentController
 	}
 
 	@RequestMapping(value = "/fragments/{login}/userline")
-	public String userLineFragment(@PathVariable("login")
-	String targetUserLogin, Model model)
+	public String userLineFragment(@PathVariable("login") String targetUserLogin, Model model)
 	{
 		Collection<Tweet> tweets = timelineService.getUserline(targetUserLogin, TatamiConstants.DEFAULT_TWEET_LIST_SIZE);
 		log.info("Listing {} tweets for user {}", tweets.size(), targetUserLogin);
@@ -129,8 +128,7 @@ public class FragmentController
 	}
 
 	@RequestMapping(value = "/fragments/{nbTweets}/tagline")
-	public String tagLineFragment(@PathVariable("nbTweets")
-	int nbTweets, Model model)
+	public String tagLineFragment(@PathVariable("nbTweets") int nbTweets, Model model)
 	{
 		if (nbTweets <= 0)
 		{
@@ -145,9 +143,7 @@ public class FragmentController
 	}
 
 	@RequestMapping(value = "/fragments/{tag}/{nbTweets}/tagline")
-	public String tagLineFragment(@PathVariable("tag")
-	String tag, @PathVariable("nbTweets")
-	int nbTweets, Model model)
+	public String tagLineFragment(@PathVariable("tag") String tag, @PathVariable("nbTweets") int nbTweets, Model model)
 	{
 		if (nbTweets <= 0)
 		{

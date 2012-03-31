@@ -29,12 +29,17 @@
 	</div>
 	<div class="row-fluid">
 		<div id="tweetInputZone" class="span12">
-			<div id="tweetValidationMessage" class="alert alert-error" style="display: none;">
+			<div id="tweetErrorPanel" class="alert alert-error" style="display: none;">
 				<h4 class="alert-heading">Error!</h4>
-				You tweet content is empty	
+				<span id="errorMessage"></span>
 			</div>
-			<textarea id="tweetContent" class="focused" maxlength="140" placeholder="Type a new tweet..."></textarea>
-			<button id="tweetButton" type="button" class="btn btn-primary">Tweet!</button>			
+			<form id="tweetForm">
+				<fieldset>
+					<textarea id="tweetContent" class="focused" maxlength="140" name="content" 
+						placeholder="Type a new tweet..."></textarea>
+				</fieldset>
+				<button id="tweetButton" type="button" class="btn btn-primary">Tweet!</button>
+			</form>			
 		</div>
 	</div>
 </div>

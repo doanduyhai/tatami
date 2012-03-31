@@ -2,16 +2,19 @@ package fr.ippon.tatami.repository;
 
 import java.util.Collection;
 
+import fr.ippon.tatami.domain.User;
+
 /**
  * The Follower Respository.
- *
+ * 
  * @author Julien Dubois
  */
-public interface FriendRepository {
+public interface FriendRepository
+{
 
-    void addFriend(String login, String friendLogin);
+	void addFriend(User user, User friend);
 
-    void removeFriend(String login, String friendLogin);
+	void removeFriend(User user, User friend);
 
-    Collection<String> findFriendsForUser(String login);
+	Collection<String> findFriendsForUser(User user);
 }

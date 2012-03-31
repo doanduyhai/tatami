@@ -45,5 +45,4 @@ public class FavoriteLine
 	{
 		this.favorites = favorites;
 	}
-
 }

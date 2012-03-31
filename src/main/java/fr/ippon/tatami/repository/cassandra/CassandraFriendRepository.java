@@ -1,5 +1,6 @@
 package fr.ippon.tatami.repository.cassandra;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -20,7 +21,7 @@ import fr.ippon.tatami.repository.FriendRepository;
  * @author Julien Dubois
  */
 @Repository
-public class CassandraFriendRepository implements FriendRepository
+public class CassandraFriendRepository extends CassandraAbstractRepository implements FriendRepository
 {
 
 	private final Logger log = LoggerFactory.getLogger(CassandraFriendRepository.class);
@@ -29,48 +30,46 @@ public class CassandraFriendRepository implements FriendRepository
 	private EntityManagerImpl em;
 
 	@Override
-	public void addFriend(String login, String friendLogin)
+	public void addFriend(User user, User friend)
 	{
-		User user = em.find(User.class, login);
-		UserFriends userFriends = em.find(UserFriends.class, login);
+		UserFriends userFriends = em.find(UserFriends.class, user.getLogin());
 		if (userFriends == null)
 		{
 			userFriends = new UserFriends();
-			userFriends.setLogin(login);
+			userFriends.setLogin(user.getLogin());
 		}
 
-		userFriends.getFriends().add(friendLogin);
+		userFriends.getFriends().add(friend.getLogin());
 		user.incrementFriendsCount();
 		em.persist(user);
 		em.persist(userFriends);
 	}
 
 	@Override
-	public void removeFriend(String login, String friendLogin)
+	public void removeFriend(User user, User friend)
 	{
-		User user = em.find(User.class, login);
-		UserFriends userFriends = em.find(UserFriends.class, login);
+		UserFriends userFriends = em.find(UserFriends.class, user.getLogin());
 		if (userFriends == null)
 		{
 			// TODO Functional exception
 			return;
 		}
 
-		userFriends.getFriends().remove(friendLogin);
+		userFriends.getFriends().remove(friend.getLogin());
 		user.decrementFriendsCount();
 		em.persist(user);
 		em.persist(userFriends);
 	}
 
 	@Override
-	public Collection<String> findFriendsForUser(String login)
+	public Collection<String> findFriendsForUser(User user)
 	{
-		UserFriends userFriends = em.find(UserFriends.class, login);
+		UserFriends userFriends = em.find(UserFriends.class, user.getLogin());
 		if (userFriends != null)
 		{
 			return userFriends.getFriends();
 		}
-		return null;
+		return new ArrayList<String>();
 
 	}
 }

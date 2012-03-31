@@ -2,17 +2,20 @@ package fr.ippon.tatami.repository;
 
 import java.util.Collection;
 
+import fr.ippon.tatami.domain.User;
+
 /**
  * The Follower Respository.
- *
+ * 
  * @author Julien Dubois
  */
-public interface FollowerRepository {
+public interface FollowerRepository
+{
 
-    void addFollower(String login, String followerLogin);
+	void addFollower(User user, User follower);
 
-    void removeFollower(String login, String followerLogin);
+	void removeFollower(User user, User follower);
 
-    Collection<String> findFollowersForUser(String login);
+	Collection<String> findFollowersForUser(User user);
 
 }

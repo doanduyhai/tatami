@@ -1,6 +1,10 @@
 package fr.ippon.tatami.repository.cassandra;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -15,7 +19,7 @@ import fr.ippon.tatami.domain.YearLine;
 import fr.ippon.tatami.repository.StatsRepository;
 
 @Repository
-public class CassandraStatsRepository implements StatsRepository
+public class CassandraStatsRepository extends CassandraAbstractRepository implements StatsRepository
 {
 
 	@Inject
@@ -59,7 +63,34 @@ public class CassandraStatsRepository implements StatsRepository
 		{
 			return dayLine.getTweetIds();
 		}
-		return null;
+		return Arrays.asList();
+	}
+
+	@Override
+	public Collection<String> findTweetsRangeForDay(String day, int start, int end)
+	{
+		DayLine dayLine = em.find(DayLine.class, day);
+		if (dayLine != null)
+		{
+			List<String> list = new ArrayList<String>(dayLine.getTweetIds());
+
+			if (list.size() > 0)
+			{
+				if (start < 1)
+				{
+					start = 1;
+				}
+
+				if (end > list.size())
+				{
+					end = list.size();
+				}
+				Collections.reverse(list);
+				return list.subList(start - 1, end);
+			}
+
+		}
+		return Arrays.asList();
 	}
 
 	@Override
@@ -100,7 +131,32 @@ public class CassandraStatsRepository implements StatsRepository
 		{
 			return weekLine.getTweetIds();
 		}
-		return null;
+		return Arrays.asList();
+	}
+
+	@Override
+	public Collection<String> findTweetsRangeForWeek(String day, int start, int end)
+	{
+		WeekLine weekLine = em.find(WeekLine.class, day);
+		if (weekLine != null)
+		{
+			List<String> list = new ArrayList<String>(weekLine.getTweetIds());
+			if (list.size() > 0)
+			{
+				if (start < 1)
+				{
+					start = 1;
+				}
+
+				if (end > list.size())
+				{
+					end = list.size();
+				}
+				Collections.reverse(list);
+				return list.subList(start - 1, end);
+			}
+		}
+		return Arrays.asList();
 	}
 
 	@Override
@@ -140,7 +196,32 @@ public class CassandraStatsRepository implements StatsRepository
 		{
 			return monthLine.getTweetIds();
 		}
-		return null;
+		return Arrays.asList();
+	}
+
+	@Override
+	public Collection<String> findTweetsRangeForMonth(String day, int start, int end)
+	{
+		MonthLine monthLine = em.find(MonthLine.class, day);
+		if (monthLine != null)
+		{
+			List<String> list = new ArrayList<String>(monthLine.getTweetIds());
+			if (list.size() > 0)
+			{
+				if (start < 1)
+				{
+					start = 1;
+				}
+
+				if (end > list.size())
+				{
+					end = list.size();
+				}
+				Collections.reverse(list);
+				return list.subList(start - 1, end);
+			}
+		}
+		return Arrays.asList();
 	}
 
 	@Override
@@ -174,6 +255,31 @@ public class CassandraStatsRepository implements StatsRepository
 	}
 
 	@Override
+	public Collection<String> findTweetsRangeForYear(String day, int start, int end)
+	{
+		YearLine yearLine = em.find(YearLine.class, day);
+		if (yearLine != null)
+		{
+			List<String> list = new ArrayList<String>(yearLine.getTweetIds());
+			if (list.size() > 0)
+			{
+				if (start < 1)
+				{
+					start = 1;
+				}
+
+				if (end > list.size())
+				{
+					end = list.size();
+				}
+				Collections.reverse(list);
+				return list.subList(start - 1, end);
+			}
+		}
+		return Arrays.asList();
+	}
+
+	@Override
 	public Collection<String> findTweetsForYear(String year)
 	{
 		YearLine yearLine = em.find(YearLine.class, year);
@@ -181,7 +287,7 @@ public class CassandraStatsRepository implements StatsRepository
 		{
 			return yearLine.getTweetIds();
 		}
-		return null;
+		return Arrays.asList();
 	}
 
 }

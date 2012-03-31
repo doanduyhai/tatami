@@ -16,7 +16,4 @@ public interface UserRepository
 
 	User findUserByLogin(String login);
 
-	void addFavoriteToUser(User user, String favoriteTweetId);
-
-	void removeFavoriteFromUser(User user, String favoriteTweetId);
 }

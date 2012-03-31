@@ -5,11 +5,15 @@ import static fr.ippon.tatami.config.ColumnFamilyKeys.DAYLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWERS_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.FRIENDS_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.MONTHLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TAGLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.TAGLINE_COUNT_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TIMELINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TWEET_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.USERLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.USER_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.WEEKLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.YEARLINE_CF;
 
 import javax.inject.Inject;
 
@@ -66,16 +70,23 @@ public class CassandraConfiguration
 			keyspaceDef = new ThriftKsDef(cassandraKeyspace);
 			cluster.addKeyspace(keyspaceDef, true);
 
-			addColumnFamily(cluster, USER_CF);
-			addColumnFamily(cluster, FRIENDS_CF);
-			addColumnFamily(cluster, FOLLOWERS_CF);
-			addColumnFamily(cluster, TWEET_CF);
-			addColumnFamily(cluster, DAYLINE_CF);
-			System.out.println(" FAV LINE");
-			addColumnFamily(cluster, FAVLINE_CF);
-			addColumnFamily(cluster, TAGLINE_CF);
-			addColumnFamily(cluster, TIMELINE_CF);
-			addColumnFamily(cluster, USERLINE_CF);
+			addColumnFamilyWithStringColumn(cluster, USER_CF);
+			addColumnFamilyWithStringColumn(cluster, FRIENDS_CF);
+			addColumnFamilyWithStringColumn(cluster, FOLLOWERS_CF);
+			addColumnFamilyWithStringColumn(cluster, TWEET_CF);
+			addColumnFamilyWithStringColumn(cluster, DAYLINE_CF);
+			addColumnFamilyWithStringColumn(cluster, WEEKLINE_CF);
+			addColumnFamilyWithStringColumn(cluster, MONTHLINE_CF);
+			addColumnFamilyWithStringColumn(cluster, YEARLINE_CF);
+			addColumnFamilyWithStringColumn(cluster, FAVLINE_CF);
+			System.out.println(FAVLINE_CF);
+			addColumnFamilyWithLongColumn(cluster, TAGLINE_CF);
+			System.out.println(TAGLINE_CF);
+			addColumnFamilyWithStringColumn(cluster, TAGLINE_COUNT_CF);
+			addColumnFamilyWithLongColumn(cluster, TIMELINE_CF);
+			System.out.println(TIMELINE_CF);
+			addColumnFamilyWithLongColumn(cluster, USERLINE_CF);
+			System.out.println(USERLINE_CF);
 
 			ThriftCfDef cfDef = new ThriftCfDef(cassandraKeyspace, COUNTER_CF, ComparatorType.UTF8TYPE);
 
@@ -85,12 +96,24 @@ public class CassandraConfiguration
 		return HFactory.createKeyspace(cassandraKeyspace, cluster, consistencyLevelPolicy);
 	}
 
-	private void addColumnFamily(ThriftCluster cluster, String cfName)
+	private void addColumnFamilyWithStringColumn(ThriftCluster cluster, String cfName)
 	{
 
 		String cassandraKeyspace = env.getProperty("cassandra.keyspace");
+		ColumnFamilyDefinition cfd = HFactory.createColumnFamilyDefinition(cassandraKeyspace, cfName, ComparatorType.UTF8TYPE);
+		cfd.setKeyValidationClass("org.apache.cassandra.db.marshal.UTF8Type");
+		cfd.setComparatorType(ComparatorType.UTF8TYPE);
+		cluster.addColumnFamily(cfd);
+	}
 
-		ColumnFamilyDefinition cfd = HFactory.createColumnFamilyDefinition(cassandraKeyspace, cfName);
+	private void addColumnFamilyWithLongColumn(ThriftCluster cluster, String cfName)
+	{
+
+		String cassandraKeyspace = env.getProperty("cassandra.keyspace");
+		ColumnFamilyDefinition cfd = HFactory.createColumnFamilyDefinition(cassandraKeyspace, cfName, ComparatorType.UTF8TYPE);
+		cfd.setKeyValidationClass("org.apache.cassandra.db.marshal.UTF8Type");
+		cfd.setComparatorType(ComparatorType.LONGTYPE);
+		cfd.setDefaultValidationClass("org.apache.cassandra.db.marshal.UTF8Type");
 		cluster.addColumnFamily(cfd);
 	}
 

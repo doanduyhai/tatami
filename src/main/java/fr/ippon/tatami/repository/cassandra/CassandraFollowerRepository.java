@@ -1,5 +1,6 @@
 package fr.ippon.tatami.repository.cassandra;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -20,7 +21,7 @@ import fr.ippon.tatami.repository.FollowerRepository;
  * @author Julien Dubois
  */
 @Repository
-public class CassandraFollowerRepository implements FollowerRepository
+public class CassandraFollowerRepository extends CassandraAbstractRepository implements FollowerRepository
 {
 
 	private final Logger log = LoggerFactory.getLogger(CassandraFollowerRepository.class);
@@ -29,47 +30,45 @@ public class CassandraFollowerRepository implements FollowerRepository
 	private EntityManagerImpl em;
 
 	@Override
-	public void addFollower(String login, String followerLogin)
+	public void addFollower(User user, User follower)
 	{
-		User user = em.find(User.class, login);
-		UserFollowers userFollowers = em.find(UserFollowers.class, login);
+		UserFollowers userFollowers = em.find(UserFollowers.class, user.getLogin());
 		if (userFollowers == null)
 		{
 			userFollowers = new UserFollowers();
 			userFollowers.setLogin(user.getLogin());
 		}
 
-		userFollowers.getFollowers().add(followerLogin);
+		userFollowers.getFollowers().add(follower.getLogin());
 		user.incrementFollowersCount();
 		em.persist(user);
 		em.persist(userFollowers);
 	}
 
 	@Override
-	public void removeFollower(String login, String followerLogin)
+	public void removeFollower(User user, User follower)
 	{
-		User user = em.find(User.class, login);
-		UserFollowers userFollowers = em.find(UserFollowers.class, login);
+		UserFollowers userFollowers = em.find(UserFollowers.class, user.getLogin());
 		if (userFollowers == null)
 		{
 			// TODO Functional exception
 			return;
 		}
 
-		userFollowers.getFollowers().remove(followerLogin);
+		userFollowers.getFollowers().remove(follower.getLogin());
 		user.decrementFollowersCount();
 		em.persist(user);
 		em.persist(userFollowers);
 	}
 
 	@Override
-	public Collection<String> findFollowersForUser(String login)
+	public Collection<String> findFollowersForUser(User user)
 	{
-		UserFollowers userFollowers = em.find(UserFollowers.class, login);
+		UserFollowers userFollowers = em.find(UserFollowers.class, user.getLogin());
 		if (userFollowers != null)
 		{
 			return userFollowers.getFollowers();
 		}
-		return null;
+		return Arrays.asList();
 	}
 }
