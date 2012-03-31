@@ -47,6 +47,7 @@ public class UserService
 	}
 
 	public void updateUser(User updatedUser)
+
 	{
 		User currentUser = authenticationService.getCurrentUser();
 		if (currentUser.getLogin().equals(updatedUser.getLogin()))

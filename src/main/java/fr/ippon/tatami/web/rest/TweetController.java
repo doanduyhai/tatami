@@ -12,12 +12,16 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.owasp.esapi.reference.DefaultEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +47,19 @@ public class TweetController extends AbstractRESTController
 
 	@Inject
 	private TimelineService timelineService;
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseBody
+	public String handleFunctionalException(MethodArgumentNotValidException ex, HttpServletRequest request)
+	{
+		log.error(" Validation exception raised : " + ex.getMessage());
+		StringBuilder errorBuffer = new StringBuilder();
+		for (FieldError fieldError : ex.getBindingResult().getFieldErrors())
+		{
+			errorBuffer.append(fieldError.getDefaultMessage()).append("<br/>");
+		}
+		return errorBuffer.toString();
+	}
 
 	@RequestMapping(value = "/rest/tweets/{login}/{nbTweets}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
@@ -152,9 +169,12 @@ public class TweetController extends AbstractRESTController
 	@ResponseBody
 	public Tweet postTweet(@Valid @RequestBody Tweet tweet)
 	{
+<<<<<<< HEAD
 		// XSS protection by encoding input data with ESAPI api
 		tweet.setContent(DefaultEncoder.getInstance().encodeForHTML(tweet.getContent()));
 
+=======
+>>>>>>> origin/master
 		log.debug("REST request to add tweet : {}", tweet.getContent());
 		return timelineService.postTweet(tweet.getContent());
 	}

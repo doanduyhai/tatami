@@ -16,6 +16,7 @@ public class TestUtil
 	{
 		Pattern firstname = Pattern.compile("^[a-zA-Z][ a-zA-Z-]{1,29}(?<!-)$");
 		Matcher match = firstname.matcher("DuyHai DOAN-");
+
 		assertFalse(match.find());
 	}
 
