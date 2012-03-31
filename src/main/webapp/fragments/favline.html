@@ -39,8 +39,10 @@
 								<br/>
 							</a>
 							<span th:inline="text">	
-								[[${tweet.content.replaceAll("@(\w+)","__${userLinkPattern}__")
-									.replaceAll("#(\w+)","__${tagLinkPattern}__")}]]
+								[[${tweet.content.replaceAll("__${T(fr.ippon.tatami.service.util.TatamiConstants).USER_REGEXP}__",
+									"__${T(fr.ippon.tatami.service.util.TatamiConstants).USER_LINK_PATTERN}__")
+									.replaceAll("__${T(fr.ippon.tatami.service.util.TatamiConstants).HASHTAG_REGEXP}__",
+									"__${T(fr.ippon.tatami.service.util.TatamiConstants).TAG_LINK_PATTERN}__")}]]
 							</span>
 						</article>
 					</td>

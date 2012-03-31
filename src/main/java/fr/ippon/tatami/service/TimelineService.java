@@ -70,7 +70,7 @@ public class TimelineService implements InitializingBean
 
 	private String hashtagDefault;
 
-	private static final Pattern HASHTAG_PATTERN = Pattern.compile("#(\\w+)");
+	private static final Pattern HASHTAG_PATTERN = Pattern.compile(TatamiConstants.HASHTAG_REGEXP);
 
 	private static final String DAYLINE_KEY_FORMAT = "yyyyMMdd";
 	private static final String WEEKLINE_KEY_FORMAT = "w";

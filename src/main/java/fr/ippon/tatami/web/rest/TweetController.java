@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.owasp.esapi.reference.DefaultEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -39,7 +40,7 @@ import fr.ippon.tatami.service.util.TatamiConstants;
  * @author Julien Dubois
  */
 @Controller
-public class TweetController
+public class TweetController extends AbstractRESTController
 {
 
 	private final Logger log = LoggerFactory.getLogger(TweetController.class);
@@ -168,6 +169,10 @@ public class TweetController
 	@ResponseBody
 	public Tweet postTweet(@Valid @RequestBody Tweet tweet)
 	{
+
+		// XSS protection by encoding input data with ESAPI api
+		tweet.setContent(DefaultEncoder.getInstance().encodeForHTML(tweet.getContent()));
+
 		log.debug("REST request to add tweet : {}", tweet.getContent());
 		return timelineService.postTweet(tweet.getContent());
 	}

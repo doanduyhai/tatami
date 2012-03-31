@@ -46,17 +46,21 @@ public class UserService
 		return userRepository.findUserByLogin(login);
 	}
 
-	public void updateUser(User user)
+	public void updateUser(User updatedUser)
+
 	{
 		User currentUser = authenticationService.getCurrentUser();
-		if (currentUser.getLogin().equals(user.getLogin()))
+		if (currentUser.getLogin().equals(updatedUser.getLogin()))
 		{
-			user.setGravatar(GravatarUtil.getHash(user.getEmail()));
-			userRepository.updateUser(user);
+			currentUser.setEmail(updatedUser.getEmail());
+			currentUser.setGravatar(GravatarUtil.getHash(updatedUser.getEmail()));
+			currentUser.setFirstName(updatedUser.getFirstName());
+			currentUser.setLastName(updatedUser.getLastName());
+			userRepository.updateUser(currentUser);
 		}
 		else
 		{
-			log.info("Security alert : user {} tried to update user {} ", currentUser.getLogin(), user);
+			log.info("Security alert : user {} tried to update user {} ", currentUser.getLogin(), updatedUser);
 		}
 	}
 

@@ -26,7 +26,7 @@ import fr.ippon.tatami.service.UserService;
  * @author Julien Dubois
  */
 @Controller
-public class UserController
+public class UserController extends AbstractRESTController
 {
 
 	private final Logger log = LoggerFactory.getLogger(UserController.class);
