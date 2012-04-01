@@ -31,6 +31,7 @@ public class User
 	@Id
 	private String login;
 
+	@JsonView(UserView.Full.class)
 	@Email(message = "User 'email' is invalid")
 	@Column(name = "email")
 	private String email;
@@ -38,28 +39,42 @@ public class User
 	@Column(name = "gravatar")
 	private String gravatar;
 
+	@JsonView(UserView.Full.class)
 	// (?<!-) is a negative look-behind construct, meaning that the end of line ($) shoud NOT be preceded by a dash -
 	@Pattern(regexp = "^[a-zA-Z][ a-zA-Z-]{1,29}(?<!-)$", message = "User 'firstName' should only contains a-z,A-Z,-, should start/finish by a character and should not exceed 30 characters")
 	@Column(name = "firstName")
 	private String firstName;
 
+	@JsonView(UserView.Full.class)
 	// (?<!-) is a negative look-behind construct, meaning that the end of line ($) shoud NOT be preceded by a dash -
 	@Pattern(regexp = "^[a-zA-Z][ a-zA-Z-]{1,29}(?<!-)$", message = "User 'lastName' should only contains a-z,A-Z,-, should start/finish by a character and should not exceed 30 characters")
 	@Column(name = "lastName")
 	private String lastName;
 
-	@JsonView(UserView.Stats.class)
+	@JsonView(value =
+	{
+			UserView.Stats.class,
+			UserView.Full.class
+	})
 	@Column(name = "tweetCount")
 	private long tweetCount = 0;
 
 	@Column(name = "timelineTweetCount")
 	private long timelineTweetCount = 0;
 
-	@JsonView(UserView.Stats.class)
+	@JsonView(value =
+	{
+			UserView.Stats.class,
+			UserView.Full.class
+	})
 	@Column(name = "friendsCount")
 	private long friendsCount = 0;
 
-	@JsonView(UserView.Stats.class)
+	@JsonView(value =
+	{
+			UserView.Stats.class,
+			UserView.Full.class
+	})
 	@Column(name = "followersCount")
 	private long followersCount = 0;
 

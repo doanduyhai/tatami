@@ -55,7 +55,13 @@ google.load("visualization", "1", {packages:["corechart"]});
 		}
 	});
 	
-	// Register refresh handler for all lines
-	$('.refreshLineIcon').click(refreshCurrentLine);
-	
+
+	$(function() {
+		
+		// Register refresh handler for all lines
+		$('.refreshLineIcon').click(refreshCurrentLine);
+		registerUserDetailsPopOver();
+		
+	});
+
 }( window.jQuery );

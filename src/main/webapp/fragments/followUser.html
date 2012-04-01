@@ -25,17 +25,18 @@
             <tbody id="userSuggestions">
             	<tr th:if="${tweets.size() == 0}">
 					<td colSpan="2">
-						No one new tweeted yet today...
+						No new people to follow today ...
 					</td>            	
             	</tr>
-            	<tr valign="top" th:each="tweet : ${tweets}">
+            	<tr th:each="tweet : ${tweets}">
             		<td>
+           				<img class="tweetGravatar" 
+							src="http://www.gravatar.com/avatar/012411?s=32"
+							th:attr="data-user=${tweet.login}"
+							th:src="${'http://www.gravatar.com/avatar/'+tweet.gravatar+'?s=32'}"></img>&nbsp;&nbsp;&nbsp;							            		
             			<a href="#" style="text-decoration:none"
             				th:attr="data-user=${tweet.login},title='Show '+${tweet.login}+' tweets'" 
             			>
-            				<img id="tweetGravatar" 
-								src="http://www.gravatar.com/avatar/012411?s=32"
-								th:src="${'http://www.gravatar.com/avatar/'+tweet.gravatar+'?s=32'}"></img>
 							<em th:text="${'@'+tweet.login}">@login</em>
 						</a>		
             		</td>

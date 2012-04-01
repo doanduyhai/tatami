@@ -26,11 +26,13 @@
 						
 						<a href="#" th:attr="data-user=${tweet.login},title=${'Show ' +tweet.login+' tweets'}"
 							th:if="${currentUser.login != tweet.login}">
-							<img id="tweetGravatar" 
+							<img class="tweetGravatar"
+								th:attr="data-user=${tweet.login}" 
 								src="http://www.gravatar.com/avatar/012411?s=32"
 								th:src="${'http://www.gravatar.com/avatar/'+tweet.gravatar+'?s=32'}"></img>
 						</a>
-						<img id="tweetGravatar" 
+						<img class="tweetGravatar"
+							th:attr="data-user=${tweet.login}" 
 							src="http://www.gravatar.com/avatar/012411?s=32"
 							th:unless="${currentUser.login != tweet.login}"
 							th:src="${'http://www.gravatar.com/avatar/'+tweet.gravatar+'?s=32'}"></img>							
@@ -43,8 +45,8 @@
 								th:attr="data-user=${tweet.login},title=${'Show '+tweet.login+' tweets'}"
 								th:if="${currentUser.login != tweet.login}">
 								<em th:text="${'@' + tweet.login}">@login</em>
-								<br/>
 							</a>
+							<br/>
 							<span th:inline="text">[[${tweet.content}]]</span>
 						</article>
 					</td>

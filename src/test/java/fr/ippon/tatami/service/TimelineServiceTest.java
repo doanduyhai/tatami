@@ -376,11 +376,13 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User freshTescolan = this.userService.getUserByLogin("tescolan");
 		User jdubois = this.userService.getUserByLogin("jdubois");
 
+		// tescolan follows jdubois, jdubois gets one alert tweet
 		mockAuthenticatedUser(freshTescolan);
 		this.userService.followUser("jdubois");
 
+		// jdubois quotes tescolan but since he already follows him, there will be no alert tweet
 		mockAuthenticatedUser(jdubois);
-		Tweet newTweet = this.timelineService.postTweet("tweet11 Hi tescolan !!!");
+		Tweet newTweet = this.timelineService.postTweet("tweet11 Hi @tescolan !!!");
 
 		freshTescolan = this.userService.getUserByLogin("tescolan");
 		mockAuthenticatedUser(freshTescolan);
@@ -396,6 +398,33 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "shouldPostTweetWithFollower")
+	public void shouldPostTweetWithQuotedUser() throws Exception
+	{
+		User tescolan = this.userService.getUserByLogin("tescolan");
+		User jdubois = this.userService.getUserByLogin("jdubois");
+
+		// tescolan no longer follows jdubois
+		mockAuthenticatedUser(tescolan);
+		this.userService.forgetUser("jdubois");
+
+		// jdubois quotes tescolan, tescolan gests one alert tweet
+		mockAuthenticatedUser(jdubois);
+		this.timelineService.postTweet("tweet12 @tescolan is a very smart guy !!!");
+
+		User freshTescolan = this.userService.getUserByLogin("tescolan");
+		mockAuthenticatedUser(freshTescolan);
+		Collection<Tweet> userline = this.timelineService.getUserline("tescolan", 10);
+		Collection<Tweet> timeline = this.timelineService.getTimeline(10);
+
+		assertTrue(freshTescolan.getTimelineTweetCount() == 2, "freshTescolan.getTimelineTweetCount() == 2");
+		assertTrue(freshTescolan.getTweetCount() == 0, "freshTescolan.getTimelineTweetCount() == 0");
+
+		assertTrue(timeline.size() == 2, "timeline.size() == 2");
+		assertTrue(userline.size() == 0, "userline.size() == 0");
+
+	}
+
+	@Test(dependsOnMethods = "shouldPostTweetWithQuotedUser")
 	public void cleanUp()
 	{
 		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, se, se, se);

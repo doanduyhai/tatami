@@ -15,6 +15,7 @@ import me.prettyprint.cassandra.model.CqlQuery;
 import org.testng.annotations.Test;
 
 import fr.ippon.tatami.AbstractCassandraTatamiTest;
+import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.domain.UserFollowers;
 import fr.ippon.tatami.domain.UserFriends;
@@ -116,6 +117,7 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
+		// "jdubois" follows "userToFollow"
 		userService.followUser("userToFollow");
 
 		User refreshedJdubois = userService.getUserByLogin("jdubois");
@@ -133,6 +135,14 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 		assertTrue(userToFollowFollowers.getFollowers().size() == 1, "userToFollowFollowers.getFollowers().size() == 1");
 		assertTrue(userToFollowFollowers.getFollowers().contains("jdubois"), "userToFollowFollowers.getFollowers().contains('jdubois')");
 		assertThat(userToFollow.getFollowersCount(), is(1L));
+
+		// "userToFollow" receives an alert tweet
+		Collection<String> tweets = timeLineRepository.getTweetsFromTimeline(userToFollow);
+		assertTrue(tweets.size() == 1, "tweets.size() == 1");
+
+		Tweet alertTweet = entityManager.find(Tweet.class, tweets.iterator().next());
+		assertTrue(alertTweet.getContent().contains("jdubois <strong>is now following you</strong>"),
+				"alertTweet contains 'jdubois <strong>is now followng you</strong>'");
 
 	}
 

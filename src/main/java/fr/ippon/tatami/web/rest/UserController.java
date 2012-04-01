@@ -67,6 +67,13 @@ public class UserController extends AbstractRESTController
 		this.writeWithView(userService.getUserByLogin(login), response, UserView.Stats.class);
 	}
 
+	@RequestMapping(value = "/rest/usersDetails/{login}", method = RequestMethod.GET, produces = "application/json")
+	public void getUserDetails(@PathVariable("login") String login, HttpServletResponse response)
+	{
+		log.debug("REST request to get Profile : {}", login);
+		this.writeWithView(userService.getUserByLogin(login), response, UserView.Full.class);
+	}
+
 	@RequestMapping(value = "/rest/users/{login}", method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public void updateUser(@PathVariable("login") String login, @Valid @RequestBody User user)

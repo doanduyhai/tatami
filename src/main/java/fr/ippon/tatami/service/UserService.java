@@ -1,5 +1,7 @@
 package fr.ippon.tatami.service;
 
+import static fr.ippon.tatami.service.util.TatamiConstants.USERTAG;
+
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -9,9 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
+import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.FollowerRepository;
 import fr.ippon.tatami.repository.FriendRepository;
+import fr.ippon.tatami.repository.TimeLineRepository;
+import fr.ippon.tatami.repository.TweetRepository;
 import fr.ippon.tatami.repository.UserRepository;
 import fr.ippon.tatami.service.util.GravatarUtil;
 
@@ -38,6 +43,12 @@ public class UserService
 
 	@Inject
 	private AuthenticationService authenticationService;
+
+	@Inject
+	private TimeLineRepository timelineRepository;
+
+	@Inject
+	TweetRepository tweetRepository;
 
 	public User getUserByLogin(String login)
 	{
@@ -89,6 +100,12 @@ public class UserService
 			{
 				friendRepository.addFriend(currentUser, followedUser);
 				followerRepository.addFollower(followedUser, currentUser);
+
+				// Tweet alert
+				String content = USERTAG + currentUser.getLogin() + " <strong>is now following you</strong>";
+				Tweet alertTweet = tweetRepository.createTweet(currentUser.getLogin(), content); // removable
+				timelineRepository.addTweetToTimeline(followedUser, alertTweet.getTweetId());
+
 			}
 		}
 		else

@@ -49,6 +49,11 @@ function bindListeners($target)
 	
 	//Bind click handler for "Update" button
 	$target.find('button[type="submit"]').click(updateProfile);
+
+	
+	//Bind 'hover' on user gravatar
+	registerUserDetailsPopOver();
+
 }
 
 function errorHandler($targetErrorPanel)
@@ -57,4 +62,46 @@ function errorHandler($targetErrorPanel)
 	{
 		$targetErrorPanel.find('#errorMessage').empty().html(jqXHR.responseText).end().show();
 	};
+}
+
+function registerUserDetailsPopOver()
+{
+	$('.tweetGravatar').mouseenter(function()
+	{
+		if($(this).data('popover') == null)
+		{
+			var data_user= $(this).attr('data-user');
+			$(this).popover({
+				animation: false,
+				placement: 'right',
+				trigger: 'manual',
+				title: 'User details',
+				html : true,
+				template: $('#popoverTemplate').clone().attr('id','').find('div.popover').attr('data-user',data_user).end().html()
+			});
+		}
+		$(this).delay(200).popover('show');
+		$.ajax({
+			type: 'GET',
+			url: "rest/usersDetails/" + $('.popover.in').attr('data-user'),
+			dataType: "json",
+	        success: function(data)
+	        {
+	        	$('.popover.in .userDetailsTitle').empty().html('<span>'+data.firstName+'</span>&nbsp;<span>'+data.lastName+'</span>');
+	        	$('.popover.in .userDetailsContent').empty();
+	        	$('#userDetailsTemplate .row-fluid').clone()
+	        	.find('.userDetailsTweetsCount').html(data.tweetCount).end()
+	        	.find('.userDetailsFriendsCount').html(data.friendsCount).end()
+	        	.find('.userDetailsFollowersCount').html(data.followersCount).end()
+	        	.appendTo('.popover.in .userDetailsContent');
+	        	
+	        }
+	    });
+		
+	});
+	
+	$('.tweetGravatar').mouseleave(function()
+	{
+		$(this).popover('hide');
+	});
 }

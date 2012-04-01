@@ -23,7 +23,8 @@
 			</tr>
 			<tr class="data" th:each="tweet,rowstat : ${userTweets}">
 				<td>
-					<img id="tweetGravatar" 
+					<img class="tweetGravatar"
+						th:attr="data-user=${tweet.login}" 
 						src="http://www.gravatar.com/avatar/012411?s=32"
 						th:src="${'http://www.gravatar.com/avatar/'+tweet.gravatar+'?s=32'}"></img>
 				</td>
@@ -34,8 +35,8 @@
 							th:attr="data-user=${tweet.login},title=${'Show '+tweet.login+' tweets'}"
 							th:if="${currentUser.login != tweet.login}">
 							<em th:text="${'@' + tweet.login}">@login</em>
-							<br/>
 						</a>
+						<br/>
 						<span th:inline="text">[[${tweet.content}]]</span>
 					</article>
 				</td>

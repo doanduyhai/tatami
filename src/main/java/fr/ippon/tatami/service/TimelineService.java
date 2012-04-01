@@ -1,7 +1,9 @@
 package fr.ippon.tatami.service;
 
+import static fr.ippon.tatami.service.util.TatamiConstants.HASHTAG;
 import static fr.ippon.tatami.service.util.TatamiConstants.HASHTAG_REGEXP;
 import static fr.ippon.tatami.service.util.TatamiConstants.TAG_LINK_PATTERN;
+import static fr.ippon.tatami.service.util.TatamiConstants.USERTAG;
 import static fr.ippon.tatami.service.util.TatamiConstants.USER_LINK_PATTERN;
 import static fr.ippon.tatami.service.util.TatamiConstants.USER_REGEXP;
 
@@ -79,6 +81,8 @@ public class TimelineService implements InitializingBean
 
 	private static final Pattern HASHTAG_PATTERN = Pattern.compile(TatamiConstants.HASHTAG_REGEXP);
 
+	private static final Pattern USER_PATTERN = Pattern.compile(TatamiConstants.USER_REGEXP);
+
 	private static final String DAYLINE_KEY_FORMAT = "yyyyMMdd";
 	private static final String WEEKLINE_KEY_FORMAT = "w";
 	private static final String MONTHLINE_KEY_FORMAT = "yyyyMM";
@@ -113,9 +117,28 @@ public class TimelineService implements InitializingBean
 		while (m.find())
 		{
 			String tag = m.group(1);
-			assert tag != null && !tag.isEmpty() && !tag.contains("#");
+			assert tag != null && !tag.isEmpty() && !tag.contains(HASHTAG);
 			log.debug("tag list augmented : " + tag);
 			tagLineRepository.addTweet(tag, tweet.getTweetId());
+		}
+
+		// Alert for quoted users
+		Matcher usermatcher = USER_PATTERN.matcher(tweet.getContent());
+		while (usermatcher.find())
+		{
+			String user = usermatcher.group(1);
+			assert user != null;
+			User quotedUser = this.userService.getUserByLogin(user);
+			if (quotedUser != null)
+			{
+				Collection<String> userFollowers = this.userService.getFollowersForUser(currentUser.getLogin());
+				if (!userFollowers.contains(user))
+				{
+					log.debug("Add tweet to quoted user " + user + " timeline");
+					this.timeLineRepository.addTweetToTimeline(quotedUser, tweet.getTweetId());
+				}
+			}
+
 		}
 
 		// Stats
@@ -238,7 +261,9 @@ public class TimelineService implements InitializingBean
 		// Tweet alert
 		if (!currentUser.getLogin().equals(tweet.getLogin()))
 		{
-			String content = "&#x40;" + currentUser.getLogin() + " <strong>liked your tweet:</strong><br/><em>_PH_...</em>";
+
+			String content = USERTAG + currentUser.getLogin() + " <strong>liked your tweet:</strong><br/><em>_PH_...</em>";
+
 			int maxLength = TatamiConstants.MAX_TWEET_SIZE - content.length() + 4;
 			if (tweet.getContent().length() > maxLength)
 			{
