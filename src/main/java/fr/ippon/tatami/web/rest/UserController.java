@@ -2,6 +2,7 @@ package fr.ippon.tatami.web.rest;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.service.TimelineService;
 import fr.ippon.tatami.service.UserService;
+import fr.ippon.tatami.web.json.view.UserView;
 
 /**
  * REST controller for managing users.
@@ -56,6 +58,20 @@ public class UserController extends AbstractRESTController
 	{
 		log.debug("REST request to get Profile : {}", login);
 		return userService.getUserByLogin(login);
+	}
+
+	@RequestMapping(value = "/rest/usersStats/{login}", method = RequestMethod.GET, produces = "application/json")
+	public void getUserStats(@PathVariable("login") String login, HttpServletResponse response)
+	{
+		log.debug("REST request to get Profile : {}", login);
+		this.writeWithView(userService.getUserByLogin(login), response, UserView.Stats.class);
+	}
+
+	@RequestMapping(value = "/rest/usersDetails/{login}", method = RequestMethod.GET, produces = "application/json")
+	public void getUserDetails(@PathVariable("login") String login, HttpServletResponse response)
+	{
+		log.debug("REST request to get Profile : {}", login);
+		this.writeWithView(userService.getUserByLogin(login), response, UserView.Full.class);
 	}
 
 	@RequestMapping(value = "/rest/users/{login}", method = RequestMethod.POST, consumes = "application/json")
@@ -98,16 +114,5 @@ public class UserController extends AbstractRESTController
 		{
 			log.info("Cannot remove a friend from another user");
 		}
-	}
-
-	@RequestMapping(value = "/rest/likeTweet/{tweet}", method = RequestMethod.GET)
-	@ResponseBody
-	public boolean likeTweet(@PathVariable("tweet") String tweet)
-	{
-		log.debug("REST request to like tweet : {} ");
-		timelineService.addFavoriteTweet(tweet);
-		log.info("Completed");
-
-		return true;
 	}
 }

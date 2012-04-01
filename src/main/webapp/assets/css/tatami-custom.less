@@ -4,7 +4,7 @@ body {
 }
 
 
-#tweetsList, #userTweetsList {
+#tweetsList, #favTweetsList, #userTweetsList, #tagTweetsList {
   color:#000000;
   tr
   {
@@ -20,11 +20,19 @@ body {
 #friendTweetsList {
   color:#000000;
 }
-.tweetFriend {
-    width: 24;
+.iconCell {
+    text-align: right !important;
+    vertical-align: middle !important;
+}
+
+.tweetFriend
+{
+	width: 24;
+	.iconCell;
 }
 .tweetDate {
     width: 68;
+    .iconCell;
 }
 
 .topbar
@@ -36,6 +44,34 @@ body {
 		width: 100% !important;
 	}
 	
+}
+
+.popover-inner
+{
+	overflow: auto !important;
+}
+
+.userDetailsTitle
+{
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	border-bottom-color: #eee;
+	padding-top: 9px;
+	padding-bottom: 9px;
+	background-color: black !important;
+	color: white !important;
+}
+.userDetailsContent
+{
+	background-color: white !important;
+	padding-top: 5px;
+	padding-bottom: 5px;	
+}
+
+.center
+{
+	text-align: center !important;
+	margin: auto;
 }
 
 #footerText
@@ -72,6 +108,28 @@ body {
 	{
 		vertical-align: middle;
 		margin: auto !important;
+	}
+}
+
+#tweetForm
+{
+	width: 100%;
+	td:nth-of-type(1)
+	{
+		width: 80%;
+		vertical-align: middle !important;
+		padding-right: 5px;
+		textarea
+		{
+			width: 100% !important;
+			margin-bottom: 0px !important;
+			padding: 0px !important;
+		}		
+	}
+	
+	td:nth-of-type(2)
+	{
+		width: 20%;
 	}
 }
 

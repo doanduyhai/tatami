@@ -20,15 +20,19 @@ public class TatamiConstants
 
 	public static final int MAX_TWEET_SIZE = 140;
 
-	// (?<!&) : negative look-behind -> the # should not be preceded by a &
-	// (?!x) : negative look-ahead -> the # should not be followed by a x
-	// This pattern is set to avoid matching all HTML escaped characters (ex: &#x28; ) as hash tags
-	public static final String HASHTAG_REGEXP = "(?<!&)#(?!x)(\\w+)";
+	// &#x23; is the HTML encoded version of the # character
+	public static final String HASHTAG_REGEXP = "&#x23;(\\w+)";
+
+	public static final String HASHTAG = "&#x23;";
 
 	public static final String TAG_LINK_PATTERN = "<a href='#' data-tag='$1' title='Show $1 related tweets'><em>#$1</em></a>";
 
-	public static final String USER_REGEXP = "@(\\w+)";
+	// &#x40; is the HTML encoded version of the @ character
+	public static final String USER_REGEXP = "&#x40;(\\w+)";
+
+	public static final String USERTAG = "&#x40;";
 
 	public static final String USER_LINK_PATTERN = "<a href='#' data-user='$1' title='Show $1 tweets'><em>@$1</em></a>";
 
+	public static final String TWEET_NB_PATTERN = "__TWEET-NB__";
 }

@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.owasp.esapi.reference.DefaultEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -32,7 +31,6 @@ import fr.ippon.tatami.domain.DayTweetStat;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.UserTweetStat;
 import fr.ippon.tatami.service.TimelineService;
-import fr.ippon.tatami.service.util.TatamiConstants;
 
 /**
  * REST controller for managing tweets.
@@ -58,22 +56,6 @@ public class TweetController extends AbstractRESTController
 			errorBuffer.append(fieldError.getDefaultMessage()).append("<br/>");
 		}
 		return errorBuffer.toString();
-	}
-
-	@RequestMapping(value = "/rest/tweets/{login}/{nbTweets}", method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public Collection<Tweet> listTweets(@PathVariable("login") String login, @PathVariable("nbTweets") String nbTweets)
-	{
-		log.debug("REST request to get the tweet list ( {} sized).", nbTweets);
-		try
-		{
-			return timelineService.getTimeline(login, Integer.parseInt(nbTweets));
-		}
-		catch (NumberFormatException e)
-		{
-			log.warn("Page size undefined ; sizing to default", e);
-			return timelineService.getTimeline(login, 20);
-		}
 	}
 
 	@RequestMapping(value = "/rest/tweetStats/day", method = RequestMethod.GET, produces = "application/json")
@@ -156,23 +138,33 @@ public class TweetController extends AbstractRESTController
 		}
 	}
 
-	@RequestMapping(value = "/rest/ownTweets/{login}", method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public Collection<Tweet> listTweets(@PathVariable("login") String login)
-	{
-		log.debug("REST request to get the own tweet list ( {} ).", login);
-		return timelineService.getUserline(login, TatamiConstants.DEFAULT_TWEET_LIST_SIZE);
-	}
-
 	@RequestMapping(value = "/rest/tweets", method = RequestMethod.POST)
 	@ResponseBody
 	public Tweet postTweet(@Valid @RequestBody Tweet tweet)
 	{
-
-		// XSS protection by encoding input data with ESAPI api
-		tweet.setContent(DefaultEncoder.getInstance().encodeForHTML(tweet.getContent()));
-
 		log.debug("REST request to add tweet : {}", tweet.getContent());
 		return timelineService.postTweet(tweet.getContent());
+	}
+
+	@RequestMapping(value = "/rest/likeTweet/{tweet}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean likeTweet(@PathVariable("tweet") String tweet)
+	{
+		log.debug("REST request to like tweet : {} ", tweet);
+		timelineService.addFavoriteTweet(tweet);
+		log.info("Completed");
+
+		return true;
+	}
+
+	@RequestMapping(value = "/rest/unlikeTweet/{tweet}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean unlikeTweet(@PathVariable("tweet") String tweet)
+	{
+		log.debug("REST request to unlike tweet : {} ", tweet);
+		timelineService.removeFavoriteTweet(tweet);
+		log.info("Completed");
+
+		return true;
 	}
 }

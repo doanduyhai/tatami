@@ -1,6 +1,5 @@
 package fr.ippon.tatami.web;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,22 +43,9 @@ public class FragmentController
 		return userService.getUserByLogin(user.getLogin());
 	}
 
-	@ModelAttribute(value = "userLinkPattern")
-	public String getUserLinkPattern()
-	{
-		return "<a href='#' data-user='$1' title='Show $1 tweets'><em>@$1</em></a>";
-	}
-
-	@ModelAttribute(value = "tagLinkPattern")
-	public String getTagLinkPattern()
-	{
-		return "<a href='#' data-tag='$1' title='Show $1 related tweets'><em>#$1</em></a>";
-	}
-
 	@RequestMapping(value = "/fragments/user")
 	public String homeFragment(Model model)
 	{
-
 		return "fragments/user";
 	}
 
@@ -72,8 +58,15 @@ public class FragmentController
 	@RequestMapping(value = "/fragments/{nbTweets}/timeline")
 	public String timelineFragment(@PathVariable("nbTweets") Integer nbTweets, Model model)
 	{
-		User user = userService.getCurrentUser();
-		model.addAttribute("tweets", timelineService.getTimeline(user.getLogin(), nbTweets));
+		String minTweetNb = TatamiConstants.TWEET_NB_PATTERN;
+		if (nbTweets < TatamiConstants.DEFAULT_TWEET_LIST_SIZE)
+		{
+			minTweetNb = TatamiConstants.DEFAULT_TWEET_LIST_SIZE + "";
+			nbTweets = TatamiConstants.DEFAULT_TWEET_LIST_SIZE;
+		}
+
+		model.addAttribute("dataURL", "fragments/" + minTweetNb + "/timeline");
+		model.addAttribute("tweets", timelineService.getTimeline(nbTweets));
 		return "fragments/timeline";
 	}
 
@@ -103,18 +96,13 @@ public class FragmentController
 		return "fragments/followUser";
 	}
 
-	@RequestMapping(value = "/fragments/userline")
-	public String userLineFragment(Model model)
-	{
-		model.addAttribute("userTweets", new ArrayList<Tweet>());
-		return "fragments/userline";
-	}
-
 	@RequestMapping(value = "/fragments/{login}/userline")
 	public String userLineFragment(@PathVariable("login") String targetUserLogin, Model model)
 	{
 		Collection<Tweet> tweets = timelineService.getUserline(targetUserLogin, TatamiConstants.DEFAULT_TWEET_LIST_SIZE);
 		log.info("Listing {} tweets for user {}", tweets.size(), targetUserLogin);
+
+		model.addAttribute("dataURL", "fragments/" + targetUserLogin + "/userline");
 		model.addAttribute("userTweets", tweets);
 		return "fragments/userline";
 	}
@@ -122,36 +110,25 @@ public class FragmentController
 	@RequestMapping(value = "/fragments/favline")
 	public String favLineFragment(Model model)
 	{
-		User currentUser = userService.getCurrentUser();
-		model.addAttribute("favoriteTweets", timelineService.getFavoritesline(currentUser.getLogin()));
+		model.addAttribute("dataURL", "fragments/favline");
+		model.addAttribute("favoriteTweets", timelineService.getFavoritesline());
+
 		return "fragments/favline";
-	}
-
-	@RequestMapping(value = "/fragments/{nbTweets}/tagline")
-	public String tagLineFragment(@PathVariable("nbTweets") int nbTweets, Model model)
-	{
-		if (nbTweets <= 0)
-		{
-			nbTweets = TatamiConstants.DEFAULT_TAG_LIST_SIZE;
-		}
-
-		log.debug("REST request to get a tag tweet list ( {} sized).", nbTweets);
-
-		model.addAttribute("tagTweets", timelineService.getTagline(null, nbTweets));
-
-		return "fragments/tagline";
 	}
 
 	@RequestMapping(value = "/fragments/{tag}/{nbTweets}/tagline")
 	public String tagLineFragment(@PathVariable("tag") String tag, @PathVariable("nbTweets") int nbTweets, Model model)
 	{
-		if (nbTweets <= 0)
+		String minTweetNb = TatamiConstants.TWEET_NB_PATTERN;
+		if (nbTweets < TatamiConstants.DEFAULT_TAG_LIST_SIZE)
 		{
+			minTweetNb = TatamiConstants.DEFAULT_TAG_LIST_SIZE + "";
 			nbTweets = TatamiConstants.DEFAULT_TAG_LIST_SIZE;
 		}
 
 		log.debug("REST request to get a  tweet list ( {} sized) with tag {}", nbTweets, tag);
 
+		model.addAttribute("dataURL", "fragments/" + tag + "/" + minTweetNb + "/tagline");
 		model.addAttribute("tagTweets", timelineService.getTagline(tag, nbTweets));
 
 		return "fragments/tagline";

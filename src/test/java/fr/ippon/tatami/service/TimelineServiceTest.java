@@ -123,35 +123,35 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "shouldGetUserlineRangeWithNegativeLimits")
-	public void shouldGetAuthenticateUserUserlineWithNullLoginSet() throws Exception
+	public void shouldReturnEmptyUserlineWithNullLoginSet() throws Exception
 	{
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
 		Collection<Tweet> tweets = timelineService.getUserline(null, 10);
 
-		assertEquals(tweets.size(), 10, "tweets.size == 10");
+		assertEquals(tweets.size(), 0, "tweets.size == 0");
 	}
 
-	@Test(dependsOnMethods = "shouldGetAuthenticateUserUserlineWithNullLoginSet")
-	public void shouldGetAuthenticateUserUserlineWithEmptyLoginSet() throws Exception
+	@Test(dependsOnMethods = "shouldReturnEmptyUserlineWithNullLoginSet")
+	public void shouldReturnEmptyUserlineWithEmptyLoginSet() throws Exception
 	{
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
 		Collection<Tweet> tweets = timelineService.getUserline("", 10);
 
-		assertEquals(tweets.size(), 10, "tweets.size == 10");
+		assertEquals(tweets.size(), 0, "tweets.size == 0");
 	}
 
 	/*********************************** TIME LINE ***********************************/
-	@Test(dependsOnMethods = "shouldGetAuthenticateUserUserlineWithEmptyLoginSet")
+	@Test(dependsOnMethods = "shouldReturnEmptyUserlineWithEmptyLoginSet")
 	public void shouldGetTimeline() throws Exception
 	{
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = timelineService.getTimeline("jdubois", 10);
+		Collection<Tweet> tweets = timelineService.getTimeline(10);
 
 		assertEquals(tweets.size(), 10, "tweets.size == 10");
 	}
@@ -163,7 +163,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		mockAuthenticatedUser(jdubois);
 
 		// Tweet are reverse-ordered so tweet(7) = tweet4 & tweet(8) = tweet3
-		Collection<Tweet> tweets = timelineService.getTimelineRange("jdubois", 7, 8);
+		Collection<Tweet> tweets = timelineService.getTimelineRange(7, 8);
 
 		assertEquals(tweets.size(), 2, "tweets.size == 2");
 		assertTrue(tweets.contains(t4), "tweets.contains(t4)");
@@ -174,7 +174,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 	public void shouldGetTimelineRangeWithLimitsOutOfBound() throws Exception
 	{
 		// Tweet are reverse-ordered so tweet(9) = tweet2, tweet(10) = tweet1
-		Collection<Tweet> tweets = this.timelineService.getTimelineRange("jdubois", 9, 14);
+		Collection<Tweet> tweets = this.timelineService.getTimelineRange(9, 14);
 
 		assertEquals(tweets.size(), 2, "tweets.size == 2");
 		assertTrue(tweets.contains(t2), "tweets.contains(t2)");
@@ -185,35 +185,15 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 	public void shouldGetTimelineRangeWithNegativeLimits() throws Exception
 	{
 		// Tweet are reverse-ordered so tweet(1) = tweet10, tweet(1) = tweet9
-		Collection<Tweet> tweets = this.timelineService.getTimelineRange("jdubois", -2, 2);
+		Collection<Tweet> tweets = this.timelineService.getTimelineRange(-2, 2);
 
 		assertEquals(tweets.size(), 2, "tweets.size == 2");
 		assertTrue(tweets.contains(t10), "tweets.contains(t10)");
 		assertTrue(tweets.contains(t9), "tweets.contains(t9)");
 	}
 
-	@Test(dependsOnMethods = "shouldGetTimelineRangeWithNegativeLimits")
-	public void shouldGetAuthenticateUserTimelineWithNullLoginSet() throws Exception
-	{
-		User jdubois = this.userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
-		Collection<Tweet> tweets = this.timelineService.getTimeline(null, 10);
-
-		assertEquals(tweets.size(), 10, "tweets.size == 10");
-	}
-
-	@Test(dependsOnMethods = "shouldGetAuthenticateUserTimelineWithNullLoginSet")
-	public void shouldGetAuthenticateUserTimelineWithEmptyLoginSet() throws Exception
-	{
-		User jdubois = this.userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
-		Collection<Tweet> tweets = this.timelineService.getTimeline("", 10);
-
-		assertEquals(tweets.size(), 10, "tweets.size == 10");
-	}
-
 	/*********************************** DAY LINE ***********************************/
-	@Test(dependsOnMethods = "shouldGetAuthenticateUserTimelineWithEmptyLoginSet")
+	@Test(dependsOnMethods = "shouldGetTimelineRangeWithNegativeLimits")
 	public void shouldGetDaylineByDate() throws Exception
 	{
 		Collection<Tweet> tweets = timelineService.getDayline(new Date());
@@ -319,7 +299,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = this.timelineService.getFavoritesline("jdubois");
+		Collection<Tweet> tweets = this.timelineService.getFavoritesline();
 
 		assertTrue(tweets.size() == 4, "favorites.getFavorites().size() == 4");
 		assertTrue(tweets.contains(t1), "favorites.getFavorites().contains('t1')");
@@ -334,7 +314,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange("jdubois", 2, 3);
+		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange(2, 3);
 
 		assertTrue(tweets.size() == 2, "favorites.getFavorites().size() == 2");
 		assertTrue(tweets.contains(t5), "favorites.getFavorites().contains('t5')");
@@ -347,7 +327,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange("jdubois", 4, 10);
+		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange(4, 10);
 
 		assertTrue(tweets.size() == 1, "favorites.getFavorites().size() == 1");
 		assertTrue(tweets.contains(t1), "favorites.getFavorites().contains('t1')");
@@ -359,7 +339,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange("jdubois", -4, 1);
+		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange(-4, 1);
 
 		assertTrue(tweets.size() == 1, "favorites.getFavorites().size() == 1");
 		assertTrue(tweets.contains(t7), "favorites.getFavorites().contains('t7')");
@@ -373,7 +353,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 
 		this.timelineService.removeFavoriteTweet(t7.getTweetId());
 
-		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange("jdubois", 1, 10);
+		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange(1, 10);
 
 		assertTrue(tweets.size() == 3, "favorites.getFavorites().size() == 3");
 		assertTrue(tweets.contains(t1), "favorites.getFavorites().contains('t1')");
@@ -396,16 +376,18 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User freshTescolan = this.userService.getUserByLogin("tescolan");
 		User jdubois = this.userService.getUserByLogin("jdubois");
 
+		// tescolan follows jdubois, jdubois gets one alert tweet
 		mockAuthenticatedUser(freshTescolan);
 		this.userService.followUser("jdubois");
 
+		// jdubois quotes tescolan but since he already follows him, there will be no alert tweet
 		mockAuthenticatedUser(jdubois);
-		Tweet newTweet = this.timelineService.postTweet("tweet11 Hi tescolan !!!");
+		Tweet newTweet = this.timelineService.postTweet("tweet11 Hi @tescolan !!!");
 
 		freshTescolan = this.userService.getUserByLogin("tescolan");
 		mockAuthenticatedUser(freshTescolan);
 		Collection<Tweet> userline = this.timelineService.getUserline("tescolan", 10);
-		Collection<Tweet> timeline = this.timelineService.getTimeline("tescolan", 10);
+		Collection<Tweet> timeline = this.timelineService.getTimeline(10);
 
 		assertTrue(freshTescolan.getTimelineTweetCount() == 1, "freshTescolan.getTimelineTweetCount() == 1");
 		assertTrue(freshTescolan.getTweetCount() == 0, "freshTescolan.getTimelineTweetCount() == 0");
@@ -416,6 +398,33 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "shouldPostTweetWithFollower")
+	public void shouldPostTweetWithQuotedUser() throws Exception
+	{
+		User tescolan = this.userService.getUserByLogin("tescolan");
+		User jdubois = this.userService.getUserByLogin("jdubois");
+
+		// tescolan no longer follows jdubois
+		mockAuthenticatedUser(tescolan);
+		this.userService.forgetUser("jdubois");
+
+		// jdubois quotes tescolan, tescolan gests one alert tweet
+		mockAuthenticatedUser(jdubois);
+		this.timelineService.postTweet("tweet12 @tescolan is a very smart guy !!!");
+
+		User freshTescolan = this.userService.getUserByLogin("tescolan");
+		mockAuthenticatedUser(freshTescolan);
+		Collection<Tweet> userline = this.timelineService.getUserline("tescolan", 10);
+		Collection<Tweet> timeline = this.timelineService.getTimeline(10);
+
+		assertTrue(freshTescolan.getTimelineTweetCount() == 2, "freshTescolan.getTimelineTweetCount() == 2");
+		assertTrue(freshTescolan.getTweetCount() == 0, "freshTescolan.getTimelineTweetCount() == 0");
+
+		assertTrue(timeline.size() == 2, "timeline.size() == 2");
+		assertTrue(userline.size() == 0, "userline.size() == 0");
+
+	}
+
+	@Test(dependsOnMethods = "shouldPostTweetWithQuotedUser")
 	public void cleanUp()
 	{
 		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, se, se, se);

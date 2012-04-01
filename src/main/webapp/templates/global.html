@@ -81,6 +81,37 @@
 				</div>
 			</div>
 		</div>
+		
+		<div id="htmlTemplate" th:fragment="htmlTemplate" style="display: none">
+			<div id="popoverTemplate">
+				<div class="popover" >
+					<div class="arrow"></div>
+					<div class="popover-inner">
+						<h4 class="userDetailsTitle center">User Details</h4>
+						<div class="userDetailsContent center">
+							Loading...<br/>
+							<img src="/assets/img/ajax.gif" th:src="@{/assets/img/ajax.gif}"></img>
+							<br/>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id="userDetailsTemplate" >
+				<div class="row-fluid">
+					<div class="span4">
+						<span class="badge userDetailsTweetsCount"></span><br/>TWEETS
+					</div>
+					<div class="span4">
+						<span class="badge userDetailsFriendsCount"></span><br/>FOLLOWING
+					</div>
+					<div class="span4">
+						<span class="badge userDetailsFollowersCount"></span><br/>FOLLOWERS
+					</div>
+				</div>
+			</div>
+		</div>
+
 
 		<!-- FOOTER Templates -->							
 		<footer id="center-footer" th:fragment="footer">
@@ -89,13 +120,13 @@
             	<a href="http://blog.ippon.fr">Blog Ippon</a> |
             	<a href="https://twitter.com/#!/ippontech">Follow @ippontech on Twitter</a>
        		</div>
-       		<script type="text/javascript" src="assets/js/jquery.js" th:src="@{/assets/js/jquery.js}"></script>
-       		<script type="text/javascript" src="assets/js/less-1.2.1.js" th:src="@{/assets/js/less-1.2.1.js}"></script>
-			<script type="text/javascript" src="assets/js/bootstrap.js" th:src="@{/assets/js/bootstrap.js}"></script>        		
+       		<script src="assets/js/jquery.js" th:src="@{/assets/js/jquery.js}"></script>
+       		<script src="assets/js/less-1.2.1.js" th:src="@{/assets/js/less-1.2.1.js}"></script>
+			<script src="assets/js/bootstrap.js" th:src="@{/assets/js/bootstrap.js}"></script>        		
 		</footer>
 		
 		<div id="home-javascript" th:fragment="home-javascript">
-			<script type="text/javascript" th:inline="javascript">
+			<script th:inline="javascript">
 				/*<![CDATA[*/
 				
         		var login =  /*[[${sec.principal.username}]]*/ "jdubois";
@@ -106,12 +137,23 @@
 				// Retrieve the default Nb Tweets value from the server				           
 				var defaultNbTags = /*[[${defaultNbTags}]]*/ 10;
 				
+				// Retrieve the default Nb Favorites value from the server	
+				var defaultNbFavorites = /*[[${defaultNbFavorites}]]*/ 10;
+				
+				var tweetNbPatern = /*[[${tweetNbPatern}]]*/ "";
+				
+				var tweetsNbRegExp=new RegExp(tweetNbPatern, "g");
             	/*]]>*/
         	</script>
-        	<script type="text/javascript"  src="/assets/js/google-jsapi.min.js" th:src="@{/assets/js/google-jsapi.min.js}"></script>
-        	<script type="text/javascript"  src="/assets/js/chart.js" th:src="@{/assets/js/chart.js}"></script>				
-			<script type="text/javascript" src="/assets/js/user.js" th:src="@{/assets/js/user.js}"></script>
-			<script type="text/javascript" src="/assets/js/shortcut.js" th:src="@{/assets/js/shortcut.js}"></script>  
+        	<script  src="/assets/js/google-jsapi.min.js" th:src="@{/assets/js/google-jsapi.min.js}"></script>
+        	<script  src="/assets/js/tatami/chart.js" th:src="@{/assets/js/tatami/chart.js}"></script>
+
+			<script src="/assets/js/tatami/common.js" th:src="@{/assets/js/tatami/common.js}"></script>        	
+        	<script src="/assets/js/tatami/user.js" th:src="@{/assets/js/tatami/user.js}"></script>
+        	<script src="/assets/js/tatami/follow.js" th:src="@{/assets/js/tatami/follow.js}"></script>				
+			<script src="/assets/js/tatami/lines.js" th:src="@{/assets/js/tatami/lines.js}"></script>
+			<script src="/assets/js/tatami/shortcut.js" th:src="@{/assets/js/tatami/shortcut.js}"></script>
+			<script src="/assets/js/tatami/init.js" th:src="@{/assets/js/tatami/init.js}"></script>  
 		</div>
 	</body>
 </html>

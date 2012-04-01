@@ -30,7 +30,27 @@
 				</div>
                 <div>
                     <div class="alert alert-info" id="followUserContent">
-                    
+					    <div>
+					        <i class="icon-zoom-in"></i><strong>Follow another user...</strong>
+					
+					        <form class="form-search" >
+					            <input id="followUserInput" type="text" class="input-large search-query"
+					                   placeholder="Type the login to follow..." required="required"/>
+					            <button type="submit" class="btn btn-primary">Search User</button>
+					        </form>
+					        <div class="alert alert-success alert-block" id="followSuccess" style="display: none;">
+					        	<a class="close" data-dismiss="alert">&times;</a>
+					        </div>
+					        <div class="alert alert-error alert-block" id="followError" style="display: none;">
+					        	<a class="close" data-dismiss="alert">&times;</a>
+					        </div>
+					        <div id="followableUsers">
+						       <i class="icon-random"></i> <strong>Who to follow</strong>
+						        <table class="table table-striped">
+						        	<tbody id="userSuggestions"></tbody>
+						        </table>					        
+					        </div>        
+					    </div>                    
                     </div>
                 </div>
 			</div>
@@ -59,16 +79,96 @@
 						</li>						
 					</ul>
 					<div id="tweetsPanel" class="tab-content alert alert-success">
-						<div class="tab-pane active" id="timeLinePanel"></div>
-						<div class="tab-pane" id="favLinePanel"></div>
-						<div class="tab-pane" id="userLinePanel"></div>
-						<div class="tab-pane" id="tagLinePanel"></div>
+					
+						<!-- TIMELINE -->
+						<div class="tab-pane active" id="timeLinePanel">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th colspan="3"><h2>Tweets list</h2></th>
+										<th class="iconCell">
+											<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
+												<i class="icon-repeat"></i>
+											</a>
+										</th>
+									</tr>
+								</thead>
+								<tbody id="tweetsList" class="lineContent"></tbody>
+							</table>
+							<footer>
+								<i class="icon-download"></i> <em>Scroll down to get more tweets.</em>
+							</footer>
+						</div>
+						
+						<!-- FAVORITE LINE -->
+						<div class="tab-pane" id="favLinePanel">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th colspan="3"><h2>Favorite tweets list</h2></th>
+										<th class="iconCell">
+											<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
+												<i class="icon-repeat"></i>
+											</a>
+										</th>
+									</tr>
+								</thead>
+								<tbody id="favTweetsList" class="lineContent"></tbody>
+							</table>
+							<footer>
+								<i class="icon-download"></i> <em>Scroll down to get more tweets.</em>
+							</footer>												
+						</div>
+						
+						<!-- USER LINE -->
+						<div class="tab-pane" id="userLinePanel">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th colspan="3"><h2>User tweets list</h2></th>
+										<th class="iconCell">
+											<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
+												<i class="icon-repeat"></i>
+											</a>
+										</th>
+									</tr>
+								</thead>
+								<tbody id="userTweetsList" class="lineContent"></tbody>
+							</table>
+							<footer>
+								<i class="icon-download"></i> <em>Scroll down to get more tweets.</em>
+							</footer>												
+						</div>
+						
+						<!-- TAG LINE -->
+						<div class="tab-pane" id="tagLinePanel">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th colspan="3"><h2>Tag tweets list</h2></th>
+										<th class="iconCell">
+											<a class="refreshLineIcon" href="#" title="See the trend">
+												<i class="icon-repeat"></i>
+											</a>
+										</th>
+									</tr>
+								</thead>
+								<tbody id="tagTweetsList" class="lineContent"></tbody>
+							</table>
+							<footer>
+								<i class="icon-download"></i> <em>Scroll down to get more tweets.</em>
+							</footer>													
+						</div>
+						
+						<!-- DAY LINE -->
 						<div class="tab-pane" id="piechartPanel">
 							<section id="day_statistics">
 								<h2>Day tweets statistics</h2>
 								<div id="piechart_div" style="width: 640px; height: 400px;"></div>
 							</section>
 						</div>
+						
+						<!-- WEEK LINE -->
 						<div class="tab-pane" id="punchchartPanel">
 							<section id="week_statistics">
 								<h2>Week tweets statistics</h2>
@@ -80,58 +180,8 @@
 			</div>
 		</div>
 	</div>
-
+	<div id="htmlTemplate" th:substituteby="templates/global :: htmlTemplate"></div>
 	<footer id="center-footer" th:substituteby="templates/global :: footer"></footer>
 	<footer id="home-javascript" th:substituteby="templates/global :: home-javascript"></footer>
-	
-
-	<script type="text/javascript" th:inline="javascript">
-		/*<![CDATA[*/
-
-        google.load("visualization", "1", {packages:["corechart"]});
-        
-        !function ( $ ) {
-        	// left panel
-        	loadHome();
-        	loadProfile();
-        	loadWhoToFollow();
-        	
-            // auto-refresh
-		    $('a[data-toggle="pill"]').on('show', function(e) {
-		    	if (e.target.hash == '#homeTabContent') {
-		    		updateUserCounters();
-		    	} 
-		    });
-
-		    // right panel
-		    loadFavoritesline();
-		    loadTagsline();
-		    loadTimeline();		    
-		    
-            // auto-refresh
-		    $('a[data-toggle="tab"]').on('show', function(e) {
-		    	if (e.target.hash == '#piechartPanel') {
-					refreshPieChart();
-		    	} else if (e.target.hash == '#punchchartPanel') {
-					refreshPunchChart();
-		        }
-		    });
-		    
-		    // browser's refresh shortcut override
-			shortcut.add("Ctrl+R", function() {
-				loadTimeline();
-			});
-
-		    // infinite scroll
-			$(window).scroll(function() { 
-				if ($('#timeline').is(':visible') && $(window).scrollTop() >= $(document).height() - $(window).height()) {
-					listTweets(false);
-				}
-			});
-        }( window.jQuery );
-        /*]]>*/
-	</script>
-
-	
   </body>
 </html>
