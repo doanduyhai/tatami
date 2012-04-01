@@ -3,6 +3,7 @@ package fr.ippon.tatami.service;
 import static fr.ippon.tatami.service.util.TatamiConstants.HASHTAG;
 import static fr.ippon.tatami.service.util.TatamiConstants.HASHTAG_REGEXP;
 import static fr.ippon.tatami.service.util.TatamiConstants.TAG_LINK_PATTERN;
+import static fr.ippon.tatami.service.util.TatamiConstants.USERTAG;
 import static fr.ippon.tatami.service.util.TatamiConstants.USER_LINK_PATTERN;
 import static fr.ippon.tatami.service.util.TatamiConstants.USER_REGEXP;
 
@@ -260,7 +261,9 @@ public class TimelineService implements InitializingBean
 		// Tweet alert
 		if (!currentUser.getLogin().equals(tweet.getLogin()))
 		{
-			String content = HASHTAG + currentUser.getLogin() + " <strong>liked your tweet:</strong><br/><em>_PH_...</em>";
+
+			String content = USERTAG + currentUser.getLogin() + " <strong>liked your tweet:</strong><br/><em>_PH_...</em>";
+
 			int maxLength = TatamiConstants.MAX_TWEET_SIZE - content.length() + 4;
 			if (tweet.getContent().length() > maxLength)
 			{

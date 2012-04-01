@@ -49,9 +49,11 @@ function bindListeners($target)
 	
 	//Bind click handler for "Update" button
 	$target.find('button[type="submit"]').click(updateProfile);
+
 	
 	//Bind 'hover' on user gravatar
 	registerUserDetailsPopOver();
+
 }
 
 function errorHandler($targetErrorPanel)
@@ -102,6 +104,4 @@ function registerUserDetailsPopOver()
 	{
 		$(this).popover('hide');
 	});
-	
-	
 }

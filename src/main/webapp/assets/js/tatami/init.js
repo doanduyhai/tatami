@@ -55,6 +55,7 @@ google.load("visualization", "1", {packages:["corechart"]});
 		}
 	});
 	
+
 	$(function() {
 		
 		// Register refresh handler for all lines
@@ -62,4 +63,5 @@ google.load("visualization", "1", {packages:["corechart"]});
 		registerUserDetailsPopOver();
 		
 	});
+
 }( window.jQuery );
