@@ -69,6 +69,12 @@ public class Tweet
 	@Column(name = "removed")
 	private Boolean removed = new Boolean(false);
 
+	private boolean authorFollow = false;
+
+	private boolean authorForget = false;
+
+	private boolean addToFavorite = false;
+
 	public String getPrettyPrintTweetDate()
 	{
 		Duration duration = new Duration(Calendar.getInstance().getTimeInMillis() - tweetDate.getTime());
@@ -191,5 +197,42 @@ public class Tweet
 	public void setRemoved(Boolean removed)
 	{
 		this.removed = removed;
+	}
+
+	public boolean isAuthorFollow()
+	{
+		return authorFollow;
+	}
+
+	public boolean isAuthorForget()
+	{
+		return authorForget;
+	}
+
+	public void setAuthorForget(boolean authorForget)
+	{
+		this.authorForget = authorForget;
+	}
+
+	public void setAuthorFollow(boolean authorFollow)
+	{
+		this.authorFollow = authorFollow;
+	}
+
+	public boolean isAddToFavorite()
+	{
+		return addToFavorite;
+	}
+
+	public void setAddToFavorite(boolean addToFavorite)
+	{
+		this.addToFavorite = addToFavorite;
+	}
+
+	public void resetFlags()
+	{
+		this.authorFollow = false;
+		this.authorForget = false;
+		this.addToFavorite = false;
 	}
 }

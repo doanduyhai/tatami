@@ -1,5 +1,10 @@
 package fr.ippon.tatami.service;
 
+import static fr.ippon.tatami.service.util.TatamiConstants.HASHTAG_REGEXP;
+import static fr.ippon.tatami.service.util.TatamiConstants.TAG_LINK_PATTERN;
+import static fr.ippon.tatami.service.util.TatamiConstants.USER_LINK_PATTERN;
+import static fr.ippon.tatami.service.util.TatamiConstants.USER_REGEXP;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,7 +14,9 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.owasp.esapi.reference.DefaultEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -80,6 +87,9 @@ public class TimelineService implements InitializingBean
 	public Tweet postTweet(String content)
 	{
 
+		// XSS protection by encoding input data with ESAPI api
+		content = DefaultEncoder.getInstance().encodeForHTML(content);
+
 		log.debug("Creating new tweet : {}", content);
 
 		User currentUser = authenticationService.getCurrentUser();
@@ -138,7 +148,7 @@ public class TimelineService implements InitializingBean
 		}
 		Collection<String> tweetIds = statsRepository.findTweetsRangeForDay(correctDate, start, end);
 
-		return this.buildTweetsList(tweetIds);
+		return this.buildTweetsList(null, tweetIds);
 	}
 
 	public Collection<Tweet> getDayline(Date date)
@@ -155,7 +165,7 @@ public class TimelineService implements InitializingBean
 
 		Collection<String> tweetIds = statsRepository.findTweetsRangeForDay(new DateTime(date).toString(DAYLINE_KEY_FORMAT), start, end);
 
-		return this.buildTweetsList(tweetIds);
+		return this.buildTweetsList(null, tweetIds);
 	}
 
 	public Collection<Tweet> getTagline(String tag, int nbTweets)
@@ -171,29 +181,23 @@ public class TimelineService implements InitializingBean
 		}
 		Collection<String> tweetIds = tagLineRepository.findTweetsRangeForTag(tag, start, end);
 
-		return this.buildTweetsList(tweetIds);
+		User currentUser = authenticationService.getCurrentUser();
+
+		return this.buildTweetsList(currentUser, tweetIds);
 	}
 
-	public Collection<Tweet> getTimeline(String login, int nbTweets)
+	public Collection<Tweet> getTimeline(int nbTweets)
 	{
-		return this.getTimelineRange(login, 1, nbTweets);
+		return this.getTimelineRange(1, nbTweets);
 	}
 
-	public Collection<Tweet> getTimelineRange(String login, int start, int end)
+	public Collection<Tweet> getTimelineRange(int start, int end)
 	{
-		User user = null;
-		if (login == null || login.isEmpty())
-		{
-			user = authenticationService.getCurrentUser();
-		}
-		else
-		{
-			user = this.userService.getUserByLogin(login);
-		}
+		User currentUser = authenticationService.getCurrentUser();
 
-		Collection<String> tweetIds = timeLineRepository.getTweetsRangeFromTimeline(user, start, end);
+		Collection<String> tweetIds = timeLineRepository.getTweetsRangeFromTimeline(currentUser, start, end);
 
-		return this.buildTweetsList(tweetIds);
+		return this.buildTweetsList(currentUser, tweetIds);
 	}
 
 	public Collection<Tweet> getUserline(String login, int nbTweets)
@@ -204,6 +208,7 @@ public class TimelineService implements InitializingBean
 	public Collection<Tweet> getUserlineRange(String login, int start, int end)
 	{
 		User user = this.userService.getUserByLogin(login);
+		User currentUser = this.userService.getCurrentUser();
 		if (user == null)
 		{
 			return Arrays.asList();
@@ -211,22 +216,7 @@ public class TimelineService implements InitializingBean
 
 		Collection<String> tweetIds = userLineRepository.getTweetsRangeFromUserline(user, start, end);
 
-		return this.buildTweetsList(tweetIds);
-	}
-
-	private Collection<Tweet> buildTweetsList(Collection<String> tweetIds)
-	{
-		Collection<Tweet> tweets = new ArrayList<Tweet>(tweetIds.size());
-		for (String tweedId : tweetIds)
-		{
-			Tweet tweet = tweetRepository.findTweetById(tweedId);
-			User tweetUser = userService.getUserByLogin(tweet.getLogin());
-			tweet.setFirstName(tweetUser.getFirstName());
-			tweet.setLastName(tweetUser.getLastName());
-			tweet.setGravatar(tweetUser.getGravatar());
-			tweets.add(tweet);
-		}
-		return tweets;
+		return this.buildTweetsList(currentUser, tweetIds);
 	}
 
 	public void addFavoriteTweet(String tweetId)
@@ -248,7 +238,7 @@ public class TimelineService implements InitializingBean
 		// Tweet alert
 		if (!currentUser.getLogin().equals(tweet.getLogin()))
 		{
-			String content = '@' + currentUser.getLogin() + " liked your tweet<br/><em>_PH_...</em>";
+			String content = "&#x40;" + currentUser.getLogin() + " <strong>liked your tweet:</strong><br/><em>_PH_...</em>";
 			int maxLength = TatamiConstants.MAX_TWEET_SIZE - content.length() + 4;
 			if (tweet.getContent().length() > maxLength)
 			{
@@ -284,36 +274,16 @@ public class TimelineService implements InitializingBean
 		favoriteLineRepository.removeFavorite(currentUser, tweetId);
 	}
 
-	public Collection<Tweet> getFavoritesline(String login)
+	public Collection<Tweet> getFavoritesline()
 	{
-		return this.getFavoriteslineByRange(login, 1, TatamiConstants.DEFAULT_FAVORITE_LIST_SIZE);
+		return this.getFavoriteslineByRange(1, TatamiConstants.DEFAULT_FAVORITE_LIST_SIZE);
 	}
 
-	public Collection<Tweet> getFavoriteslineByRange(String login, int start, int end)
+	public Collection<Tweet> getFavoriteslineByRange(int start, int end)
 	{
 		User currentUser = authenticationService.getCurrentUser();
-		User user = null;
-		Collection<String> tweetIds = null;
-		if (login == null || login.isEmpty())
-		{
-			// TODO Functional exception
-			tweetIds = Arrays.asList();
-		}
-		else
-		{
-			user = this.userService.getUserByLogin(login);
-			if (!currentUser.equals(user))
-			{
-				// TODO Functional exception
-				tweetIds = Arrays.asList();
-			}
-			else
-			{
-				tweetIds = favoriteLineRepository.findFavoritesRangeForUser(user, start, end);
-			}
-
-		}
-		return this.buildTweetsList(tweetIds);
+		Collection<String> tweetIds = favoriteLineRepository.findFavoritesRangeForUser(currentUser, start, end);
+		return this.buildTweetsList(currentUser, tweetIds);
 	}
 
 	public boolean removeTweet(String tweetId)
@@ -334,6 +304,52 @@ public class TimelineService implements InitializingBean
 			return true;
 		}
 		return false;
+	}
+
+	private Collection<Tweet> buildTweetsList(User currentUser, Collection<String> tweetIds)
+	{
+		Collection<Tweet> tweets = new ArrayList<Tweet>(tweetIds.size());
+		for (String tweedId : tweetIds)
+		{
+			Tweet tweet = tweetRepository.findTweetById(tweedId);
+			User tweetUser = userService.getUserByLogin(tweet.getLogin());
+			tweet.setFirstName(tweetUser.getFirstName());
+			tweet.setLastName(tweetUser.getLastName());
+			tweet.setGravatar(tweetUser.getGravatar());
+			tweet.resetFlags();
+			if (currentUser != null)
+			{
+				Collection<String> friends = this.userService.getFriendsForUser(currentUser.getLogin());
+				Collection<String> favorites = this.favoriteLineRepository.findFavoritesForUser(currentUser);
+
+				if (!StringUtils.equals(currentUser.getLogin(), tweet.getLogin()))
+				{
+					if (!friends.contains(tweet.getLogin()))
+					{
+						tweet.setAuthorFollow(true);
+					}
+					else
+					{
+						tweet.setAuthorForget(true);
+					}
+				}
+
+				if (!favorites.contains(tweet.getTweetId()))
+				{
+					tweet.setAddToFavorite(true);
+				}
+				else
+				{
+					tweet.setAddToFavorite(false);
+				}
+
+			}
+
+			tweet.setContent(tweet.getContent().replaceAll(USER_REGEXP, USER_LINK_PATTERN).replaceAll(HASHTAG_REGEXP, TAG_LINK_PATTERN));
+
+			tweets.add(tweet);
+		}
+		return tweets;
 	}
 
 	public void setAuthenticationService(AuthenticationService authenticationService)

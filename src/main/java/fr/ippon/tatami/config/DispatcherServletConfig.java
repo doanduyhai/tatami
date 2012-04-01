@@ -21,6 +21,7 @@ import org.thymeleaf.spring3.SpringTemplateEngine;
 import org.thymeleaf.spring3.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import fr.ippon.tatami.web.converter.JacksonViewAwareHttpMessageConverter;
 import fr.ippon.tatami.web.converter.UserConverter;
 import fr.ippon.tatami.web.interceptor.SecurityInterceptor;
 
@@ -84,5 +85,26 @@ public class DispatcherServletConfig extends WebMvcConfigurationSupport
 	{
 		UserConverter userConverter = new UserConverter();
 		registry.addConverter(userConverter);
+	}
+
+	// @Override
+	// protected void configureMessageConverters(List<HttpMessageConverter<?>> converters)
+	// {
+	// StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
+	// stringConverter.setWriteAcceptCharset(false);
+	//
+	// converters.add(new ByteArrayHttpMessageConverter());
+	// converters.add(stringConverter);
+	// converters.add(new ResourceHttpMessageConverter());
+	// converters.add(new SourceHttpMessageConverter<Source>());
+	// converters.add(new XmlAwareFormHttpMessageConverter());
+	// converters.add(new JacksonViewAwareHttpMessageConverter());
+	//
+	// }
+
+	@Bean(name = "jacksonViewAwareHttpMessageConverter")
+	public JacksonViewAwareHttpMessageConverter jacksonViewAwareHttpMessageConverter()
+	{
+		return new JacksonViewAwareHttpMessageConverter();
 	}
 }

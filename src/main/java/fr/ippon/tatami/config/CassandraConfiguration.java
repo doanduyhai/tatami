@@ -79,14 +79,10 @@ public class CassandraConfiguration
 			addColumnFamilyWithStringColumn(cluster, MONTHLINE_CF);
 			addColumnFamilyWithStringColumn(cluster, YEARLINE_CF);
 			addColumnFamilyWithStringColumn(cluster, FAVLINE_CF);
-			System.out.println(FAVLINE_CF);
 			addColumnFamilyWithLongColumn(cluster, TAGLINE_CF);
-			System.out.println(TAGLINE_CF);
 			addColumnFamilyWithStringColumn(cluster, TAGLINE_COUNT_CF);
 			addColumnFamilyWithLongColumn(cluster, TIMELINE_CF);
-			System.out.println(TIMELINE_CF);
 			addColumnFamilyWithLongColumn(cluster, USERLINE_CF);
-			System.out.println(USERLINE_CF);
 
 			ThriftCfDef cfDef = new ThriftCfDef(cassandraKeyspace, COUNTER_CF, ComparatorType.UTF8TYPE);
 

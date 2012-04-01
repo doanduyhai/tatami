@@ -8,15 +8,20 @@
 			<tr>
 				<th colspan="4"><h2>User tweets list</h2></th>
 				<th>
-					<a id="refreshTimeline" href="#" title="Refresh - shortcut : ctrl+R">
+					<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
 						<i class="icon-repeat"></i>
 					</a>
 				</th>
 			</tr>
 		</thead>
-		<tbody id="userTweetsList">
-			
-			<tr th:each="tweet,rowstat : ${userTweets}">
+		<tbody id="userTweetsList" class="lineContent">
+			<tr style="display: none;">
+				<td th:attr="data-url=${dataURL}" colspan="4"></td>
+			</tr>
+			<tr style="display: none;">
+				<td colspan="4"></td>
+			</tr>
+			<tr class="data" th:each="tweet,rowstat : ${userTweets}">
 				<td>
 					<img id="tweetGravatar" 
 						src="http://www.gravatar.com/avatar/012411?s=32"
@@ -25,27 +30,36 @@
 				<td>
 					<article>
 						<strong th:text="${tweet.firstName +' '+tweet.lastName}">firstName lastname</strong>&nbsp;
-						<em th:text="${'@' + tweet.login}">@login</em>
-						<br/>
-						<span th:inline="text">	
-							[[${tweet.content.replaceAll("__${T(fr.ippon.tatami.service.util.TatamiConstants).USER_REGEXP}__",
-								"__${T(fr.ippon.tatami.service.util.TatamiConstants).USER_LINK_PATTERN}__")
-								.replaceAll("__${T(fr.ippon.tatami.service.util.TatamiConstants).HASHTAG_REGEXP}__",
-								"__${T(fr.ippon.tatami.service.util.TatamiConstants).TAG_LINK_PATTERN}__")}]]
-						</span>
+						<a href="#" 
+							th:attr="data-user=${tweet.login},title=${'Show '+tweet.login+' tweets'}"
+							th:if="${currentUser.login != tweet.login}">
+							<em th:text="${'@' + tweet.login}">@login</em>
+							<br/>
+						</a>
+						<span th:inline="text">[[${tweet.content}]]</span>
 					</article>
 				</td>
 				<td class="tweetFriend">
-					<a href="#" title="Follow" th:attr="data-follow=${tweet.login}"><i class="icon-star"></i></a>&nbsp;
-					<a href="#" title="Unfollow" th:attr="data-unfollow=${tweet.login}"><i class="icon-star-empty"></i></a>&nbsp;
-					<a href="#" title="Like" th:attr="data-like=${tweet.tweetId}"><i class="icon-heart"></i></a>&nbsp;
-					<a href="#" title="Remove" th:attr="data-remove=${tweet.tweetId}"><i class="icon-remove"></i></a>&nbsp;
+					<a href="#" title="Follow"
+						th:if="${tweet.authorFollow}" 
+						th:attr="data-follow=${tweet.login}"><i class="icon-star"></i>&nbsp;</a>						
+					<a href="#" title="Stop following"
+						th:if="${tweet.authorForget}"
+						th:attr="data-unfollow=${tweet.login}"><i class="icon-star-empty"></i>&nbsp;</a>
+					<a href="#" title="Like"
+						th:if="${tweet.addToFavorite}" 
+						th:attr="data-like=${tweet.tweetId}"><i class="icon-heart"></i>&nbsp;</a>
+					<a href="#" title="Remove" th:attr="data-remove=${tweet.tweetId}">
+						<i class="icon-remove"></i></a>
 					
 				</td>
 				<td class="tweetDate">
 					<aside th:text="${tweet.prettyPrintTweetDate}">tweetDate</aside>
 				</td>				
 			</tr>
+			<tr>
+				<td colspan="4"></td>
+			</tr>			
 		</tbody>
 	</table>
 </section>

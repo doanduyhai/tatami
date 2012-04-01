@@ -9,8 +9,11 @@ import javax.validation.constraints.Pattern;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import org.codehaus.jackson.map.annotate.JsonView;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import fr.ippon.tatami.web.json.view.UserView;
 
 /**
  * A user.
@@ -45,15 +48,18 @@ public class User
 	@Column(name = "lastName")
 	private String lastName;
 
+	@JsonView(UserView.Stats.class)
 	@Column(name = "tweetCount")
 	private long tweetCount = 0;
 
 	@Column(name = "timelineTweetCount")
 	private long timelineTweetCount = 0;
 
+	@JsonView(UserView.Stats.class)
 	@Column(name = "friendsCount")
 	private long friendsCount = 0;
 
+	@JsonView(UserView.Stats.class)
 	@Column(name = "followersCount")
 	private long followersCount = 0;
 
