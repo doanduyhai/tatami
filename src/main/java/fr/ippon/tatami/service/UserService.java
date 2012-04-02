@@ -1,6 +1,6 @@
 package fr.ippon.tatami.service;
 
-import static fr.ippon.tatami.service.util.TatamiConstants.HASHTAG;
+import static fr.ippon.tatami.service.util.TatamiConstants.USERTAG;
 
 import java.util.Collection;
 
@@ -102,7 +102,7 @@ public class UserService
 				followerRepository.addFollower(followedUser, currentUser);
 
 				// Tweet alert
-				String content = HASHTAG + currentUser.getLogin() + " <strong>is now followng you</strong>";
+				String content = USERTAG + currentUser.getLogin() + " <strong>is now following you</strong>";
 				Tweet alertTweet = tweetRepository.createTweet(currentUser.getLogin(), content); // removable
 				timelineRepository.addTweetToTimeline(followedUser, alertTweet.getTweetId());
 
