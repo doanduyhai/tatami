@@ -55,7 +55,7 @@ function updateUserCounters()
 
 function tweet() {
 
-	$('#tweetValidationMessage').hide();
+	$('#tweetErrorPanel').hide();
 	$.ajax({
         type: 'POST',
         url: "rest/tweets",
