@@ -16,7 +16,7 @@
 	 
 
 	<logger name="fr.ippon.tatami">
-		<level value="DEBUG" />
+		<level value="INFO" />
 	</logger>
 
  	<logger name="org.thymeleaf">
@@ -24,7 +24,7 @@
 	</logger>
 
  	<logger name="org.springframework.security">
-		<level value="DEBUG" />
+		<level value="INFO" />
 	</logger>	
 
 
