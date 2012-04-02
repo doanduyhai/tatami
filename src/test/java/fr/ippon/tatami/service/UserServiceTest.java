@@ -141,8 +141,8 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 		assertTrue(tweets.size() == 1, "tweets.size() == 1");
 
 		Tweet alertTweet = entityManager.find(Tweet.class, tweets.iterator().next());
-		assertTrue(alertTweet.getContent().contains("jdubois <strong>is now followng you</strong>"),
-				"alertTweet contains 'jdubois <strong>is now followng you</strong>'");
+		assertTrue(alertTweet.getContent().contains("jdubois <strong>is now following you</strong>"),
+				"alertTweet contains 'jdubois <strong>is now following you</strong>'");
 
 	}
 
