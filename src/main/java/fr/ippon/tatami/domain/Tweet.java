@@ -44,6 +44,7 @@ public class Tweet
 	private static PeriodFormatter secondFormatter = new PeriodFormatterBuilder().appendSeconds().appendSuffix("s").toFormatter();
 
 	@Id
+	@JsonView(TweetView.Full.class)
 	private String tweetId;
 
 	@JsonView(TweetView.Full.class)
@@ -78,13 +79,13 @@ public class Tweet
 	private Boolean removed = new Boolean(false);
 
 	@JsonView(TweetView.Full.class)
-	private boolean authorFollow = false;
+	private Boolean authorFollow = new Boolean(false);
 
 	@JsonView(TweetView.Full.class)
-	private boolean authorForget = false;
+	private Boolean authorForget = new Boolean(false);
 
 	@JsonView(TweetView.Full.class)
-	private boolean addToFavorite = false;
+	private Boolean addToFavorite = new Boolean(false);
 
 	@JsonView(TweetView.Full.class)
 	public String getPrettyPrintTweetDate()
