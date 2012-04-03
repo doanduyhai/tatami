@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import fr.ippon.tatami.domain.DayTweetStat;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.UserTweetStat;
 import fr.ippon.tatami.service.TimelineService;
+import fr.ippon.tatami.web.json.view.TweetView;
 
 /**
  * REST controller for managing tweets.
@@ -166,5 +168,19 @@ public class TweetController extends AbstractRESTController
 		log.info("Completed");
 
 		return true;
+	}
+
+	@RequestMapping(value = "/rest/tweetFetch/timeline/{start}/{end}", method = RequestMethod.GET)
+	public void timelineTweetFetch(@PathVariable("start") int start, @PathVariable("end") int end, HttpServletResponse response)
+	{
+
+		log.debug("REST fetch tweet from {} to {} for current user ", new Object[]
+		{
+				start,
+				end
+		});
+
+		this.writeWithView((Object) timelineService.getTimelineRange(start, end), response, TweetView.Full.class);
+
 	}
 }

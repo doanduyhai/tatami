@@ -95,16 +95,6 @@ public class CassandraTagLineRepository extends CassandraAbstractRepository impl
 			long endTweetColumn = maxTweetColumn - start + 1;
 			long startTweetColumn = maxTweetColumn - end + 1;
 
-			if (startTweetColumn < 0)
-			{
-				startTweetColumn = 0;
-			}
-
-			if (endTweetColumn <= 0)
-			{
-				endTweetColumn = 0;
-			}
-
 			List<HColumn<Long, String>> columns = createSliceQuery(keyspaceOperator, se, le, se).setColumnFamily(TAGLINE_CF).setKey(tag)
 					.setRange(endTweetColumn, startTweetColumn, true, end - start + 1).execute().get().getColumns();
 

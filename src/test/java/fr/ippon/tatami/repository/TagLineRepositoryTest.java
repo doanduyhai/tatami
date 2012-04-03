@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import me.prettyprint.cassandra.model.CqlQuery;
+import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.hector.api.beans.HColumn;
 
 import org.testng.annotations.Test;
@@ -65,6 +67,18 @@ public class TagLineRepositoryTest extends AbstractCassandraTatamiTest
 		assertTrue(tweetIds.contains("tweet3"), "tweet3 has 'tag'");
 		assertTrue(tweetIds.contains("tweet4"), "tweet4 has 'tag'");
 		assertTrue(tweetIds.contains("tweet5"), "tweet5 has 'tag'");
+
+		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, StringSerializer.get(), StringSerializer.get(),
+				StringSerializer.get());
+		cqlQuery.setQuery("truncate TagLine");
+		cqlQuery.execute();
+
+		cqlQuery.setQuery("truncate TagLineCount");
+		cqlQuery.execute();
+
+		cqlQuery.setQuery("truncate Tweet");
+		cqlQuery.execute();
+
 	}
 
 }

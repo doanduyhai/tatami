@@ -70,16 +70,6 @@ public class CassandraTimeLineRepository extends CassandraAbstractRepository imp
 		long endTweetColumn = maxTweetColumn - start + 1;
 		long startTweetColumn = maxTweetColumn - end + 1;
 
-		if (startTweetColumn < 0)
-		{
-			startTweetColumn = 0;
-		}
-
-		if (endTweetColumn <= 0)
-		{
-			endTweetColumn = 0;
-		}
-
 		List<HColumn<Long, String>> columns = createSliceQuery(keyspaceOperator, se, le, se).setColumnFamily(TIMELINE_CF).setKey(user.getLogin())
 				.setRange(endTweetColumn, startTweetColumn, true, end - start + 1).execute().get().getColumns();
 

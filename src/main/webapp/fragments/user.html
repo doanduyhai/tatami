@@ -18,7 +18,9 @@
 	</div>
 	<div class="well well-small row-fluid">
 		<div class="span4">
-			<span id="tweetCount" class="badge" th:text="${currentUser.tweetCount}">20</span><br/>TWEETS
+			<span id="tweetCount" class="badge" 
+				th:attr="data-user=${currentUser.login}"
+				th:text="${currentUser.tweetCount}">20</span><br/>TWEETS
 		</div>
 		<div class="span4">
 			<span id="friendsCount" class="badge" th:text="${currentUser.friendsCount}">5</span><br/>FOLLOWING

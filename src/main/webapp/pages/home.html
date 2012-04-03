@@ -81,7 +81,7 @@
 					<div id="tweetsPanel" class="tab-content alert alert-success">
 					
 						<!-- TIMELINE -->
-						<div class="tab-pane active" id="timeLinePanel">
+						<div class="tab-pane active tweetLine" id="timeLinePanel">
 							<table class="table table-striped">
 								<thead>
 									<tr>
@@ -95,8 +95,22 @@
 								</thead>
 								<tbody id="tweetsList" class="lineContent"></tbody>
 							</table>
-							<footer>
-								<i class="icon-download"></i> <em>Scroll down to get more tweets.</em>
+							<footer class="row-fluid" data-rest-url="rest/tweetFetch/timeline/__START__/__END__">
+								<div class="span4" style="padding-top: 2px;">
+									<a href="#" class="tweetPagingIcon">
+										<img src="assets/img/glyphicons_200_download.png"
+											th:src="@{/assets/img/glyphicons_200_download.png}"></img></a>&nbsp;
+									<em>More</em>
+								</div>
+								<div class="span8 right">
+									<em>Fetch Tweets Nb</em>&nbsp;
+									<select class="pageSelector">
+										<option>5</option>
+										<option>10</option>
+										<option>20</option>
+									</select>
+								</div>
+
 							</footer>
 						</div>
 						

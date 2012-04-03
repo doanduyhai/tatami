@@ -26,7 +26,7 @@ import fr.ippon.tatami.web.json.view.UserView;
 @ToString
 public class User
 {
-
+	@JsonView(UserView.Full.class)
 	@NotEmpty(message = "User 'login' should not be empty")
 	@Id
 	private String login;
@@ -36,6 +36,7 @@ public class User
 	@Column(name = "email")
 	private String email;
 
+	@JsonView(UserView.Full.class)
 	@Column(name = "gravatar")
 	private String gravatar;
 

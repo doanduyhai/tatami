@@ -87,21 +87,6 @@ public class DispatcherServletConfig extends WebMvcConfigurationSupport
 		registry.addConverter(userConverter);
 	}
 
-	// @Override
-	// protected void configureMessageConverters(List<HttpMessageConverter<?>> converters)
-	// {
-	// StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
-	// stringConverter.setWriteAcceptCharset(false);
-	//
-	// converters.add(new ByteArrayHttpMessageConverter());
-	// converters.add(stringConverter);
-	// converters.add(new ResourceHttpMessageConverter());
-	// converters.add(new SourceHttpMessageConverter<Source>());
-	// converters.add(new XmlAwareFormHttpMessageConverter());
-	// converters.add(new JacksonViewAwareHttpMessageConverter());
-	//
-	// }
-
 	@Bean(name = "jacksonViewAwareHttpMessageConverter")
 	public JacksonViewAwareHttpMessageConverter jacksonViewAwareHttpMessageConverter()
 	{

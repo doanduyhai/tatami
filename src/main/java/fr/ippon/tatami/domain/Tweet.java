@@ -13,12 +13,15 @@ import javax.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import org.codehaus.jackson.map.annotate.JsonView;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.Duration;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
+
+import fr.ippon.tatami.web.json.view.TweetView;
 
 /**
  * A user.
@@ -43,9 +46,11 @@ public class Tweet
 	@Id
 	private String tweetId;
 
+	@JsonView(TweetView.Full.class)
 	@Column(name = "login")
 	private String login;
 
+	@JsonView(TweetView.Full.class)
 	@NotEmpty(message = "The tweet content should not be empty")
 	@Length(max = 140, message = "The tweet content should not exceed 140 characters")
 	@Column(name = "content")
@@ -60,21 +65,28 @@ public class Tweet
 	@Column(name = "likersCount")
 	private long likersCount;
 
+	@JsonView(TweetView.Full.class)
 	private String firstName;
 
+	@JsonView(TweetView.Full.class)
 	private String lastName;
 
+	@JsonView(TweetView.Full.class)
 	private String gravatar;
 
 	@Column(name = "removed")
 	private Boolean removed = new Boolean(false);
 
+	@JsonView(TweetView.Full.class)
 	private boolean authorFollow = false;
 
+	@JsonView(TweetView.Full.class)
 	private boolean authorForget = false;
 
+	@JsonView(TweetView.Full.class)
 	private boolean addToFavorite = false;
 
+	@JsonView(TweetView.Full.class)
 	public String getPrettyPrintTweetDate()
 	{
 		Duration duration = new Duration(Calendar.getInstance().getTimeInMillis() - tweetDate.getTime());

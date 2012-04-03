@@ -96,11 +96,11 @@ public class CassandraFavoriteRepository extends CassandraAbstractRepository imp
 	{
 		List<String> tweetIds = new ArrayList<String>();
 
-		if (start < 1)
+		if (start > user.getFavoritesCount())
 		{
-			start = 1;
+			return Arrays.asList();
 		}
-		if (end > user.getFavoritesCount())
+		else if (end > user.getFavoritesCount())
 		{
 			end = (int) user.getFavoritesCount();
 		}
@@ -108,16 +108,6 @@ public class CassandraFavoriteRepository extends CassandraAbstractRepository imp
 		long maxTweetColumn = user.getFavoritesCount() - 1;
 		long endTweetColum = maxTweetColumn - start + 1;
 		long startTweetColum = maxTweetColumn - end + 1;
-
-		if (startTweetColum < 0)
-		{
-			startTweetColum = 0;
-		}
-
-		if (endTweetColum <= 0)
-		{
-			endTweetColum = 0;
-		}
 
 		List<HColumn<String, Object>> columns = createSliceQuery(keyspaceOperator, se, se, oe).setColumnFamily(FAVLINE_CF).setKey(user.getLogin())
 				.setRange("favorites:" + endTweetColum, "favorites:" + startTweetColum, true, end - start + 1).execute().get().getColumns();

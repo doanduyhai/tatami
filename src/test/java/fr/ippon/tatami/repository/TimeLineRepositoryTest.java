@@ -81,9 +81,24 @@ public class TimeLineRepositoryTest extends AbstractCassandraTatamiTest
 		assertTrue(tweetIds.contains("tweet2"), "tweetIds has 'tweet2'");
 		assertTrue(tweetIds.contains("tweet3"), "tweetIds has 'tweet3'");
 
+	}
+
+	@Test(dependsOnMethods = "testGetTweetsRangeFromTimeline")
+	public void testGetTweetsRangeOutOfBoundsFromTimeline()
+	{
+		Collection<String> tweetIds = this.timeLineRepository.getTweetsRangeFromTimeline(user, 7, 10);
+
+		assertTrue(tweetIds.size() == 0, "tweetIds.size() == 0");
+
 		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, StringSerializer.get(), StringSerializer.get(),
 				StringSerializer.get());
 		cqlQuery.setQuery("truncate User");
+		cqlQuery.execute();
+
+		cqlQuery.setQuery("truncate Tweet");
+		cqlQuery.execute();
+
+		cqlQuery.setQuery("truncate TimeLine");
 		cqlQuery.execute();
 
 		User deletedUser = this.userRepository.findUserByLogin("test");

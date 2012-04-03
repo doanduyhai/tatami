@@ -61,9 +61,7 @@
 							th:unless="${tweet.addToFavorite}" 
 							th:attr="data-unlike=${tweet.tweetId}">					
 							<img src="/assets/img/glyphicons_012_unheart_small.png" 
-								th:src="@{/assets/img/glyphicons_012_unheart_small.png}"></img>&nbsp;</a>
-						<a href="#" title="Remove" 
-							th:attr="data-remove=${tweet.tweetId}"><i class="icon-remove"></i></a>
+								th:src="@{/assets/img/glyphicons_012_unheart_small.png}"></img></a>
 					</td>
 					<td class="tweetDate">
 						<aside th:text="${tweet.prettyPrintTweetDate}">tweetDate</aside>

@@ -38,7 +38,8 @@
             				th:attr="data-user=${tweet.login},title='Show '+${tweet.login}+' tweets'" 
             			>
 							<em th:text="${'@'+tweet.login}">@login</em>
-						</a>		
+						</a>
+						<span class="userDetailsName" th:inline="text">[[${tweet.firstName + ' ' + tweet.lastName}]]</span>		
             		</td>
             		<td class="tweetFriend">
             			<a href="#" th:attr="data-follow=${tweet.login}" title="Follow">

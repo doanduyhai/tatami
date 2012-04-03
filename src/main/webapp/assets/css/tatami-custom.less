@@ -3,9 +3,15 @@ body {
 	/* 60px to make the container go all the way to the bottom of the top bar */
 }
 
+@black: #000000;  
+
+.normalFont
+{
+	color: @black;
+}
 
 #tweetsList, #favTweetsList, #userTweetsList, #tagTweetsList {
-  color:#000000;
+ .normalFont;
   tr
   {
   	vertical-align: top;
@@ -16,9 +22,18 @@ body {
   }
 }
 
+.lineContent
+{
+	overflow-y: auto;
+	max-height: 600px !important;
+
+}  
+  
+
+
 
 #friendTweetsList {
-  color:#000000;
+ .normalFont;
 }
 .iconCell {
     text-align: right !important;
@@ -46,6 +61,32 @@ body {
 	
 }
 
+.center
+{
+	text-align: center !important;
+	margin: auto;
+}
+
+.right
+{
+	text-align: right;	
+}
+
+.middle
+{
+	vertical-align: middle;
+}
+
+.fullHeight
+{
+	height: 100%;	
+}
+
+.pageSelector
+{
+	width: 50px;
+}
+
 .popover-inner
 {
 	overflow: auto !important;
@@ -67,11 +108,20 @@ body {
 	padding-top: 5px;
 	padding-bottom: 5px;	
 }
-
-.center
+.userDetailsGravatar
 {
-	text-align: center !important;
-	margin: auto;
+	float: left;	
+}
+
+.userDetailsName
+{
+	font-weight: bold;	
+}
+
+
+#userDetailsPanel, #tweetsPanel
+{
+	padding-right: 1px !important;
 }
 
 #footerText
@@ -86,10 +136,6 @@ body {
 	width: 68px;
 }
 
-#userDetailsPanel, #tweetsPanel
-{
-	padding-right: 1px !important;
-}
 
 
 #followUserContent

@@ -86,6 +86,12 @@ public class UserLineRepositoryTest extends AbstractCassandraTatamiTest
 		cqlQuery.setQuery("truncate User");
 		cqlQuery.execute();
 
+		cqlQuery.setQuery("truncate Tweet");
+		cqlQuery.execute();
+
+		cqlQuery.setQuery("truncate UserLine");
+		cqlQuery.execute();
+
 		User deletedUser = this.userRepository.findUserByLogin("test");
 		assertNull(deletedUser, "deletedUser");
 	}

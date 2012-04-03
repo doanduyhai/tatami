@@ -60,7 +60,7 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 		assertTrue(userFavorites.contains("tweet5"), "refreshedUser has tweet5 as favorite");
 	}
 
-	@Test(dependsOnMethods = "testAddFavorite")
+	@Test(dependsOnMethods = "testFindFavoritesForUser")
 	public void testFindFavoritesRangeForUser()
 	{
 		Collection<String> userFavorites = this.favoriteRepository.findFavoritesRangeForUser(user, 1, 2);
@@ -70,11 +70,24 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 		assertTrue(userFavorites.contains("tweet5"), "refreshedUser has tweet5 as favorite");
 	}
 
-	@Test(dependsOnMethods =
+	@Test(dependsOnMethods = "testFindFavoritesRangeForUser")
+	public void testFindFavoritesRangeOutOfBoundsForUser()
 	{
-			"testFindFavoritesForUser",
-			"testFindFavoritesRangeForUser"
-	})
+		Collection<String> userFavorites = this.favoriteRepository.findFavoritesRangeForUser(user, 7, 10);
+
+		assertTrue(userFavorites.size() == 0, "userFavorites.size() == 0");
+	}
+
+	@Test(dependsOnMethods = "testFindFavoritesRangeOutOfBoundsForUser")
+	public void testFindFavoritesRangeBoundsLimitForUser()
+	{
+		Collection<String> userFavorites = this.favoriteRepository.findFavoritesRangeForUser(user, 5, 10);
+
+		assertTrue(userFavorites.size() == 1, "userFavorites.size() == 1");
+		assertTrue(userFavorites.contains("tweet1"), "refreshedUser has tweet1 as favorite");
+	}
+
+	@Test(dependsOnMethods = "testFindFavoritesRangeOutOfBoundsForUser")
 	public void testRemoveFavorite()
 	{
 		this.favoriteRepository.removeFavorite(user, "tweet1");
@@ -92,6 +105,12 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, StringSerializer.get(), StringSerializer.get(),
 				StringSerializer.get());
 		cqlQuery.setQuery("truncate User");
+		cqlQuery.execute();
+
+		cqlQuery.setQuery("truncate Tweet");
+		cqlQuery.execute();
+
+		cqlQuery.setQuery("truncate FavoriteLine");
 		cqlQuery.execute();
 
 		User deletedUser = this.userRepository.findUserByLogin("test");

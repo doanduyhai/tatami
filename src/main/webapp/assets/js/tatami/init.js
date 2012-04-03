@@ -59,8 +59,9 @@ google.load("visualization", "1", {packages:["corechart"]});
 	$(function() {
 		
 		// Register refresh handler for all lines
-		$('.refreshLineIcon').click(refreshCurrentLine);
-		registerUserDetailsPopOver();
+		registerRefreshLineListeners();
+		registerUserDetailsPopOver($('#userSuggestions'));
+		registerFetchTweetHandlers();
 		
 	});
 

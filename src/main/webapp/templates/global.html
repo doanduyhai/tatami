@@ -96,8 +96,12 @@
 					</div>
 				</div>
 			</div>
-			
+					
+	
 			<div id="userDetailsTemplate" >
+				<div class="row-fluid">
+					<span class="userDetailsName center"></span>
+				</div>
 				<div class="row-fluid">
 					<div class="span4">
 						<span class="badge userDetailsTweetsCount"></span><br/>TWEETS
@@ -110,6 +114,31 @@
 					</div>
 				</div>
 			</div>
+			
+			<table id="tweetTemplate">
+				<tbody>
+					<tr class="data">
+						<td>
+							<img class="tweetGravatar"
+								data-user="" 
+								src="http://www.gravatar.com/avatar/012411?s=32"
+							></img>
+						</td>
+						<td>
+							<article>
+								<strong></strong>
+								<br/>					
+								<span></span> 
+							</article>
+						</td>
+						<td class="tweetFriend">
+						</td>
+						<td class="tweetDate">
+							<aside>tweet.prettyPrintTweetDate</aside>
+						</td>				
+					</tr>
+				</tbody>			
+			</table>
 		</div>
 
 
@@ -147,7 +176,9 @@
         	</script>
         	<script  src="/assets/js/google-jsapi.min.js" th:src="@{/assets/js/google-jsapi.min.js}"></script>
         	<script  src="/assets/js/tatami/chart.js" th:src="@{/assets/js/tatami/chart.js}"></script>
+        	<script  src="/assets/js/tatami/raphael-min.js" th:src="@{/assets/js/tatami/raphael-min.js}"></script>
 
+			<script src="/assets/js/tatami/constants.js" th:src="@{/assets/js/tatami/constants.js}"></script>
 			<script src="/assets/js/tatami/common.js" th:src="@{/assets/js/tatami/common.js}"></script>        	
         	<script src="/assets/js/tatami/user.js" th:src="@{/assets/js/tatami/user.js}"></script>
         	<script src="/assets/js/tatami/follow.js" th:src="@{/assets/js/tatami/follow.js}"></script>				

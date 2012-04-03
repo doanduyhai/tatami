@@ -49,10 +49,7 @@
 						th:attr="data-unfollow=${tweet.login}"><i class="icon-star-empty"></i>&nbsp;</a>
 					<a href="#" title="Like"
 						th:if="${tweet.addToFavorite}" 
-						th:attr="data-like=${tweet.tweetId}"><i class="icon-heart"></i>&nbsp;</a>
-					<a href="#" title="Remove" th:attr="data-remove=${tweet.tweetId}">
-						<i class="icon-remove"></i></a>
-					
+						th:attr="data-like=${tweet.tweetId}"><i class="icon-heart"></i></a>
 				</td>
 				<td class="tweetDate">
 					<aside th:text="${tweet.prettyPrintTweetDate}">tweetDate</aside>
