@@ -26,35 +26,64 @@ import fr.ippon.tatami.web.json.view.UserView;
 @ToString
 public class User
 {
-	@JsonView(UserView.Full.class)
-	@NotEmpty(message = "User 'login' should not be empty")
+	@JsonView(
+	{
+			UserView.Details.class,
+			UserView.Full.class
+	})
+	@NotEmpty(message = "Login should not be empty")
 	@Id
 	private String login;
 
-	@JsonView(UserView.Full.class)
 	@Email(message = "User 'email' is invalid")
 	@Column(name = "email")
 	private String email;
 
-	@JsonView(UserView.Full.class)
+	@JsonView(
+	{
+			UserView.Details.class,
+			UserView.Full.class
+	})
 	@Column(name = "gravatar")
 	private String gravatar;
 
-	@JsonView(UserView.Full.class)
+	@JsonView(
+	{
+			UserView.Details.class,
+			UserView.Full.class
+	})
 	// (?<!-) is a negative look-behind construct, meaning that the end of line ($) shoud NOT be preceded by a dash -
-	@Pattern(regexp = "^[a-zA-Z][ a-zA-Z-]{1,29}(?<!-)$", message = "User 'firstName' should only contains a-z,A-Z,-, should start/finish by a character and should not exceed 30 characters")
+	@Pattern(regexp = "^[a-zA-Z][ a-zA-Z-]{1,29}(?<!-)$", message = "First Name should only contains a-z,A-Z,-, should start/finish by a character and should not exceed 30 characters")
 	@Column(name = "firstName")
 	private String firstName;
 
-	@JsonView(UserView.Full.class)
+	@JsonView(
+	{
+			UserView.Details.class,
+			UserView.Full.class
+	})
 	// (?<!-) is a negative look-behind construct, meaning that the end of line ($) shoud NOT be preceded by a dash -
-	@Pattern(regexp = "^[a-zA-Z][ a-zA-Z-]{1,29}(?<!-)$", message = "User 'lastName' should only contains a-z,A-Z,-, should start/finish by a character and should not exceed 30 characters")
+	@Pattern(regexp = "^[a-zA-Z][ a-zA-Z-]{1,29}(?<!-)$", message = "Last Name should only contains a-z,A-Z,-, should start/finish by a character and should not exceed 30 characters")
 	@Column(name = "lastName")
 	private String lastName;
+
+	@JsonView(UserView.Full.class)
+	@Column(name = "biography")
+	private String biography;
+
+	@JsonView(UserView.Full.class)
+	@Column(name = "location")
+	private String location;
+
+	@JsonView(UserView.Full.class)
+	@Pattern(regexp = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "The website URL is not valid")
+	@Column(name = "website")
+	private String website;
 
 	@JsonView(value =
 	{
 			UserView.Stats.class,
+			UserView.Details.class,
 			UserView.Full.class
 	})
 	@Column(name = "tweetCount")
@@ -66,6 +95,7 @@ public class User
 	@JsonView(value =
 	{
 			UserView.Stats.class,
+			UserView.Details.class,
 			UserView.Full.class
 	})
 	@Column(name = "friendsCount")
@@ -74,6 +104,7 @@ public class User
 	@JsonView(value =
 	{
 			UserView.Stats.class,
+			UserView.Details.class,
 			UserView.Full.class
 	})
 	@Column(name = "followersCount")
@@ -81,6 +112,8 @@ public class User
 
 	@Column(name = "favoritesCount")
 	private long favoritesCount = 0;
+
+	private boolean follow = false;
 
 	public void incrementTweetCount()
 	{
@@ -240,6 +273,46 @@ public class User
 	public void setTimelineTweetCount(long timelineTweetCount)
 	{
 		this.timelineTweetCount = timelineTweetCount;
+	}
+
+	public String getBiography()
+	{
+		return biography;
+	}
+
+	public void setDBiography(String biography)
+	{
+		this.biography = biography;
+	}
+
+	public String getLocation()
+	{
+		return location;
+	}
+
+	public void setLocation(String location)
+	{
+		this.location = location;
+	}
+
+	public String getWebsite()
+	{
+		return website;
+	}
+
+	public void setWebsite(String website)
+	{
+		this.website = website;
+	}
+
+	public boolean isFollow()
+	{
+		return follow;
+	}
+
+	public void setFollow(boolean follow)
+	{
+		this.follow = follow;
 	}
 
 }

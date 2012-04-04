@@ -94,9 +94,10 @@ public class CassandraTagLineRepository extends CassandraAbstractRepository impl
 			long maxTweetColumn = tagLineCount.getTweetCount() - 1;
 			long endTweetColumn = maxTweetColumn - start + 1;
 			long startTweetColumn = maxTweetColumn - end + 1;
+			int count = end - start + 1 == 0 ? 1 : end - start + 1;
 
 			List<HColumn<Long, String>> columns = createSliceQuery(keyspaceOperator, se, le, se).setColumnFamily(TAGLINE_CF).setKey(tag)
-					.setRange(endTweetColumn, startTweetColumn, true, end - start + 1).execute().get().getColumns();
+					.setRange(endTweetColumn, startTweetColumn, true, count).execute().get().getColumns();
 
 			tweetIds = new ArrayList<String>();
 

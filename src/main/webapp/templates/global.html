@@ -81,7 +81,35 @@
 				</div>
 			</div>
 		</div>
-		
+
+	    <div id="userProfileModal" th:fragment="userProfileModal" class="modal" style="display: none;">
+		    <div class="modal-header center row-fluid noPadding">
+				<div class="span3 left">
+					<img class="tweetGravatar"
+						data-user="" 
+						src="http://www.gravatar.com/avatar/ffa96040bb4211cad1c66f385d8cb77b?s=48"
+						></img>
+				</div>
+		    	
+		    	<div class="span7 center fullHeight">
+		    		<h3>DuyHai DOAN</h3>
+		    	</div>
+				
+				<div class="span2 noMargin noPadding">
+		    		 <a class="close" data-dismiss="modal">&times;</a>
+		    	</div>
+		    </div>
+		    
+		    <div class="modal-body">
+		   		<p>One fine body…</p>
+		    </div>
+		    
+		    <div class="modal-footer">
+			    <a href="#" class="btn">Close</a>
+			    <a href="#" class="btn btn-primary">Save changes</a>
+		    </div>
+	    </div>
+	    		
 		<div id="htmlTemplate" th:fragment="htmlTemplate" style="display: none">
 			<div id="popoverTemplate">
 				<div class="popover" >
@@ -112,7 +140,11 @@
 					<div class="span4">
 						<span class="badge userDetailsFollowersCount"></span><br/>FOLLOWERS
 					</div>
+					<div class="span12 center red strong noMargin noPadding">
+						Click to have more details ...
+					</div>
 				</div>
+				
 			</div>
 			
 			<table id="tweetTemplate">
@@ -139,6 +171,7 @@
 					</tr>
 				</tbody>			
 			</table>
+				
 		</div>
 
 
@@ -161,24 +194,54 @@
         		var login =  /*[[${sec.principal.username}]]*/ "jdubois";
             	
 				// Retrieve the default Nb Tweets value from the server				           
-				var defaultNbTweets = /*[[${defaultNbTweets}]]*/ 10;
+				var DEFAULT_TWEET_LIST_SIZE = /*[[${DEFAULT_TWEET_LIST_SIZE}]]*/ 10;
 				
-				// Retrieve the default Nb Tweets value from the server				           
-				var defaultNbTags = /*[[${defaultNbTags}]]*/ 10;
+				// Retrieve the default Nb Favorite value from the server				           
+				var DEFAULT_FAVORITE_LIST_SIZE = /*[[${DEFAULT_FAVORITE_LIST_SIZE}]]*/ 10;
 				
-				// Retrieve the default Nb Favorites value from the server	
-				var defaultNbFavorites = /*[[${defaultNbFavorites}]]*/ 10;
+				// Retrieve the default Nb Tag value from the server				           
+				var DEFAULT_TAG_LIST_SIZE = /*[[${DEFAULT_TAG_LIST_SIZE}]]*/ 10;
+
+				// Retrieve the default tweet first fetch size value from the server				           
+				var TWEET_FIRST_FETCH_SIZE = /*[[${TWEET_FIRST_FETCH_SIZE}]]*/ 5;
 				
-				var tweetNbPatern = /*[[${tweetNbPatern}]]*/ "";
+				// Retrieve the default tweet second fetch size value from the server				           
+				var TWEET_SECOND_FETCH_SIZE = /*[[${TWEET_SECOND_FETCH_SIZE}]]*/ 10;
 				
-				var tweetsNbRegExp=new RegExp(tweetNbPatern, "g");
+				// Retrieve the default tweet third fetch size value from the server				           
+				var TWEET_THIRD_FETCH_SIZE = /*[[${TWEET_THIRD_FETCH_SIZE}]]*/ 20;
+				
+				
+				var TWEET_NB_PATTERN = /*[[${TWEET_NB_PATTERN}]]*/ "";
+				var TWEET_NB_REGEXP = new RegExp(TWEET_NB_PATTERN, "g");
+				
+				var START_TWEET_INDEX_PATTERN = /*[[${START_TWEET_INDEX_PATTERN}]]*/ "";
+				var START_TWEET_INDEX_REGEXP = new RegExp(START_TWEET_INDEX_PATTERN, "g");
+				
+				var END_TWEET_INDEX_PATTERN = /*[[${END_TWEET_INDEX_PATTERN}]]*/ "";
+				var END_TWEET_INDEX_REGEXP = new RegExp(END_TWEET_INDEX_PATTERN, "g");
+				
+				var USER_LOGIN_PATTERN = /*[[${USER_LOGIN_PATTERN}]]*/ "";
+				var USER_LOGIN_REGEXP = new RegExp(USER_LOGIN_PATTERN, "g");
+				
+				var TAG_PATTERN = /*[[${TAG_PATTERN}]]*/ "";
+				var TAG_REGEXP = new RegExp(TAG_PATTERN, "g");
+				
+				
+				var HTTP_GET = 'GET';
+				
+				var HTTP_POST = 'POST';
+				
+				var JSON_DATA = 'json';
+				
+				var JSON_CONTENT = 'application/json; charset=UTF-8';
             	/*]]>*/
         	</script>
         	<script  src="/assets/js/google-jsapi.min.js" th:src="@{/assets/js/google-jsapi.min.js}"></script>
         	<script  src="/assets/js/tatami/chart.js" th:src="@{/assets/js/tatami/chart.js}"></script>
         	<script  src="/assets/js/tatami/raphael-min.js" th:src="@{/assets/js/tatami/raphael-min.js}"></script>
 
-			<script src="/assets/js/tatami/constants.js" th:src="@{/assets/js/tatami/constants.js}"></script>
+<!-- 			<script src="/assets/js/tatami/constants.js" th:src="@{/assets/js/tatami/constants.js}"></script> -->
 			<script src="/assets/js/tatami/common.js" th:src="@{/assets/js/tatami/common.js}"></script>        	
         	<script src="/assets/js/tatami/user.js" th:src="@{/assets/js/tatami/user.js}"></script>
         	<script src="/assets/js/tatami/follow.js" th:src="@{/assets/js/tatami/follow.js}"></script>				

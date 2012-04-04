@@ -3,6 +3,7 @@ package fr.ippon.tatami.repository.cassandra;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVLINE_CF;
 import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +33,8 @@ public class CassandraFavoriteRepository extends CassandraAbstractRepository imp
 	@Inject
 	private Keyspace keyspaceOperator;
 
+	private final DecimalFormat orderFormatter = new DecimalFormat("000000000");
+
 	@Override
 	public void addFavorite(User user, String tweetId)
 	{
@@ -42,7 +45,11 @@ public class CassandraFavoriteRepository extends CassandraAbstractRepository imp
 			favoriteLine.setLogin(user.getLogin());
 		}
 
-		favoriteLine.getFavorites().add(tweetId);
+		if (!favoriteLine.getFavorites().contains(tweetId))
+		{
+			favoriteLine.getFavorites().add(tweetId);
+		}
+
 		user.incrementFavoritesCount();
 		em.persist(user);
 		em.persist(favoriteLine);
@@ -108,9 +115,11 @@ public class CassandraFavoriteRepository extends CassandraAbstractRepository imp
 		long maxTweetColumn = user.getFavoritesCount() - 1;
 		long endTweetColum = maxTweetColumn - start + 1;
 		long startTweetColum = maxTweetColumn - end + 1;
+		int count = end - start + 1 == 0 ? 1 : end - start + 1;
 
 		List<HColumn<String, Object>> columns = createSliceQuery(keyspaceOperator, se, se, oe).setColumnFamily(FAVLINE_CF).setKey(user.getLogin())
-				.setRange("favorites:" + endTweetColum, "favorites:" + startTweetColum, true, end - start + 1).execute().get().getColumns();
+				.setRange("favorites:" + orderFormatter.format(endTweetColum), "favorites:" + orderFormatter.format(startTweetColum), true, count)
+				.execute().get().getColumns();
 
 		for (HColumn<String, Object> column : columns)
 		{

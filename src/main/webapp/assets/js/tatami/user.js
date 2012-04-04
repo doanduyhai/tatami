@@ -20,8 +20,11 @@ function updateProfile() {
 		dataType: "json",
 		success: function(data) {
 			$('#defaultTab').tab('show');
-			loadHome();
-			updateUserCounters();
+			setTimeout(function()
+			{
+				loadHome();
+				updateUserCounters();
+			},300);		
 		},
 		error: errorHandler($('#userProfileErrorPanel'))
 	});
@@ -46,9 +49,13 @@ function updateUserCounters()
 		url: "rest/usersStats/" + login + "/",
 		dataType: "json",
 		success: function(data) {
-			$("#tweetCount").text(data.tweetCount);
-			$("#friendsCount").text(data.friendsCount);
-			$("#followersCount").text(data.followersCount);
+			setTimeout(function()
+			{
+				$("#tweetCount").text(data.tweetCount);
+				$("#friendsCount").text(data.friendsCount);
+				$("#followersCount").text(data.followersCount);
+			},200);	
+			
 		}
 	});
 }
@@ -59,14 +66,18 @@ function tweet() {
 	$.ajax({
         type: 'POST',
         url: "rest/tweets",
+        async: false,
         contentType: "application/json;  charset=UTF-8",
         data:  JSON.stringify({content: $.trim($("#tweetContent").val())}),
         dataType: "json",
         success: function(data) {
-            $("#tweetContent").slideUp().val("").slideDown('fast');
-            updateUserCounters();
-            refreshTimeline();
-            loadWhoToFollow();
+			setTimeout(function()
+			{
+				$("#tweetContent").slideUp().val("").slideDown('fast');
+				updateUserCounters();
+				refreshTimeline();
+				loadWhoToFollow();
+			},300);	
         },
         error: errorHandler($('#tweetErrorPanel'))
     });

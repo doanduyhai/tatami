@@ -1,15 +1,15 @@
 function initTimeline()
 {
 	$('#mainTab').tab('show');	
-	$('#tweetsList').load('fragments/'+defaultNbTweets+'/timeline.html .lineContent tr',function()
+	$('#tweetsList').load('fragments/'+DEFAULT_TWEET_LIST_SIZE+'/timeline.html .lineContent tr',function()
 	{
-		bindListeners($('#tweetsList'));		
+		bindListeners($('#tweetsList'));
 	});
 }
 
 function initFavoritesline()
 {
-	$('#favTweetsList').load('fragments/favline.html .lineContent tr',function()
+	$('#favTweetsList').load('fragments/'+DEFAULT_FAVORITE_LIST_SIZE+'/favline.html .lineContent tr',function()
 	{
 		bindListeners($('#favTweetsList'));
 	});	
@@ -17,7 +17,10 @@ function initFavoritesline()
 
 google.load("visualization", "1", {packages:["corechart"]});
 
+var clickFromLink = false;
+
 !function ( $ ) {
+	
 	// left panel
 	loadHome();
 	loadProfile();
@@ -30,39 +33,45 @@ google.load("visualization", "1", {packages:["corechart"]});
     	} 
     });
 
-    // right panel
-    initFavoritesline();
-    initTimeline();		    
+    
     
     // auto-refresh
     $('a[data-toggle="tab"]').on('show', function(e) {
-    	if (e.target.hash == '#piechartPanel') {
+    	if (e.target.hash == '#timeLinePanel' || e.target.hash == '#userLinePanel' || e.target.hash == '#tagLinePanel') {
+    		if(!clickFromLink)
+    		{	
+    			setTimeout(refreshCurrentLine,10);
+    		}	
+    	}
+    	else if (e.target.hash == '#piechartPanel') {
 			refreshPieChart();
-    	} else if (e.target.hash == '#punchchartPanel') {
+    	} 
+    	else if (e.target.hash == '#punchchartPanel') {
 			refreshPunchChart();
         }
     });
     
     // browser's refresh shortcut override
 	shortcut.add("Ctrl+R", function() {
-		loadTimeline();
-	});
-
-    // infinite scroll
-	$(window).scroll(function() { 
-		if ($('#timeline').is(':visible') && $(window).scrollTop() >= $(document).height() - $(window).height()) {
-			listTweets(false);
-		}
+		refreshCurrentLine();
 	});
 	
-
 	$(function() {
-		
+
+	    // right panel
+	    initFavoritesline();
+	    initTimeline();		
 		// Register refresh handler for all lines
 		registerRefreshLineListeners();
 		registerUserDetailsPopOver($('#userSuggestions'));
 		registerFetchTweetHandlers();
-		
+		$('#picture').click(function()
+		{
+			$('#userProfileModal').modal('show');
+			return false;
+		});
 	});
 
 }( window.jQuery );
+
+

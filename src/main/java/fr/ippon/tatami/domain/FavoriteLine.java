@@ -1,7 +1,7 @@
 package fr.ippon.tatami.domain;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -24,7 +24,7 @@ public class FavoriteLine
 	private String login;
 
 	@me.prettyprint.hom.annotations.Column(name = "favorites")
-	private Set<String> favorites = new TreeSet<String>();
+	private List<String> favorites = new ArrayList<String>();
 
 	public String getLogin()
 	{
@@ -36,12 +36,12 @@ public class FavoriteLine
 		this.login = login;
 	}
 
-	public Set<String> getFavorites()
+	public List<String> getFavorites()
 	{
 		return favorites;
 	}
 
-	public void setFavorites(Set<String> favorites)
+	public void setFavorites(List<String> favorites)
 	{
 		this.favorites = favorites;
 	}

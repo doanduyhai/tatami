@@ -20,6 +20,12 @@ public class TatamiConstants
 
 	public static final int MAX_TWEET_SIZE = 140;
 
+	public static final int TWEET_FIRST_FETCH_SIZE = 5;
+
+	public static final int TWEET_SECOND_FETCH_SIZE = 10;
+
+	public static final int TWEET_THIRD_FETCH_SIZE = 20;
+
 	// &#x23; is the HTML encoded version of the # character
 	public static final String HASHTAG_REGEXP = "&#x23;(\\w+)";
 
@@ -35,4 +41,12 @@ public class TatamiConstants
 	public static final String USER_LINK_PATTERN = "<a href='#' data-user='$1' title='Show $1 tweets'><em>@$1</em></a>";
 
 	public static final String TWEET_NB_PATTERN = "__TWEET-NB__";
+
+	public static final String START_TWEET_INDEX_PATTERN = "__START__";
+
+	public static final String END_TWEET_INDEX_PATTERN = "__END__";
+
+	public static final String USER_LOGIN_PATTERN = "__LOGIN__";
+
+	public static final String TAG_PATTERN = "__TAG__";
 }

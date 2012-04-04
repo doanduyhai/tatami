@@ -85,17 +85,25 @@
 							<table class="table table-striped">
 								<thead>
 									<tr>
-										<th colspan="3"><h2>Tweets list</h2></th>
-										<th class="iconCell">
+										<td colspan="3"><h2>Tweets list</h2></td>
+										<td class="iconCell">
 											<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
 												<i class="icon-repeat"></i>
 											</a>
-										</th>
+										</td>
 									</tr>
 								</thead>
-								<tbody id="tweetsList" class="lineContent"></tbody>
 							</table>
-							<footer class="row-fluid" data-rest-url="rest/tweetFetch/timeline/__START__/__END__">
+
+							<div class="row-fluid tweetContainer">
+								<table class="table table-striped">
+									<tbody id="tweetsList" class="lineContent"></tbody>		
+								</table>
+							</div>
+							
+							<footer class="row-fluid" 
+								th:attr="data-rest-url=${'rest/tweetFetch/timeline/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
+								data-line-type="timeline">
 								<div class="span4" style="padding-top: 2px;">
 									<a href="#" class="tweetPagingIcon">
 										<img src="assets/img/glyphicons_200_download.png"
@@ -105,12 +113,11 @@
 								<div class="span8 right">
 									<em>Fetch Tweets Nb</em>&nbsp;
 									<select class="pageSelector">
-										<option>5</option>
-										<option>10</option>
-										<option>20</option>
+										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${TWEET_THIRD_FETCH_SIZE}]]</option>
 									</select>
 								</div>
-
 							</footer>
 						</div>
 						
@@ -119,38 +126,81 @@
 							<table class="table table-striped">
 								<thead>
 									<tr>
-										<th colspan="3"><h2>Favorite tweets list</h2></th>
-										<th class="iconCell">
+										<td colspan="3"><h2>Favorite tweets list</h2></td>
+										<td class="iconCell">
 											<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
 												<i class="icon-repeat"></i>
 											</a>
-										</th>
+										</td>
 									</tr>
 								</thead>
-								<tbody id="favTweetsList" class="lineContent"></tbody>
 							</table>
-							<footer>
-								<i class="icon-download"></i> <em>Scroll down to get more tweets.</em>
+
+							<div class="row-fluid tweetContainer">
+								<table class="table table-striped">
+									<tbody id="favTweetsList" class="lineContent"></tbody>		
+								</table>
+							</div>
+																				
+							<footer class="row-fluid" 
+								th:attr="data-rest-url=${'rest/tweetFetch/favoriteline/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
+								data-line-type="favoriteline">
+								<div class="span4" style="padding-top: 2px;">
+									<a href="#" class="tweetPagingIcon">
+										<img src="assets/img/glyphicons_200_download.png"
+											th:src="@{/assets/img/glyphicons_200_download.png}"></img></a>&nbsp;
+									<em>More</em>
+								</div>
+								<div class="span8 right">
+									<em>Fetch Tweets Nb</em>&nbsp;
+									<select class="pageSelector">
+										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${TWEET_THIRD_FETCH_SIZE}]]</option>
+									</select>
+								</div>
 							</footer>												
 						</div>
 						
 						<!-- USER LINE -->
 						<div class="tab-pane" id="userLinePanel">
+						
 							<table class="table table-striped">
 								<thead>
 									<tr>
-										<th colspan="3"><h2>User tweets list</h2></th>
-										<th class="iconCell">
+										<td colspan="3"><h2>User tweets list</h2></td>
+										<td class="iconCell">
 											<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
 												<i class="icon-repeat"></i>
 											</a>
-										</th>
+										</td>
 									</tr>
 								</thead>
-								<tbody id="userTweetsList" class="lineContent"></tbody>
 							</table>
-							<footer>
-								<i class="icon-download"></i> <em>Scroll down to get more tweets.</em>
+
+							<div class="row-fluid tweetContainer">
+								<table class="table table-striped">
+									<tbody id="userTweetsList" class="lineContent"></tbody>		
+								</table>
+							</div>
+												
+							<footer class="row-fluid" 
+								th:attr="data-rest-url=${'rest/tweetFetch/userline/'+USER_LOGIN_PATTERN+'/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
+								data-line-type="userline">
+								<div class="span4" style="padding-top: 2px;">
+									<a href="#" class="tweetPagingIcon">
+										<img src="assets/img/glyphicons_200_download.png"
+											th:src="@{/assets/img/glyphicons_200_download.png}"></img></a>&nbsp;
+									<em>More</em>
+								</div>
+								<div class="span8 right">
+									<em>Fetch Tweets Nb</em>&nbsp;
+									<select class="pageSelector">
+										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${TWEET_THIRD_FETCH_SIZE}]]</option>
+									</select>
+								</div>
 							</footer>												
 						</div>
 						
@@ -159,19 +209,40 @@
 							<table class="table table-striped">
 								<thead>
 									<tr>
-										<th colspan="3"><h2>Tag tweets list</h2></th>
-										<th class="iconCell">
-											<a class="refreshLineIcon" href="#" title="See the trend">
+										<td colspan="3"><h2>Tag tweets list</h2></td>
+										<td class="iconCell">
+											<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
 												<i class="icon-repeat"></i>
 											</a>
-										</th>
+										</td>
 									</tr>
 								</thead>
-								<tbody id="tagTweetsList" class="lineContent"></tbody>
 							</table>
-							<footer>
-								<i class="icon-download"></i> <em>Scroll down to get more tweets.</em>
-							</footer>													
+
+							<div class="row-fluid tweetContainer">
+								<table class="table table-striped">
+									<tbody id="tagTweetsList" class="lineContent"></tbody>		
+								</table>
+							</div>
+													
+							<footer class="row-fluid" 
+								th:attr="data-rest-url=${'rest/tweetFetch/tagline/'+TAG_PATTERN+'/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
+								data-line-type="tagline">
+								<div class="span4" style="padding-top: 2px;">
+									<a href="#" class="tweetPagingIcon">
+										<img src="assets/img/glyphicons_200_download.png"
+											th:src="@{/assets/img/glyphicons_200_download.png}"></img></a>&nbsp;
+									<em>More</em>
+								</div>
+								<div class="span8 right">
+									<em>Fetch Tweets Nb</em>&nbsp;
+									<select class="pageSelector">
+										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${TWEET_THIRD_FETCH_SIZE}]]</option>
+									</select>
+								</div>
+							</footer>	
 						</div>
 						
 						<!-- DAY LINE -->
@@ -195,7 +266,19 @@
 		</div>
 	</div>
 	<div id="htmlTemplate" th:substituteby="templates/global :: htmlTemplate"></div>
+	<div id="userProfileModal" th:substituteby="templates/global :: userProfileModal"></div>
 	<footer id="center-footer" th:substituteby="templates/global :: footer"></footer>
 	<footer id="home-javascript" th:substituteby="templates/global :: home-javascript"></footer>
+	
+	<div class="bgCover">
+		<div class="overlayBox">
+			<div class="overlayContent">
+				<h2>Hello World</h2>
+				<p>Feel free to put in what ever content you wish to. Images can also be shown</p>
+			</div>
+		</div>	
+	</div>
+	
+			
   </body>
 </html>

@@ -46,22 +46,20 @@
 								th:if="${currentUser.login != tweet.login}">
 								<em th:text="${'@' + tweet.login}">@login</em>
 							</a>
-							<br/>
+							<br th:if="${currentUser.login != tweet.login}"></br>
 							<span th:inline="text">[[${tweet.content}]]</span>
 						</article>
 					</td>
 					<td class="tweetFriend">
 						<a href="#" title="Follow" 
 							th:if="${tweet.authorFollow}"
-							th:attr="data-follow=${tweet.login}"><i class="icon-star"></i>&nbsp;</a>
+							th:attr="data-follow=${tweet.login}"><i class="icon-eye-open"></i>&nbsp;</a>
 						<a href="#" title="Stop following" 
 							th:if="${tweet.authorForget}"
-							th:attr="data-unfollow=${tweet.login}"><i class="icon-star-empty"></i>&nbsp;</a>
+							th:attr="data-unfollow=${tweet.login}"><i class="icon-eye-close"></i>&nbsp;</a>
 						<a href="#" title="Stop liking"
 							th:unless="${tweet.addToFavorite}" 
-							th:attr="data-unlike=${tweet.tweetId}">					
-							<img src="/assets/img/glyphicons_012_unheart_small.png" 
-								th:src="@{/assets/img/glyphicons_012_unheart_small.png}"></img></a>
+							th:attr="data-unlike=${tweet.tweetId}"><i class="icon-star-empty"></i></a>
 					</td>
 					<td class="tweetDate">
 						<aside th:text="${tweet.prettyPrintTweetDate}">tweetDate</aside>

@@ -26,15 +26,12 @@ body {
 {
 	overflow-y: auto;
 	max-height: 600px !important;
-
 }  
-  
-
-
 
 #friendTweetsList {
  .normalFont;
 }
+
 .iconCell {
     text-align: right !important;
     vertical-align: middle !important;
@@ -42,11 +39,11 @@ body {
 
 .tweetFriend
 {
-	width: 24;
+	width: 20%;
 	.iconCell;
 }
 .tweetDate {
-    width: 68;
+    width: 5%;
     .iconCell;
 }
 
@@ -72,6 +69,11 @@ body {
 	text-align: right;	
 }
 
+.left
+{
+	text-align: left;	
+}
+
 .middle
 {
 	vertical-align: middle;
@@ -80,6 +82,29 @@ body {
 .fullHeight
 {
 	height: 100%;	
+}
+
+.strong
+{
+	folt-weight: bold;	
+}
+.red
+{
+	color: red;
+}
+.noMargin
+{
+	margin: 0px !important;	
+}
+.noPadding
+{
+	padding: 0px !important;
+}
+
+.tweetContainer
+{
+	max-height: 600px; 
+	overflow-y: auto;	
 }
 
 .pageSelector
@@ -177,6 +202,24 @@ body {
 	{
 		width: 20%;
 	}
+}
+
+
+.bgCover { 
+	background:#000; 
+	position:absolute; 
+	left:0; top:0; 
+	display:none; 
+	overflow:hidden;
+}
+
+.overlayBox {
+	border:5px solid #09F;
+	position:absolute;
+	display:none;
+	width:500px;
+	height:300px;
+	background:#fff;
 }
 
 #footerText

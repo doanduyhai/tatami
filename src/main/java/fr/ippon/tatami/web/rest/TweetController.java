@@ -12,16 +12,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +28,7 @@ import fr.ippon.tatami.domain.DayTweetStat;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.UserTweetStat;
 import fr.ippon.tatami.service.TimelineService;
+import fr.ippon.tatami.service.util.TatamiConstants;
 import fr.ippon.tatami.web.json.view.TweetView;
 
 /**
@@ -46,19 +43,6 @@ public class TweetController extends AbstractRESTController
 
 	@Inject
 	private TimelineService timelineService;
-
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	@ResponseBody
-	public String handleFunctionalException(MethodArgumentNotValidException ex, HttpServletRequest request)
-	{
-		log.error(" Validation exception raised : " + ex.getMessage());
-		StringBuilder errorBuffer = new StringBuilder();
-		for (FieldError fieldError : ex.getBindingResult().getFieldErrors())
-		{
-			errorBuffer.append(fieldError.getDefaultMessage()).append("<br/>");
-		}
-		return errorBuffer.toString();
-	}
 
 	@RequestMapping(value = "/rest/tweetStats/day", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
@@ -173,6 +157,8 @@ public class TweetController extends AbstractRESTController
 	@RequestMapping(value = "/rest/tweetFetch/timeline/{start}/{end}", method = RequestMethod.GET)
 	public void timelineTweetFetch(@PathVariable("start") int start, @PathVariable("end") int end, HttpServletResponse response)
 	{
+		start = start == 0 ? 1 : start;
+		end = end < TatamiConstants.DEFAULT_TWEET_LIST_SIZE ? TatamiConstants.DEFAULT_TWEET_LIST_SIZE : end;
 
 		log.debug("REST fetch tweet from {} to {} for current user ", new Object[]
 		{
@@ -181,6 +167,57 @@ public class TweetController extends AbstractRESTController
 		});
 
 		this.writeWithView((Object) timelineService.getTimelineRange(start, end), response, TweetView.Full.class);
+	}
 
+	@RequestMapping(value = "/rest/tweetFetch/userline/{login}/{start}/{end}", method = RequestMethod.GET)
+	public void userlineTweetFetch(@PathVariable("login") String login, @PathVariable("start") int start, @PathVariable("end") int end,
+			HttpServletResponse response)
+	{
+
+		start = start == 0 ? 1 : start;
+		end = end < TatamiConstants.DEFAULT_TWEET_LIST_SIZE ? TatamiConstants.DEFAULT_TWEET_LIST_SIZE : end;
+
+		log.debug("REST fetch tweet from {} to {} for user {}", new Object[]
+		{
+				start,
+				end,
+				login
+		});
+
+		this.writeWithView((Object) timelineService.getUserlineRange(login, start, end), response, TweetView.Full.class);
+	}
+
+	@RequestMapping(value = "/rest/tweetFetch/favoriteline/{start}/{end}", method = RequestMethod.GET)
+	public void favoriteTweetFetch(@PathVariable("start") int start, @PathVariable("end") int end, HttpServletResponse response)
+	{
+
+		start = start == 0 ? 1 : start;
+		end = end < TatamiConstants.DEFAULT_TWEET_LIST_SIZE ? TatamiConstants.DEFAULT_TWEET_LIST_SIZE : end;
+
+		log.debug("REST fetch tweet from {} to {} for current user ", new Object[]
+		{
+				start,
+				end
+		});
+
+		this.writeWithView((Object) timelineService.getFavoriteslineByRange(start, end), response, TweetView.Full.class);
+	}
+
+	@RequestMapping(value = "/rest/tweetFetch/tagline/{tag}/{start}/{end}", method = RequestMethod.GET)
+	public void taglineTweetFetch(@PathVariable("tag") String tag, @PathVariable("start") int start, @PathVariable("end") int end,
+			HttpServletResponse response)
+	{
+
+		start = start == 0 ? 1 : start;
+		end = end < TatamiConstants.DEFAULT_TWEET_LIST_SIZE ? TatamiConstants.DEFAULT_TWEET_LIST_SIZE : end;
+
+		log.debug("REST fetch tweet from {} to {} for tag {}", new Object[]
+		{
+				start,
+				end,
+				tag
+		});
+
+		this.writeWithView((Object) timelineService.getTaglineRange(tag, start, end), response, TweetView.Full.class);
 	}
 }

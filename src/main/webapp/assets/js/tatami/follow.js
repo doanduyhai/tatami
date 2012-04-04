@@ -4,13 +4,13 @@ function followMessage(targetLogin,follow)
 	{	
 		$('#followSuccess').find('span').remove();
 		$('#followSuccess').fadeIn("fast").append('<span>You are now following '+targetLogin+'</span>');
-		$('#followSuccess').delay(2000).fadeOut(5000);
+		$('#followSuccess').delay(500).fadeOut(5000);
 	}
 	else
 	{
 		$('#followSuccess').find('span').remove();
 		$('#followSuccess').fadeIn("fast").append('<span>You no longer follow '+targetLogin+'</span>');
-	    $('#followSuccess').delay(2000).fadeOut(5000);		
+	    $('#followSuccess').delay(500).fadeOut(5000);		
 	}	
 }
 
@@ -33,10 +33,15 @@ function followUser(loginToFollow) {
 		data: loginToFollow,
 		dataType: "json",
         success: function(data) {
-            $("#followUserInput").val("");
-            updateUserCounters();
-            followMessage(loginToFollow,true);
-            loadWhoToFollow();
+
+			setTimeout(function()
+			{
+	            $("#followUserInput").val("");
+	            updateUserCounters();
+	            followMessage(loginToFollow,true);
+	            loadWhoToFollow();
+			},300);
+
         },
     	error: followError()
 	});
@@ -53,9 +58,14 @@ function removeFriend(friend) {
 		data: friend,
 		dataType: "json",
         success: function(data) {
-        	updateUserCounters();
-        	followMessage(friend,false);	
-        	loadWhoToFollow();
+
+			setTimeout(function()
+			{
+	        	updateUserCounters();
+	        	followMessage(friend,false);	
+	        	loadWhoToFollow();
+			},300);
+
         },
     	error: followError()
 	});

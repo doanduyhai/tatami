@@ -55,21 +55,6 @@ public class FragmentController
 		return "fragments/profile";
 	}
 
-	@RequestMapping(value = "/fragments/{nbTweets}/timeline")
-	public String timelineFragment(@PathVariable("nbTweets") Integer nbTweets, Model model)
-	{
-		String minTweetNb = TatamiConstants.TWEET_NB_PATTERN;
-		if (nbTweets < TatamiConstants.DEFAULT_TWEET_LIST_SIZE)
-		{
-			minTweetNb = TatamiConstants.DEFAULT_TWEET_LIST_SIZE + "";
-			nbTweets = TatamiConstants.DEFAULT_TWEET_LIST_SIZE;
-		}
-
-		model.addAttribute("dataURL", "fragments/" + minTweetNb + "/timeline");
-		model.addAttribute("tweets", timelineService.getTimeline(nbTweets));
-		return "fragments/timeline";
-	}
-
 	@RequestMapping(value = "/fragments/followUser")
 	public String whoToFollowFragment(Model model)
 	{
@@ -96,22 +81,37 @@ public class FragmentController
 		return "fragments/followUser";
 	}
 
-	@RequestMapping(value = "/fragments/{login}/userline")
-	public String userLineFragment(@PathVariable("login") String targetUserLogin, Model model)
+	@RequestMapping(value = "/fragments/{nbTweets}/timeline")
+	public String timelineFragment(@PathVariable("nbTweets") int nbTweets, Model model)
 	{
-		Collection<Tweet> tweets = timelineService.getUserline(targetUserLogin, TatamiConstants.DEFAULT_TWEET_LIST_SIZE);
+		nbTweets = nbTweets < TatamiConstants.DEFAULT_TWEET_LIST_SIZE ? TatamiConstants.DEFAULT_TWEET_LIST_SIZE : nbTweets;
+
+		model.addAttribute("dataURL", "fragments/" + TatamiConstants.TWEET_NB_PATTERN + "/timeline");
+		Collection<Tweet> tweets = timelineService.getTimeline(nbTweets);
+		model.addAttribute("tweets", tweets);
+		return "fragments/timeline";
+	}
+
+	@RequestMapping(value = "/fragments/{login}/{nbTweets}/userline")
+	public String userLineFragment(@PathVariable("login") String targetUserLogin, @PathVariable("nbTweets") int nbTweets, Model model)
+	{
+		nbTweets = nbTweets < TatamiConstants.DEFAULT_TWEET_LIST_SIZE ? TatamiConstants.DEFAULT_TWEET_LIST_SIZE : nbTweets;
+
+		Collection<Tweet> tweets = timelineService.getUserline(targetUserLogin, nbTweets);
 		log.info("Listing {} tweets for user {}", tweets.size(), targetUserLogin);
 
-		model.addAttribute("dataURL", "fragments/" + targetUserLogin + "/userline");
+		model.addAttribute("dataURL", "fragments/" + targetUserLogin + "/" + TatamiConstants.TWEET_NB_PATTERN + "/userline");
 		model.addAttribute("userTweets", tweets);
 		return "fragments/userline";
 	}
 
-	@RequestMapping(value = "/fragments/favline")
-	public String favLineFragment(Model model)
+	@RequestMapping(value = "/fragments/{nbTweets}/favline")
+	public String favLineFragment(@PathVariable("nbTweets") int nbTweets, Model model)
 	{
-		model.addAttribute("dataURL", "fragments/favline");
-		model.addAttribute("favoriteTweets", timelineService.getFavoritesline());
+		nbTweets = nbTweets < TatamiConstants.DEFAULT_FAVORITE_LIST_SIZE ? TatamiConstants.DEFAULT_FAVORITE_LIST_SIZE : nbTweets;
+
+		model.addAttribute("dataURL", "fragments/" + TatamiConstants.TWEET_NB_PATTERN + "/favline");
+		model.addAttribute("favoriteTweets", timelineService.getFavoriteslineByRange(1, nbTweets));
 
 		return "fragments/favline";
 	}
@@ -119,16 +119,11 @@ public class FragmentController
 	@RequestMapping(value = "/fragments/{tag}/{nbTweets}/tagline")
 	public String tagLineFragment(@PathVariable("tag") String tag, @PathVariable("nbTweets") int nbTweets, Model model)
 	{
-		String minTweetNb = TatamiConstants.TWEET_NB_PATTERN;
-		if (nbTweets < TatamiConstants.DEFAULT_TAG_LIST_SIZE)
-		{
-			minTweetNb = TatamiConstants.DEFAULT_TAG_LIST_SIZE + "";
-			nbTweets = TatamiConstants.DEFAULT_TAG_LIST_SIZE;
-		}
+		nbTweets = nbTweets < TatamiConstants.DEFAULT_TAG_LIST_SIZE ? TatamiConstants.DEFAULT_TAG_LIST_SIZE : nbTweets;
 
 		log.debug("REST request to get a  tweet list ( {} sized) with tag {}", nbTweets, tag);
 
-		model.addAttribute("dataURL", "fragments/" + tag + "/" + minTweetNb + "/tagline");
+		model.addAttribute("dataURL", "fragments/" + tag + "/" + TatamiConstants.TWEET_NB_PATTERN + "/tagline");
 		model.addAttribute("tagTweets", timelineService.getTagline(tag, nbTweets));
 
 		return "fragments/tagline";
