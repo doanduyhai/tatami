@@ -67,6 +67,9 @@ public class UserService
 			currentUser.setGravatar(GravatarUtil.getHash(updatedUser.getEmail()));
 			currentUser.setFirstName(updatedUser.getFirstName());
 			currentUser.setLastName(updatedUser.getLastName());
+			currentUser.setBiography(updatedUser.getBiography());
+			currentUser.setLocation(updatedUser.getLocation());
+			currentUser.setWebsite(updatedUser.getWebsite());
 			userRepository.updateUser(currentUser);
 		}
 		else

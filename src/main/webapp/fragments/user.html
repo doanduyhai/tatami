@@ -4,10 +4,11 @@
 	xmlns:th="http://www.thymeleaf.org">
 <div id="homeContent" class="container-fluid">
 	<div class="row-fluid">
-		<div class="span3 gravatar">
+		<div id="userMain" class="span3 gravatar">
 			<a href="#">
 				<img id="picture" src="http://www.gravatar.com/avatar/"
-					th:src="${'http://www.gravatar.com/avatar/'+currentUser.gravatar+'?s=64'}">
+					th:src="${'http://www.gravatar.com/avatar/'+currentUser.gravatar+'?s=64'}"
+					th:attr="data-user=${currentUser.login}">
 				</img>
 			</a>
 		</div>
@@ -19,15 +20,15 @@
 		</div>
 	</div>
 	<div class="well well-small row-fluid">
-		<div class="span4">
+		<div class="span4 center">
 			<span id="tweetCount" class="badge" 
 				th:attr="data-user=${currentUser.login}"
 				th:text="${currentUser.tweetCount}">20</span><br/>TWEETS
 		</div>
-		<div class="span4">
+		<div class="span4 center">
 			<span id="friendsCount" class="badge" th:text="${currentUser.friendsCount}">5</span><br/>FOLLOWING
 		</div>
-		<div class="span4">
+		<div class="span4 center">
 			<span id="followersCount" class="badge" th:text="${currentUser.followersCount}">100</span><br/>FOLLOWERS
 		</div>
 	</div>

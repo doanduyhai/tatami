@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" 
+	  xmlns="http://www.w3.org/1999/xhtml" 
+	  xmlns:th="http://www.thymeleaf.org">
+	  
+    <div id="userProfileModal" th:fragment="userProfileModal" class="modal" style="display: none;">
+	    <div class="modal-header center userDetailsTitle">
+			<span id="userProfileLogin">@duyhai</span>
+			<a class="close userProfileClose" data-dismiss="modal">&times;</a>
+	    </div>
+	    
+	    <div class="modal-body row-fluid noMargin noPadding">
+			<div id="userProfileGravatar" class="span3">
+				<img class="tweetGravatar"
+					src="http://www.gravatar.com/avatar/ffa96040bb4211cad1c66f385d8cb77b?s=128"
+					></img>
+			</div>
+	    	
+	    	<div id="userProfileInfo" class="span9 noMargin">
+	    		<div id="userProfileName" class="row-fluid noMargin">DuyHai DOAN</div>
+	    		<div id="userProfileLocation" class="row-fluid noMargin">
+	    			<span class="span3 userProfileLabel">Location:&nbsp;</span><span>Paris</span>
+				</div>
+    			<div id="userProfileWebsite" class="row-fluid noMargin">
+	    			<span class="span3  userProfileLabel">Website:&nbsp;</span><a href="" target="_blank">http://doanduyhai.wordpress.com</a> 
+    			</div>	    		
+	    		<div id="userProfileBio" class="row-fluid noMargin">
+	    			Java Senior Developer is a very hard job. I spend my day and night coding
+	    			I hope to win the competition to get a Galaxy tab and some rest. I need to sleep!
+	    		</div>
+	    	</div>
+	    </div>
+	    
+	    <div id="userProfileFooter" class="modal-footer row-fluid noMargin">
+			<div class="span4 center">
+				<span id="userProfileTweetsCount" class="badge">1</span><br/>TWEETS
+			</div>
+			<div class="span4 center">
+				<span id="userProfileFriendsCount" class="badge">0</span><br/>FOLLOWING
+			</div>
+			<div class="span4 center">
+				<span id="userProfileFollowersCount" class="badge">0</span><br/>FOLLOWERS
+			</div>
+	    </div>
+    </div>
+
+</html>
+	  

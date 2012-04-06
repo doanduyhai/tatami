@@ -76,7 +76,7 @@ public class User
 	private String location;
 
 	@JsonView(UserView.Full.class)
-	@Pattern(regexp = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "The website URL is not valid")
+	@Pattern(regexp = "^((https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])?", message = "The website URL is not valid")
 	@Column(name = "website")
 	private String website;
 
@@ -280,7 +280,7 @@ public class User
 		return biography;
 	}
 
-	public void setDBiography(String biography)
+	public void setBiography(String biography)
 	{
 		this.biography = biography;
 	}

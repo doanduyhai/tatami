@@ -67,7 +67,8 @@ var clickFromLink = false;
 		registerFetchTweetHandlers();
 		$('#picture').click(function()
 		{
-			$('#userProfileModal').modal('show');
+			var login = $('#picture').attr('data-user');
+			showUserProfile(login);
 			return false;
 		});
 	});

@@ -19,6 +19,7 @@ import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.service.TimelineService;
 import fr.ippon.tatami.service.UserService;
 import fr.ippon.tatami.service.util.TatamiConstants;
+import fr.ippon.tatami.web.view.ViewConstants;
 
 /**
  * Fragment controller
@@ -39,23 +40,22 @@ public class FragmentController
 	@ModelAttribute(value = "currentUser")
 	public User getCurrentUser()
 	{
-		User user = userService.getCurrentUser();
-		return userService.getUserByLogin(user.getLogin());
+		return userService.getCurrentUser();
 	}
 
-	@RequestMapping(value = "/fragments/user")
+	@RequestMapping(ViewConstants.URL_FRAGMENT_USER)
 	public String homeFragment(Model model)
 	{
-		return "fragments/user";
+		return ViewConstants.FRAGMENT_USER;
 	}
 
-	@RequestMapping(value = "/fragments/profile")
+	@RequestMapping(ViewConstants.URL_FRAGMENT_PROFILE)
 	public String profileFragment()
 	{
-		return "fragments/profile";
+		return ViewConstants.FRAGMENT_PROFILE;
 	}
 
-	@RequestMapping(value = "/fragments/followUser")
+	@RequestMapping(ViewConstants.URL_FRAGMENT_FOLLOWER)
 	public String whoToFollowFragment(Model model)
 	{
 		User currentUser = userService.getCurrentUser();
@@ -78,7 +78,7 @@ public class FragmentController
 		}
 
 		model.addAttribute("tweets", users.values());
-		return "fragments/followUser";
+		return ViewConstants.FRAGMENT_FOLLOWER;
 	}
 
 	@RequestMapping(value = "/fragments/{nbTweets}/timeline")
@@ -89,7 +89,7 @@ public class FragmentController
 		model.addAttribute("dataURL", "fragments/" + TatamiConstants.TWEET_NB_PATTERN + "/timeline");
 		Collection<Tweet> tweets = timelineService.getTimeline(nbTweets);
 		model.addAttribute("tweets", tweets);
-		return "fragments/timeline";
+		return ViewConstants.FRAGMENT_TIMELINE;
 	}
 
 	@RequestMapping(value = "/fragments/{login}/{nbTweets}/userline")
@@ -102,7 +102,7 @@ public class FragmentController
 
 		model.addAttribute("dataURL", "fragments/" + targetUserLogin + "/" + TatamiConstants.TWEET_NB_PATTERN + "/userline");
 		model.addAttribute("userTweets", tweets);
-		return "fragments/userline";
+		return ViewConstants.FRAGMENT_USERLINE;
 	}
 
 	@RequestMapping(value = "/fragments/{nbTweets}/favline")
@@ -113,7 +113,7 @@ public class FragmentController
 		model.addAttribute("dataURL", "fragments/" + TatamiConstants.TWEET_NB_PATTERN + "/favline");
 		model.addAttribute("favoriteTweets", timelineService.getFavoriteslineByRange(1, nbTweets));
 
-		return "fragments/favline";
+		return ViewConstants.FRAGMENT_FAVLINE;
 	}
 
 	@RequestMapping(value = "/fragments/{tag}/{nbTweets}/tagline")
@@ -126,6 +126,6 @@ public class FragmentController
 		model.addAttribute("dataURL", "fragments/" + tag + "/" + TatamiConstants.TWEET_NB_PATTERN + "/tagline");
 		model.addAttribute("tagTweets", timelineService.getTagline(tag, nbTweets));
 
-		return "fragments/tagline";
+		return ViewConstants.FRAGMENT_TAGLINE;
 	}
 }

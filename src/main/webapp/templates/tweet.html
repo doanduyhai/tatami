@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" 
+	  xmlns="http://www.w3.org/1999/xhtml" 
+	  xmlns:th="http://www.thymeleaf.org">
+
+	<div id="tweetTemplateContainer" th:fragment="tweetTemplate" style="display: none;">
+		<table id="tweetTemplate">
+			<tbody>
+				<tr class="data">
+					<td>
+						<img class="tweetGravatar"
+							data-user="" 
+							src="http://www.gravatar.com/avatar/012411?s=32"
+						></img>
+					</td>
+					<td>
+						<article>
+							<strong></strong>
+							<br/>					
+							<span></span> 
+						</article>
+					</td>
+					<td class="tweetFriend">
+					</td>
+					<td class="tweetDate">
+						<aside>tweet.prettyPrintTweetDate</aside>
+					</td>				
+				</tr>
+			</tbody>			
+		</table>
+	</div>			  
+</html>	  

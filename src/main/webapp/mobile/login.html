@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">
+	
+  <head th:substituteby="templates/mobile :: header" />	
+
+
+  <body>
+	<div id="topbar-login" th:substituteby="templates/mobile :: topbar-login"></div>
+	<br/>
+    <div id="mobileLoginContainer">
+        <h1>Authentication</h1>
+		<br/>
+        <form id="loginForm" action="authentication" th:action="@{/authentication}" method="post" class="well" >
+        	<br/>
+            <fieldset>
+                <label>Login :</label> <input id="j_username" name="j_username"
+                       type="text" required="required" autofocus="autofocus" class="input-large"
+                       placeholder="Your login..."/>
+                <label>Password :</label> <input id="j_password" name="j_password"
+                       type="password" required="required" class="input-large"
+                       placeholder="Your password..."/>
+            </fieldset>
+            <br/>
+            <button type="submit" class="btn btn-success btn-large">Authenticate</button>
+            <br/>&nbsp;
+        </form>
+    </div>
+   
+    <footer th:substituteby="templates/mobile :: footer"></footer>
+  </body>
+</html>

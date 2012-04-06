@@ -51,6 +51,21 @@ function bindListeners($target)
 	
 	//Bind 'hover' on user gravatar
 	registerUserDetailsPopOver($target);
+	
+	//Bind click on gravatar to display user profile modal
+	$target.find('img.tweetGravatar[data-user]').click(function(e)
+	{
+		//First hide popover
+		if($(e.currentTarget).data('popover') != null)
+		{
+			$(e.currentTarget).popover('hide');	
+		}
+		
+		var login = $(e.currentTarget).attr('data-user');
+		showUserProfile(login);
+		return false;
+	});
+
 
 }
 
@@ -78,7 +93,7 @@ function registerUserDetailsPopOver($target)
 				template: $('#popoverTemplate').clone().attr('id','').find('div.popover').attr('data-user',data_user).end().html()
 			});
 		}
-		$(this).delay(200).popover('show');
+		$(this).popover('show');
 		$.ajax({
 			type: 'GET',
 			url: "rest/usersDetails/" + $('.popover.in').attr('data-user'),

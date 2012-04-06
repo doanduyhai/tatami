@@ -49,8 +49,15 @@ public class UserController extends AbstractRESTController
 	@RequestMapping(value = "/rest/usersDetails/{login}", method = RequestMethod.GET, produces = "application/json")
 	public void getUserDetails(@PathVariable("login") String login, HttpServletResponse response)
 	{
-		log.debug("REST request to get Profile : {}", login);
+		log.debug("REST request to get Details : {}", login);
 		this.writeWithView(userService.getUserByLogin(login), response, UserView.Details.class);
+	}
+
+	@RequestMapping(value = "/rest/usersProfile/{login}", method = RequestMethod.GET, produces = "application/json")
+	public void getUserProfile(@PathVariable("login") String login, HttpServletResponse response)
+	{
+		log.debug("REST request to get Profile : {}", login);
+		this.writeWithView(userService.getUserByLogin(login), response, UserView.Full.class);
 	}
 
 	@RequestMapping(value = "/rest/users/{login}", method = RequestMethod.POST, consumes = "application/json")

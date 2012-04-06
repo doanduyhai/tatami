@@ -14,7 +14,7 @@
 				<div class="tabbable">
                     <ul class="nav nav-tabs">
 						<li class="active">
-							<a id="defaultTab" href="#homeTabContent" data-toggle="pill">Show profile</a>
+							<a id="defaultTab" href="#homeTabContent" data-toggle="pill">Show Profile</a>
 						</li>
 						<li>
 							<a href="#profileTabContent" data-toggle="pill"><i class="icon-edit"></i>Update Profile</a>
@@ -88,7 +88,7 @@
 										<td colspan="3"><h2>Tweets list</h2></td>
 										<td class="iconCell">
 											<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
-												<i class="icon-repeat"></i>
+												<i class="icon-refresh"></i>
 											</a>
 										</td>
 									</tr>
@@ -111,7 +111,7 @@
 									<em>More</em>
 								</div>
 								<div class="span8 right">
-									<em>Fetch Tweets Nb</em>&nbsp;
+									<em>Tweets #</em>&nbsp;
 									<select class="pageSelector">
 										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
 										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
@@ -129,7 +129,7 @@
 										<td colspan="3"><h2>Favorite tweets list</h2></td>
 										<td class="iconCell">
 											<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
-												<i class="icon-repeat"></i>
+												<i class="icon-refresh"></i>
 											</a>
 										</td>
 									</tr>
@@ -152,7 +152,7 @@
 									<em>More</em>
 								</div>
 								<div class="span8 right">
-									<em>Fetch Tweets Nb</em>&nbsp;
+									<em>Tweets #</em>&nbsp;
 									<select class="pageSelector">
 										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
 										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
@@ -171,7 +171,7 @@
 										<td colspan="3"><h2>User tweets list</h2></td>
 										<td class="iconCell">
 											<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
-												<i class="icon-repeat"></i>
+												<i class="icon-refresh"></i>
 											</a>
 										</td>
 									</tr>
@@ -194,7 +194,7 @@
 									<em>More</em>
 								</div>
 								<div class="span8 right">
-									<em>Fetch Tweets Nb</em>&nbsp;
+									<em>Tweets #</em>&nbsp;
 									<select class="pageSelector">
 										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
 										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
@@ -212,7 +212,7 @@
 										<td colspan="3"><h2>Tag tweets list</h2></td>
 										<td class="iconCell">
 											<a class="refreshLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
-												<i class="icon-repeat"></i>
+												<i class="icon-refresh"></i>
 											</a>
 										</td>
 									</tr>
@@ -235,7 +235,7 @@
 									<em>More</em>
 								</div>
 								<div class="span8 right">
-									<em>Fetch Tweets Nb</em>&nbsp;
+									<em>Tweets #</em>&nbsp;
 									<select class="pageSelector">
 										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
 										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
@@ -265,8 +265,10 @@
 			</div>
 		</div>
 	</div>
-	<div id="htmlTemplate" th:substituteby="templates/global :: htmlTemplate"></div>
-	<div id="userProfileModal" th:substituteby="templates/global :: userProfileModal"></div>
+
+	<div id="tweetTemplate" th:substituteby="templates/tweet :: tweetTemplate"></div>
+	<div id="popoverTemplate" th:substituteby="templates/popover :: popoverTemplate"></div>
+	<div id="userProfileModal" th:substituteby="templates/userprofile :: userProfileModal"></div>
 	<footer id="center-footer" th:substituteby="templates/global :: footer"></footer>
 	<footer id="home-javascript" th:substituteby="templates/global :: home-javascript"></footer>
 	

@@ -2,6 +2,7 @@ package fr.ippon.tatami.config;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
+import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -77,7 +80,16 @@ public class DispatcherServletConfig extends WebMvcConfigurationSupport
 	protected void addInterceptors(InterceptorRegistry registry)
 	{
 		SecurityInterceptor securityInterceptor = new SecurityInterceptor();
+		DeviceResolverHandlerInterceptor springMobileInterceptor = new DeviceResolverHandlerInterceptor();
 		registry.addInterceptor(securityInterceptor);
+		registry.addInterceptor(springMobileInterceptor);
+	}
+
+	@Override
+	protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers)
+	{
+		// argumentResolvers.
+		// argumentResolvers.add(new DeviceWebArgumentResolver());
 	}
 
 	@Override
@@ -92,4 +104,5 @@ public class DispatcherServletConfig extends WebMvcConfigurationSupport
 	{
 		return new JacksonViewAwareHttpMessageConverter();
 	}
+
 }

@@ -33,10 +33,10 @@ function updateProfile() {
 
 function loadProfile()
 {
-	$('#profileTabContent').empty();
-	$('#profileTabContent').load('fragments/profile.html #profileContent',function()
+	$('#profilePanel').empty();
+	$('#profilePanel').load('fragments/mobile/profile.html #profileContent',function()
 	{
-		bindListeners($('#profileTabContent'));
+		//bindListeners($('#profilePanel'));
 	});
 	
 }

@@ -28,13 +28,18 @@
 	        <label>Bio :</label> 
 	        <textarea id="biographyInput" name="biography" rows="3"
 	        	placeholder="Some description about you..." class="input-xlarge"
-	        	th:value="${currentUser.biography}"/>	
+	        	th:inline="text">[[${currentUser.biography}]]</textarea>	
 
 	        <label>Website :</label> 
 	        <input id="websiteInput" name="website" type="url"
 				placeholder="Your website..." class="input-xlarge"
 				th:value="${currentUser.website}"/>
-					        				
+				
+	        <label>Location :</label> 
+	        <input id="locationInput" name="location" type="url"
+				placeholder="Your location..." class="input-xlarge"
+				th:value="${currentUser.location}"/>
+									        				
 	    </fieldset>
 	    <button type="submit" class="btn btn-primary">Update</button>
 	</form>

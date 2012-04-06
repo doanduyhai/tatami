@@ -1,12 +1,19 @@
 package fr.ippon.tatami.web;
 
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mobile.device.Device;
+import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import fr.ippon.tatami.service.UserService;
 import fr.ippon.tatami.service.util.TatamiConstants;
+import fr.ippon.tatami.web.view.ViewConstants;
 
 /**
  * Main tatami page.
@@ -19,18 +26,33 @@ public class TatamiController
 
 	private final Logger log = LoggerFactory.getLogger(TatamiController.class);
 
-	@RequestMapping("/login")
-	public String welcome()
+	@Inject
+	UserService userService;
+
+	@RequestMapping(ViewConstants.URL_LOGIN)
+	public String welcome(HttpServletRequest servletRequest)
 	{
-		return "pages/login";
+		Device currentDevice = DeviceUtils.getCurrentDevice(servletRequest);
+
+		log.info("is mobile : " + currentDevice.isMobile());
+
+		if (currentDevice.isMobile())
+		{
+			return ViewConstants.MOBILE_LOGIN;
+		}
+		else
+		{
+			return ViewConstants.PAGE_LOGIN;
+		}
+
 	}
 
 	@RequestMapping(value =
 	{
-			"/",
-			"/home"
+			ViewConstants.URL_ROOT,
+			ViewConstants.URL_HOME
 	})
-	public String tatami(Model model)
+	public String tatami(Model model, HttpServletRequest servletRequest)
 	{
 		// Set the default nb tweets value to the model to be defined as Javascript constant
 		model.addAttribute("DEFAULT_TWEET_LIST_SIZE", TatamiConstants.DEFAULT_TWEET_LIST_SIZE);
@@ -65,12 +87,32 @@ public class TatamiController
 		// Set the default tweet third fetch to be defined as Javascript constant
 		model.addAttribute("TWEET_THIRD_FETCH_SIZE", TatamiConstants.TWEET_THIRD_FETCH_SIZE);
 
-		return "pages/home";
+		Device currentDevice = DeviceUtils.getCurrentDevice(servletRequest);
+
+		if (currentDevice.isMobile())
+		{
+			model.addAttribute("currentUser", userService.getCurrentUser());
+			return ViewConstants.MOBILE_HOME;
+		}
+		else
+		{
+			return ViewConstants.PAGE_HOME;
+		}
+
 	}
 
-	@RequestMapping("/about")
-	public String about()
+	@RequestMapping(ViewConstants.URL_ABOUT)
+	public String about(HttpServletRequest servletRequest)
 	{
-		return "pages/about";
+		Device currentDevice = DeviceUtils.getCurrentDevice(servletRequest);
+
+		if (currentDevice.isMobile())
+		{
+			return ViewConstants.MOBILE_ABOUT;
+		}
+		else
+		{
+			return ViewConstants.PAGE_ABOUT;
+		}
 	}
 }

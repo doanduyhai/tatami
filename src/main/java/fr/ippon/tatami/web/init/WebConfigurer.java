@@ -9,6 +9,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
 
+import org.springframework.mobile.device.DeviceResolverHandlerFilter;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -45,6 +46,8 @@ public class WebConfigurer implements ServletContextListener
 		FilterRegistration.Dynamic monitoringFilter = servletContext.addFilter("monitoringFilter", new MonitoringFilter());
 		monitoringFilter.addMappingForUrlPatterns(disps, true, "/*");
 
+		FilterRegistration.Dynamic springMobileFilter = servletContext.addFilter("springMobileFilter", new DeviceResolverHandlerFilter());
+		springMobileFilter.addMappingForUrlPatterns(disps, true, "/*");
 	}
 
 	@Override

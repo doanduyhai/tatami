@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">
+	
+  <head th:substituteby="templates/mobile :: header" />	
+  
+  <body>
+	<div id="topbar-login" th:substituteby="templates/mobile :: topbar-home"></div>
+	<div id="mainMobileContainer" class="row-fluid noMargin">
+		<div class="tabbable">
+           <ul class="nav nav-tabs">
+           		<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<img src="assets/img/glyphicons_322_twitter.png"
+						th:src="@{/assets/img/glyphicons_322_twitter.png}"></img>&nbsp;User&nbsp;<b class="caret"></b>
+					</a>
+		            <ul class="dropdown-menu">
+		            	<li>
+		            		<a id="defaultTab" href="#homePanel" data-toggle="tab">
+		            			<img src="assets/img/glyphicons_322_twitter.png"
+									th:src="@{/assets/img/glyphicons_322_twitter.png}"></img>&nbsp;&nbsp;Tweet</a>
+		            	</li>
+		            	<li>
+		            		<a id="profileTab" href="#profilePanel"  data-toggle="tab">
+		            			<img src="assets/img/glyphicons_151_edit.png"
+									th:src="@{/assets/img/glyphicons_151_edit.png}"></img>&nbsp;&nbsp;Update Profile</a>
+		            	</li>
+		            	<li>
+		            		<a id="profileTab" href="#followPanel"  data-toggle="tab">
+		            			<img src="assets/img/glyphicons_083_random.png"
+									th:src="@{/assets/img/glyphicons_083_random.png}"></img>&nbsp;Follow Suggestions</a>
+		            	</li>		            	
+		            </ul>	            
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<img src="assets/img/glyphicons_309_comments.png"
+						th:src="@{/assets/img/glyphicons_309_comments.png}"></img>&nbsp;Tweet Lines&nbsp;<b class="caret"></b>
+					</a>
+					 <ul class="dropdown-menu">
+		            	<li>
+		            		<a id="timelineTab" href="#timelinePanel" data-toggle="tab">
+		            			<img src="assets/img/glyphicons_309_comments.png"
+									th:src="@{/assets/img/glyphicons_309_comments.png}"></img>&nbsp;&nbsp;&nbsp;Timeline</a>
+		            	</li>
+		            	<li>
+		            		<a id="favoriteTab" href="#favlinePanel"  data-toggle="tab">
+		            			<img src="assets/img/glyphicons_049_star.png"
+									th:src="@{/assets/img/glyphicons_049_star.png}"></img>&nbsp;&nbsp;&nbsp;Favorites</a>
+		            	</li>
+		            	<li>
+		            		<a id="userlineTab" href="#userlinePanel" data-toggle="tab">
+		            			<img src="assets/img/glyphicons_024_parents.png"
+									th:src="@{/assets/img/glyphicons_024_parents.png}"></img>&nbsp;Userline</a>
+		            	</li>
+						<li>
+		            		<a id="taglineTab" href="#taglinePanel" data-toggle="tab">
+		            			<img src="assets/img/glyphicons_066_tags.png"
+									th:src="@{/assets/img/glyphicons_066_tags.png}"></img>&nbsp;&nbsp;Tagline</a>
+		            	</li>
+		            </ul>	
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<img src="assets/img/glyphicons_041_charts.png"
+									th:src="@{/assets/img/glyphicons_041_charts.png}"></img>&nbsp;Statistics<b class="caret"></b></a>
+		            <ul class="dropdown-menu">
+		            	<li>
+		            		<a id="piechartTab" href="#piechartPanel" data-toggle="tab">
+		            			<img src="assets/img/glyphicons_042_pie_chart.png"
+									th:src="@{/assets/img/glyphicons_042_pie_chart.png}"></img>&nbsp;Day Tweets</a>
+		            	</li>
+		            	<li>
+		            		<a id="punchchartTab" href="#punchchartPanel" data-toggle="tab">
+		            			<img src="assets/img/glyphicons_040_stats.png"
+									th:src="@{/assets/img/glyphicons_040_stats.png}"></img>&nbsp;Week Tweets</a>
+		            	</li>
+		            </ul>
+				</li>				
+			</ul>
+			<div id="dataContentPanel" class="tab-content alert noPadding">
+				<div class="tab-pane active alert-info" id="homePanel">
+					<div id="homePanelUserDetails" class="row-fluid">
+						<div id="userMain" class="span3 noMargin gravatar">
+							<a href="#">
+								<img id="picture" src="http://www.gravatar.com/avatar/"
+									th:src="${'http://www.gravatar.com/avatar/'+currentUser.gravatar+'?s=64'}"
+									th:attr="data-user=${currentUser.login}">
+								</img>
+							</a>
+						</div>
+						<div class="span9 noMargin">
+							<h2>
+								<span id="firstName" th:text="${currentUser.firstName}">Julien</span> 
+								<span id="lastName" th:text="${currentUser.lastName}">DUBOIS</span>
+							</h2>
+						</div>
+					</div>
+					<div id="homePanelUserStats" class="well well-small row-fluid noMargin noPadding">
+						<div class="span4 noMargin noPadding center">
+							<span id="tweetCount" class="badge" 
+								th:attr="data-user=${currentUser.login}"
+								th:text="${currentUser.tweetCount}">20</span><br/>TWEETS
+						</div>
+						<div class="span4 noMargin noPadding center">
+							<span id="friendsCount" class="badge" th:text="${currentUser.friendsCount}">5</span><br/>FOLLOWING
+						</div>
+						<div class="span4 noMargin noPadding center">
+							<span id="followersCount" class="badge" th:text="${currentUser.followersCount}">100</span><br/>FOLLOWERS
+						</div>
+					</div>
+					<div id="homePanelTweet" class="row-fluid noMargin">
+						<div id="tweetErrorPanel" class="alert alert-error span12 noMargin noPadding" style="display: none;">
+							<h4 class="alert-heading">Error!</h4>
+							<span id="errorMessage"></span>
+						</div>
+							
+						<table id="tweetForm" class="center span12 noMargin noPadding">
+							<tr>
+								<td class="center">
+									<textarea id="tweetContent" class="focused"  
+										maxlength="140" 
+										name="content" 
+										placeholder="Type a new tweet..."></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<button id="tweetButton" type="button" class="btn btn-primary">Tweet!</button>
+								</td>
+							</tr>
+						</table>			
+					</div>					 		
+				</div>
+				<div class="tab-pane alert-info" id="profilePanel">
+					Profile				
+				</div>
+				<div class="tab-pane alert-info" id="followPanel">
+					Follow								
+				</div>				
+				<div class="tab-pane alert-success" id="timelinePanel">
+					Timeline					
+				</div>
+				<div class="tab-pane alert-success" id="favlinePanel">
+					Favorites					
+				</div>
+				<div class="tab-pane alert-success" id="userlinePanel">
+					Userline					
+				</div>
+				<div class="tab-pane alert-success" id="taglinePanel">
+					Tagline					
+				</div>
+				<div class="tab-pane alert-success" id="piechartPanel">
+					Tweets of the day					
+				</div>
+				<div class="tab-pane alert-success" id="punchchartPanel">
+					Tweets of the week				
+				</div>																								
+			</div>
+		</div>
+	</div>
+	<footer th:substituteby="templates/mobile :: footer"></footer>
+	<footer id="home-javascript" th:substituteby="templates/mobile :: home-javascript"></footer>
+  </body>
+  
+</html>  
