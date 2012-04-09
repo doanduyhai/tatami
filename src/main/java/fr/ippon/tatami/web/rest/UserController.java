@@ -1,5 +1,9 @@
 package fr.ippon.tatami.web.rest;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -13,8 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
+import fr.ippon.tatami.domain.UserSearch;
+import fr.ippon.tatami.service.TimelineService;
 import fr.ippon.tatami.service.UserService;
+import fr.ippon.tatami.service.util.TatamiConstants;
 import fr.ippon.tatami.web.json.view.UserView;
 
 /**
@@ -31,12 +39,41 @@ public class UserController extends AbstractRESTController
 	@Inject
 	private UserService userService;
 
+	@Inject
+	TimelineService timelineService;
+
 	@RequestMapping(value = "/rest/users/{login}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public User getUser(@PathVariable("login") String login)
 	{
 		log.debug("REST request to get Profile : {}", login);
 		return userService.getUserByLogin(login);
+	}
+
+	@RequestMapping(value = "/rest/users/suggestions", method = RequestMethod.GET, produces = "application/json")
+	public void getSuggestions(HttpServletResponse response)
+	{
+		User currentUser = userService.getCurrentUser();
+		final String login = currentUser.getLogin();
+		log.debug("REST request to get the last active tweeters list (except {} ).", login);
+
+		Collection<String> exceptions = userService.getFriendsForUser(login);
+		exceptions.add(login);
+
+		Collection<Tweet> tweets = timelineService.getDayline("");
+		Set<String> logins = new HashSet<String>();
+		for (Tweet tweet : tweets)
+		{
+			if (exceptions.contains(tweet.getLogin()))
+				continue;
+
+			logins.add(tweet.getLogin());
+
+			if (logins.size() == TatamiConstants.USER_SUGGESTION_LIMIT)
+				break; // suggestions list limit
+		}
+
+		this.writeWithView((Object) this.userService.buildUserList(currentUser, logins), response, UserView.Minimum.class);
 	}
 
 	@RequestMapping(value = "/rest/usersStats/{login}", method = RequestMethod.GET, produces = "application/json")
@@ -100,5 +137,13 @@ public class UserController extends AbstractRESTController
 		{
 			log.info("Cannot remove a friend from another user");
 		}
+	}
+
+	@RequestMapping(value = "/rest/usersSearch", method = RequestMethod.POST, consumes = "application/json")
+	@ResponseBody
+	public void searchUser(@Valid @RequestBody UserSearch userSearch, HttpServletResponse response)
+	{
+		log.debug("REST request to search for user with input {}", userSearch);
+		this.writeWithView(userService.findUser(userSearch.getSearchString()), response, UserView.Minimum.class);
 	}
 }

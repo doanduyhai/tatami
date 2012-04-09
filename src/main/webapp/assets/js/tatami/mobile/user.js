@@ -1,10 +1,19 @@
-function loadHome()
+function refreshHome()
 {
-	$('#homeTabContent').empty();
-	$('#homeTabContent').load('fragments/user.html #homeContent',
-	function()
-	{
-		bindListeners($('#homeTabContent'));	
+	$.ajax({
+		type: HTTP_GET,
+		url: "rest/usersProfile/" + login,
+		dataType: JSON_DATA,
+		success: function(user) {
+			$('#homePanel').find('#picture').attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=64').end()
+			.find('#firstName').html(user.firstName).end()
+			.find('#latName').html(user.lastName).end()
+			.find('#tweetCount').html(user.tweetCount).end()
+			.find('#friendsCount').html(user.friendsCount).end()
+			.find('#followersCount').html(user.followersCount).end();
+			
+			bindListeners($('#homePanel'));
+		}
 	});
 }
 
@@ -13,16 +22,16 @@ function updateProfile() {
 	$('#userProfileErrorPanel').hide();
 	
 	$.ajax({
-		type: 'POST',
+		type: HTTP_POST,
 		url: "rest/users/" + login,
-		contentType: "application/json; charset=UTF-8",
+		contentType: JSON_CONTENT,
 		data: JSON.stringify($("#updateUserForm").serializeObject()),
-		dataType: "json",
+		dataType: JSON_DATA,
 		success: function(data) {
 			$('#defaultTab').tab('show');
 			setTimeout(function()
 			{
-				loadHome();
+				refreshHome();
 				updateUserCounters();
 			},300);		
 		},
@@ -36,7 +45,8 @@ function loadProfile()
 	$('#profilePanel').empty();
 	$('#profilePanel').load('fragments/mobile/profile.html #profileContent',function()
 	{
-		//bindListeners($('#profilePanel'));
+		//Bind click handler for "Update" button
+		$('#profilePanel').find('button[type="submit"]').click(updateProfile);
 	});
 	
 }
@@ -45,9 +55,9 @@ function loadProfile()
 function updateUserCounters()
 {
 	$.ajax({
-		type: 'GET',
+		type: HTTP_GET,
 		url: "rest/usersStats/" + login,
-		dataType: "json",
+		dataType: JSON_DATA,
 		success: function(data) {
 			$("#tweetCount").text(data.tweetCount);
 			$("#friendsCount").text(data.friendsCount);
@@ -61,19 +71,19 @@ function tweet() {
 
 	$('#tweetErrorPanel').hide();
 	$.ajax({
-        type: 'POST',
+        type: HTTP_POST,
         url: "rest/tweets",
         async: false,
         contentType: "application/json;  charset=UTF-8",
         data:  JSON.stringify({content: $.trim($("#tweetContent").val())}),
-        dataType: "json",
+        dataType: JSON_DATA,
         success: function(data) {
 			setTimeout(function()
 			{
 				$("#tweetContent").slideUp().val("").slideDown('fast');
 				updateUserCounters();
 				refreshTimeline();
-				loadWhoToFollow();
+				refreshUserSuggestions();
 			},300);	
         },
         error: errorHandler($('#tweetErrorPanel'))
@@ -85,9 +95,9 @@ function tweet() {
 function showUserProfile(login)
 {
 	$.ajax({
-		type: 'GET',
+		type: HTTP_GET,
 		url: "rest/usersProfile/" + login,
-		dataType: "json",
+		dataType: JSON_DATA,
 		success: function(data) {
 			
 			updateUserProfileModal(data);
@@ -99,9 +109,15 @@ function showUserProfile(login)
 
 function updateUserProfileModal(data)
 {
+	var currentWidth = $(window).width();
+	var currentHeight = $(window).height();
+	
+	console.log('currentWidth = '+currentWidth);
+	console.log('currentHeight = '+currentHeight);
+	
 	$('#userProfileModal')
 	.find('#userProfileLogin').html('@'+data.login).end()
-	.find('#userProfileGravatar .tweetGravatar').attr('src','http://www.gravatar.com/avatar/'+data.gravatar+'?s=128').end()
+	.find('#userProfileGravatar .tweetGravatar').attr('src','http://www.gravatar.com/avatar/'+data.gravatar+'?s=64').end()
 	.find('#userProfileName').html(data.firstName+'&nbsp;'+data.lastName).end()
 	.find('#userProfileLocation span:nth-child(2)').html(data.location).end()
 	.find('#userProfileWebsite a').html(data.website).attr('href',data.website).end()
@@ -109,6 +125,42 @@ function updateUserProfileModal(data)
 	.find('#userProfileTweetsCount').html(data.tweetCount).end()
 	.find('#userProfileFriendsCount').html(data.friendsCount).end()
 	.find('#userProfileFollowersCount').html(data.followersCount);
+}
+
+function registerUserSearchListener()
+{
+	$('#userSearchForm button').click(function()
+	{
+		$('#searchErrorPanel').hide();
+		$.ajax({
+			type: HTTP_POST,
+			url: "rest/usersSearch",
+	        contentType: "application/json;  charset=UTF-8",
+	        data:  JSON.stringify({searchString: $.trim($("#followUserInput").val())}),			
+			dataType: JSON_DATA,
+			success: function(data) {
+				
+				var $tableBody = $('#userSearchList');
+	    		$tableBody.empty();
+	        	if(data.length>0)
+	    		{
+		        	$.each(data,function(index, user)
+		        	{        		
+		        		$tableBody.append(fillUserTemplate(user));
+		        	});
+		        	
+	    		}
+	        	else
+	        	{
+	        		$newUserLine = $('#emptyUserSearchTemplate').clone().attr('id','').appendTo($tableBody);
+	        	}
+				$('#userSearchPanel').show();
+			},
+			error: errorHandler($('#searchErrorPanel'))
+		});
+		
+		return false;
+	});
 }
 
 $.fn.serializeObject = function() {

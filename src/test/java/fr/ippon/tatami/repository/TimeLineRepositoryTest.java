@@ -1,6 +1,7 @@
 package fr.ippon.tatami.repository;
 
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TIMELINE_CF;
+import static fr.ippon.tatami.service.util.TatamiConstants.DEFAULT_TWEET_LIST_SIZE;
 import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -61,7 +62,7 @@ public class TimeLineRepositoryTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testAddTweetToTimeLine")
 	public void testGetTweetsFromTimeline()
 	{
-		Collection<String> tweetIds = this.timeLineRepository.getTweetsFromTimeline(user);
+		Collection<String> tweetIds = this.timeLineRepository.getTweetsRangeFromTimeline(user, 1, DEFAULT_TWEET_LIST_SIZE);
 
 		assertTrue(tweetIds.size() == 5, "tweetIds.size() == 5");
 		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");

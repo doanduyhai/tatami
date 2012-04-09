@@ -10,7 +10,8 @@
       <class name="fr.ippon.tatami.repository.TagLineRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.UserLineRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.TimeLineRepositoryTest"/>
-      <class name="fr.ippon.tatami.repository.StatsRepositoryTest"/>          
+      <class name="fr.ippon.tatami.repository.StatsRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.UserRepositoryTest"/>
     </classes>
   </test>
    

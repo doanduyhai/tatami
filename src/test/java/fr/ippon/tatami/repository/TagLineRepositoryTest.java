@@ -1,6 +1,7 @@
 package fr.ippon.tatami.repository;
 
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TAGLINE_CF;
+import static fr.ippon.tatami.service.util.TatamiConstants.DEFAULT_TAG_LIST_SIZE;
 import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
 import static org.testng.Assert.assertTrue;
 
@@ -48,7 +49,7 @@ public class TagLineRepositoryTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testAddTweet")
 	public void testFindTweetsForTag()
 	{
-		Collection<String> tweetIds = this.tagLineRepository.findTweetsForTag("tag");
+		Collection<String> tweetIds = this.tagLineRepository.findTweetsRangeForTag("tag", 1, DEFAULT_TAG_LIST_SIZE);
 
 		assertTrue(tweetIds.size() == 5, "tweetIds.size() == 5");
 		assertTrue(tweetIds.contains("tweet1"), "tweet1 has 'tag'");

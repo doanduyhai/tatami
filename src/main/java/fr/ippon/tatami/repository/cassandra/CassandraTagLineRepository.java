@@ -52,33 +52,6 @@ public class CassandraTagLineRepository extends CassandraAbstractRepository impl
 	}
 
 	@Override
-	public Collection<String> findTweetsForTag(String tag)
-	{
-		Collection<String> tweetIds = null;
-		TagLineCount tagLineCount = em.find(TagLineCount.class, tag);
-		if (tagLineCount == null)
-		{
-			// TODO Functional exception
-			tweetIds = Arrays.asList();
-		}
-		else
-		{
-			long endTweetColumn = tagLineCount.getTweetCount() - 1;
-			long startTweetColumn = tagLineCount.getTweetCount() - TatamiConstants.DEFAULT_TAG_LIST_SIZE - 1;
-
-			List<HColumn<Long, String>> columns = createSliceQuery(keyspaceOperator, se, le, se).setColumnFamily(TAGLINE_CF).setKey("tag")
-					.setRange(endTweetColumn, startTweetColumn, true, TatamiConstants.DEFAULT_TAG_LIST_SIZE).execute().get().getColumns();
-
-			tweetIds = new ArrayList<String>();
-			for (HColumn<Long, String> column : columns)
-			{
-				tweetIds.add(column.getValue());
-			}
-		}
-		return tweetIds;
-	}
-
-	@Override
 	public Collection<String> findTweetsRangeForTag(String tag, int start, int end)
 	{
 		Collection<String> tweetIds = null;

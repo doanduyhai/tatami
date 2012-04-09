@@ -6,7 +6,5 @@ public interface TagLineRepository
 {
 	void addTweet(String tag, String tweetId);
 
-	Collection<String> findTweetsForTag(String tag);
-
 	Collection<String> findTweetsRangeForTag(String tag, int start, int end);
 }

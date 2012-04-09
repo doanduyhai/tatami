@@ -18,6 +18,8 @@ public class TatamiConstants
 
 	public static final int USER_SUGGESTION_LIMIT = 5;
 
+	public static final int USER_SEARCH_LIMIT = 10;
+
 	public static final int MAX_TWEET_SIZE = 140;
 
 	public static final int TWEET_FIRST_FETCH_SIZE = 5;

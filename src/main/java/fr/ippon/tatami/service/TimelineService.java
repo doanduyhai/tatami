@@ -191,11 +191,6 @@ public class TimelineService implements InitializingBean
 		return this.buildTweetsList(null, tweetIds);
 	}
 
-	public Collection<Tweet> getTagline(String tag, int nbTweets)
-	{
-		return this.getTaglineRange(tag, 1, nbTweets);
-	}
-
 	public Collection<Tweet> getTaglineRange(String tag, int start, int end)
 	{
 		if (tag == null || tag.isEmpty())
@@ -209,11 +204,6 @@ public class TimelineService implements InitializingBean
 		return this.buildTweetsList(currentUser, tweetIds);
 	}
 
-	public Collection<Tweet> getTimeline(int nbTweets)
-	{
-		return this.getTimelineRange(1, nbTweets);
-	}
-
 	public Collection<Tweet> getTimelineRange(int start, int end)
 	{
 		User currentUser = authenticationService.getCurrentUser();
@@ -221,11 +211,6 @@ public class TimelineService implements InitializingBean
 		Collection<String> tweetIds = timeLineRepository.getTweetsRangeFromTimeline(currentUser, start, end);
 
 		return this.buildTweetsList(currentUser, tweetIds);
-	}
-
-	public Collection<Tweet> getUserline(String login, int nbTweets)
-	{
-		return this.getUserlineRange(login, 1, nbTweets);
 	}
 
 	public Collection<Tweet> getUserlineRange(String login, int start, int end)
@@ -299,12 +284,7 @@ public class TimelineService implements InitializingBean
 		favoriteLineRepository.removeFavorite(currentUser, tweetId);
 	}
 
-	public Collection<Tweet> getFavoritesline()
-	{
-		return this.getFavoriteslineByRange(1, TatamiConstants.DEFAULT_FAVORITE_LIST_SIZE);
-	}
-
-	public Collection<Tweet> getFavoriteslineByRange(int start, int end)
+	public Collection<Tweet> getFavoriteslineRange(int start, int end)
 	{
 		User currentUser = authenticationService.getCurrentUser();
 		Collection<String> tweetIds = favoriteLineRepository.findFavoritesRangeForUser(currentUser, start, end);
@@ -345,7 +325,7 @@ public class TimelineService implements InitializingBean
 			if (currentUser != null)
 			{
 				Collection<String> friends = this.userService.getFriendsForUser(currentUser.getLogin());
-				Collection<String> favorites = this.favoriteLineRepository.findFavoritesForUser(currentUser);
+				Collection<String> favorites = this.favoriteLineRepository.findFavoritesRangeForUser(currentUser, 1, 99999999);
 
 				if (!StringUtils.equals(currentUser.getLogin(), tweet.getLogin()))
 				{

@@ -18,7 +18,6 @@ import org.springframework.stereotype.Repository;
 
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.TimeLineRepository;
-import fr.ippon.tatami.service.util.TatamiConstants;
 
 @Repository
 public class CassandraTimeLineRepository extends CassandraAbstractRepository implements TimeLineRepository
@@ -41,24 +40,6 @@ public class CassandraTimeLineRepository extends CassandraAbstractRepository imp
 
 		em.persist(user);
 
-	}
-
-	@Override
-	public Collection<String> getTweetsFromTimeline(User user)
-	{
-		long endTweetColumn = user.getTimelineTweetCount() - 1;
-		long startTweetColumn = user.getTimelineTweetCount() - TatamiConstants.DEFAULT_TWEET_LIST_SIZE - 1;
-
-		List<HColumn<Long, String>> columns = createSliceQuery(keyspaceOperator, se, le, se).setColumnFamily(TIMELINE_CF).setKey(user.getLogin())
-				.setRange(endTweetColumn, startTweetColumn, true, TatamiConstants.DEFAULT_TWEET_LIST_SIZE).execute().get().getColumns();
-
-		List<String> tweetIds = new ArrayList<String>();
-		for (HColumn<Long, String> column : columns)
-		{
-			tweetIds.add(column.getValue());
-		}
-
-		return tweetIds;
 	}
 
 	@Override

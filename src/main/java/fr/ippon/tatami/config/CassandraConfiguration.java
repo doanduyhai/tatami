@@ -12,6 +12,7 @@ import static fr.ippon.tatami.config.ColumnFamilyKeys.TIMELINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TWEET_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.USERLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.USER_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.USER_INDEX_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.WEEKLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.YEARLINE_CF;
 
@@ -83,6 +84,9 @@ public class CassandraConfiguration
 			addColumnFamilyWithStringColumn(cluster, TAGLINE_COUNT_CF);
 			addColumnFamilyWithLongColumn(cluster, TIMELINE_CF);
 			addColumnFamilyWithLongColumn(cluster, USERLINE_CF);
+
+			// CF for User search feature
+			addColumnFamilyWithStringColumn(cluster, USER_INDEX_CF);
 
 			ThriftCfDef cfDef = new ThriftCfDef(cassandraKeyspace, COUNTER_CF, ComparatorType.UTF8TYPE);
 

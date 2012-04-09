@@ -10,7 +10,5 @@ public interface FavoriteRepository
 
 	void removeFavorite(User user, String tweetId);
 
-	Collection<String> findFavoritesForUser(User user);
-
 	Collection<String> findFavoritesRangeForUser(User user, int start, int end);
 }

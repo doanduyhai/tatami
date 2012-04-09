@@ -1,15 +1,36 @@
-google.load("visualization", "1", {packages:["corechart"]});
-
 var clickFromLink = false;
 
 !function ( $ ) {
-    	
-	$(function() {
 
-		// left panel
-		loadProfile();
-		loadWhoToFollow();
-		loadEmptyLines();	
+	// left panel
+	loadProfile();
+	loadWhoToFollow();
+	
+    // auto-refresh
+    $('a[data-toggle="tab"]').on('show', function(e) {
+    	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' || e.target.hash == '#taglinePanel') {
+    		if(!clickFromLink)
+    		{	
+    			setTimeout(refreshCurrentLine,10);
+    		}	
+    	}
+    });
+    
+    
+	$(function() {
+		
+		// Bind click handler for "Tweet" button
+		$('#tweetButton').click(tweet);
+		
+		//Right panel
+		loadEmptyLines();
+		$('#picture').click(function()
+		{
+			var login = $('#picture').attr('data-user');
+			showUserProfile(login);
+			return false;
+		});
+		
 	});
 
 }( window.jQuery );

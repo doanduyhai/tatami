@@ -7,7 +7,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Repository;
 import fr.ippon.tatami.domain.FavoriteLine;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.FavoriteRepository;
-import fr.ippon.tatami.service.util.TatamiConstants;
 
 @Repository
 public class CassandraFavoriteRepository extends CassandraAbstractRepository implements FavoriteRepository
@@ -72,30 +70,6 @@ public class CassandraFavoriteRepository extends CassandraAbstractRepository imp
 		em.persist(user);
 		em.persist(favoriteLine);
 
-	}
-
-	@Override
-	public Collection<String> findFavoritesForUser(User user)
-	{
-		FavoriteLine favoriteLine = em.find(FavoriteLine.class, user.getLogin());
-		if (favoriteLine != null)
-		{
-			List<String> list = new ArrayList<String>(favoriteLine.getFavorites());
-			Collections.reverse(list);
-
-			// Return default nb of favorite tweets and not all
-			if (list.size() < TatamiConstants.DEFAULT_FAVORITE_LIST_SIZE)
-			{
-				return list;
-			}
-			else
-			{
-				return list.subList(0, TatamiConstants.DEFAULT_FAVORITE_LIST_SIZE - 1);
-			}
-
-		}
-
-		return Arrays.asList();
 	}
 
 	@Override

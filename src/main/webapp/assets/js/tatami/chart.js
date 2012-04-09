@@ -1,8 +1,8 @@
 function refreshPieChart() {
 	$.ajax({
-		type: 'GET',
+		type: HTTP_GET,
 		url: "rest/tweetStats/day",
-		dataType: "json",
+		dataType: JSON_DATA,
 		success: function(data) {
 			makePieChartsList(data, $('#piechart_div'));
 		}
@@ -29,9 +29,9 @@ function makePieChartsList(data, dest) {
 
 function refreshPunchChart() {
 	$.ajax({
-		type: 'GET',
+		type: HTTP_GET,
 		url: "rest/tweetStats/week",
-		dataType: "json",
+		dataType: JSON_DATA,
 		success: function(data) {
 			makePunchChartsList(data, $('#punchchart_div'));
 //			$('#punchchartTab').tab('show');

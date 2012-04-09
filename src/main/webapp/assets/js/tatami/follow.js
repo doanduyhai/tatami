@@ -27,11 +27,11 @@ function followError()
 
 function followUser(loginToFollow) {
 	$.ajax({
-		type: 'POST',
+		type: HTTP_POST,
 		url: "rest/users/" + login + "/followUser",
-		contentType: "application/json; charset=UTF-8",
+		contentType: JSON_CONTENT,
 		data: loginToFollow,
-		dataType: "json",
+		dataType: JSON_DATA,
         success: function(data) {
 
 			setTimeout(function()
@@ -39,7 +39,7 @@ function followUser(loginToFollow) {
 	            $("#followUserInput").val("");
 	            updateUserCounters();
 	            followMessage(loginToFollow,true);
-	            loadWhoToFollow();
+	            refreshUserSuggestions();
 			},300);
 
         },
@@ -52,18 +52,18 @@ function followUser(loginToFollow) {
 function removeFriend(friend) {
 	
 	$.ajax({
-		type: 'POST',
+		type: HTTP_POST,
 		url: "rest/users/" + login + "/removeFriend",
 		contentType: "application/json;  charset=UTF-8",
 		data: friend,
-		dataType: "json",
+		dataType: JSON_DATA,
         success: function(data) {
 
 			setTimeout(function()
 			{
 	        	updateUserCounters();
 	        	followMessage(friend,false);	
-	        	loadWhoToFollow();
+	        	refreshUserSuggestions();
 			},300);
 
         },
@@ -72,17 +72,29 @@ function removeFriend(friend) {
 }
 
 
-function loadWhoToFollow()
+function refreshUserSuggestions()
 {
-	$('#userSuggestions').empty();
-	$('#userSuggestions').load('fragments/followUser.html #userSuggestions tr',function()
-	{
-		bindListeners($('#userSuggestions'));
-		
-//		$('button[type="submit"]').click(function()
-//		{
-//			followUser($('#followline').val());
-//			return false;
-//		});
-	});
+	$.ajax({
+		type: HTTP_GET,
+		url: 'rest/users/suggestions',
+		dataType: JSON_DATA,
+        success: function(data)
+        {
+    		var $tableBody = $('#userSuggestions');
+    		$tableBody.empty();
+        	if(data.length>0)
+    		{
+	        	$.each(data,function(index, user)
+	        	{        		
+	        		$tableBody.append(fillUserTemplate(user));
+	        	});
+	        	
+    		}
+        	else
+        	{
+        		$newUserLine = $('#emptyUserTemplate').clone().attr('id','').appendTo($tableBody);
+        	}	
+        	
+        }
+    });	
 }

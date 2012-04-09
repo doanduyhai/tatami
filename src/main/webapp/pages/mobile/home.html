@@ -11,43 +11,27 @@
 		<div class="tabbable">
            <ul class="nav nav-tabs">
            		<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-						<img src="assets/img/glyphicons_322_twitter.png"
-						th:src="@{/assets/img/glyphicons_322_twitter.png}"></img>&nbsp;User&nbsp;<b class="caret"></b>
-					</a>
-		            <ul class="dropdown-menu">
-		            	<li>
-		            		<a id="defaultTab" href="#homePanel" data-toggle="tab">
-		            			<img src="assets/img/glyphicons_322_twitter.png"
-									th:src="@{/assets/img/glyphicons_322_twitter.png}"></img>&nbsp;&nbsp;Tweet</a>
-		            	</li>
-		            	<li>
-		            		<a id="profileTab" href="#profilePanel"  data-toggle="tab">
-		            			<img src="assets/img/glyphicons_151_edit.png"
-									th:src="@{/assets/img/glyphicons_151_edit.png}"></img>&nbsp;&nbsp;Update Profile</a>
-		            	</li>
-		            	<li>
-		            		<a id="profileTab" href="#followPanel"  data-toggle="tab">
-		            			<img src="assets/img/glyphicons_083_random.png"
-									th:src="@{/assets/img/glyphicons_083_random.png}"></img>&nbsp;Follow Suggestions</a>
-		            	</li>		            	
-		            </ul>	            
+            		<a id="defaultTab" href="#homePanel" data-toggle="tab">
+            			<img src="assets/img/glyphicons_322_twitter.png"
+							th:src="@{/assets/img/glyphicons_322_twitter.png}"></img>&nbsp;Tweet</a>	            
+				</li>
+				<li class="dropdown">
+            		<a id="timelineTab" href="#timelinePanel" data-toggle="tab">
+            			<img src="assets/img/glyphicons_309_comments.png"
+							th:src="@{/assets/img/glyphicons_309_comments.png}"></img>&nbsp;Timeline</a>
 				</li>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-						<img src="assets/img/glyphicons_309_comments.png"
-						th:src="@{/assets/img/glyphicons_309_comments.png}"></img>&nbsp;Tweet Lines&nbsp;<b class="caret"></b>
-					</a>
-					 <ul class="dropdown-menu">
+						<img src="assets/img/glyphicons_153_more_windows.png"
+									th:src="@{/assets/img/glyphicons_153_more_windows.png}"></img>&nbsp;More<b class="caret"></b></a>
+		            <ul class="dropdown-menu">
 		            	<li>
-		            		<a id="timelineTab" href="#timelinePanel" data-toggle="tab">
-		            			<img src="assets/img/glyphicons_309_comments.png"
-									th:src="@{/assets/img/glyphicons_309_comments.png}"></img>&nbsp;&nbsp;&nbsp;Timeline</a>
+		            		<a id="profileTab" href="#profilePanel"  data-toggle="tab">
+		            			<i class="icon-edit"></i>&nbsp;Update Profile</a>
 		            	</li>
 		            	<li>
 		            		<a id="favoriteTab" href="#favlinePanel"  data-toggle="tab">
-		            			<img src="assets/img/glyphicons_049_star.png"
-									th:src="@{/assets/img/glyphicons_049_star.png}"></img>&nbsp;&nbsp;&nbsp;Favorites</a>
+		            			<i class="icon-star"></i>&nbsp;Favorites</a>
 		            	</li>
 		            	<li>
 		            		<a id="userlineTab" href="#userlinePanel" data-toggle="tab">
@@ -56,27 +40,13 @@
 		            	</li>
 						<li>
 		            		<a id="taglineTab" href="#taglinePanel" data-toggle="tab">
-		            			<img src="assets/img/glyphicons_066_tags.png"
-									th:src="@{/assets/img/glyphicons_066_tags.png}"></img>&nbsp;&nbsp;Tagline</a>
-		            	</li>
-		            </ul>	
-				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-						<img src="assets/img/glyphicons_041_charts.png"
-									th:src="@{/assets/img/glyphicons_041_charts.png}"></img>&nbsp;Statistics<b class="caret"></b></a>
-		            <ul class="dropdown-menu">
+		            			<i class="icon-tags"></i>&nbsp;Tagline</a>
+		            	</li>		            	
 		            	<li>
-		            		<a id="piechartTab" href="#piechartPanel" data-toggle="tab">
-		            			<img src="assets/img/glyphicons_042_pie_chart.png"
-									th:src="@{/assets/img/glyphicons_042_pie_chart.png}"></img>&nbsp;Day Tweets</a>
-		            	</li>
-		            	<li>
-		            		<a id="punchchartTab" href="#punchchartPanel" data-toggle="tab">
-		            			<img src="assets/img/glyphicons_040_stats.png"
-									th:src="@{/assets/img/glyphicons_040_stats.png}"></img>&nbsp;Week Tweets</a>
-		            	</li>
-		            </ul>
+		            		<a id="profileTab" href="#followPanel"  data-toggle="tab">
+		            			<i class="icon-random"></i>&nbsp;User Suggestions</a>
+		            	</li>		            	
+		            </ul>				
 				</li>				
 			</ul>
 			<div id="dataContentPanel" class="tab-content alert noPadding">
@@ -110,13 +80,13 @@
 							<span id="followersCount" class="badge" th:text="${currentUser.followersCount}">100</span><br/>FOLLOWERS
 						</div>
 					</div>
-					<div id="homePanelTweet" class="row-fluid noMargin">
-						<div id="tweetErrorPanel" class="alert alert-error span12 noMargin noPadding" style="display: none;">
+					<div id="homePanelTweet" class="row-fluid noMargin center">
+						<div id="tweetErrorPanel" class="alert alert-error noPadding" style="display: none;">
 							<h4 class="alert-heading">Error!</h4>
-							<span id="errorMessage"></span>
+							<span class="errorMessage"></span>
 						</div>
 							
-						<table id="tweetForm" class="center span12 noMargin noPadding">
+						<table id="tweetForm" class="center row-fluid noMargin noPadding">
 							<tr>
 								<td class="center">
 									<textarea id="tweetContent" class="focused"  
@@ -150,16 +120,15 @@
 				</div>
 				<div class="tab-pane alert-success" id="taglinePanel">
 					Tagline					
-				</div>
-				<div class="tab-pane alert-success" id="piechartPanel">
-					Tweets of the day					
-				</div>
-				<div class="tab-pane alert-success" id="punchchartPanel">
-					Tweets of the week				
-				</div>																								
+				</div>																							
 			</div>
 		</div>
 	</div>
+	
+	<div id="userTemplate" th:substituteby="templates/user :: userTemplate"></div>
+	<div id="tweetTemplate" th:substituteby="templates/tweet :: tweetTemplate"></div>
+	<div id="userProfileModal" th:substituteby="templates/userprofile :: userProfileModal"></div>
+		
 	<footer th:substituteby="templates/mobile :: footer"></footer>
 	<footer id="home-javascript" th:substituteby="templates/mobile :: home-javascript"></footer>
   </body>

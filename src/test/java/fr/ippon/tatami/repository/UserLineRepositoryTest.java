@@ -1,6 +1,7 @@
 package fr.ippon.tatami.repository;
 
 import static fr.ippon.tatami.config.ColumnFamilyKeys.USERLINE_CF;
+import static fr.ippon.tatami.service.util.TatamiConstants.DEFAULT_TWEET_LIST_SIZE;
 import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -61,7 +62,7 @@ public class UserLineRepositoryTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testAddTweetToUserLine")
 	public void testGetTweetsFromUserline()
 	{
-		Collection<String> tweetIds = this.userLineRepository.getTweetsFromUserline(user);
+		Collection<String> tweetIds = this.userLineRepository.getTweetsRangeFromUserline(user, 1, DEFAULT_TWEET_LIST_SIZE);
 
 		assertTrue(tweetIds.size() == 5, "tweetIds.size() == 5");
 		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");

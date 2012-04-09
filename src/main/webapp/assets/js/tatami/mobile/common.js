@@ -41,17 +41,7 @@ function bindListeners($target)
 		loadTagsline(target);
 		return false;
 	});
-	
-	// Bind click handler for "Tweet" button
-	$target.find('#tweetButton').click(tweet);
-	
-	//Bind click handler for "Update" button
-	$target.find('button[type="submit"]').click(updateProfile);
 
-	
-	//Bind 'hover' on user gravatar
-	registerUserDetailsPopOver($target);
-	
 	//Bind click on gravatar to display user profile modal
 	$target.find('img.tweetGravatar[data-user],#picture').click(function(e)
 	{
@@ -77,60 +67,15 @@ function errorHandler($targetErrorPanel)
 	};
 }
 
-function registerUserDetailsPopOver($target)
+
+function registerRefreshLineListeners($target)
 {
-	$target.find('.tweetGravatar').mouseenter(function()
-	{
-		if($(this).data('popover') == null)
-		{
-			var data_user= $(this).attr('data-user');
-			$(this).popover({
-				animation: false,
-				placement: 'right',
-				trigger: 'manual',
-				title: 'User details',
-				html : true,
-				template: $('#popoverTemplate').clone().attr('id','').find('div.popover').attr('data-user',data_user).end().html()
-			});
-		}
-		$(this).popover('show');
-		$.ajax({
-			type: HTTP_GET,
-			url: "rest/usersDetails/" + $('.popover.in').attr('data-user'),
-			dataType: JSON_DATA,
-	        success: function(data)
-	        {
-	        	$('.popover.in .userDetailsTitle').empty()
-	        	.append('<img class="userDetailsGravatar" src="http://www.gravatar.com/avatar/'+data.gravatar+'?s=24"></img>')
-	        	.append('<span>@'+data.login+'</span>');
-	        	
-	        	$('.popover.in .userDetailsContent').empty();
-	        	$('#userDetailsTemplate .row-fluid').clone()
-	        	.find('.userDetailsName').html(data.firstName+'&nbsp;'+data.lastName).end()
-	        	.find('.userDetailsTweetsCount').html(data.tweetCount).end()
-	        	.find('.userDetailsFriendsCount').html(data.friendsCount).end()
-	        	.find('.userDetailsFollowersCount').html(data.followersCount).end()
-	        	.appendTo('.popover.in .userDetailsContent');
-	        	
-	        }
-	    });
-		
-	});
-	
-	$target.find('.tweetGravatar').mouseleave(function()
-	{
-		$(this).popover('hide');
-	});
+	$target.find('.refreshLineIcon').click(refreshCurrentLine);
 }
 
-function registerRefreshLineListeners()
+function registerFetchTweetHandlers($target)
 {
-	$('.refreshLineIcon').click(refreshCurrentLine);
-}
-
-function registerFetchTweetHandlers()
-{
-	$('.tweetPagingButton').click(function(event)
+	$target.find('.tweetPagingButton').click(function(event)
 	{
 		var tweetsNb = $(event.target).closest('footer').find('.pageSelector option').filter(':selected').val(); 
 		var currentTweetsNb = $(event.target).closest('footer').closest('div').find('.lineContent tr.data').size();
@@ -166,25 +111,25 @@ function fillTweetTemplate(tweet,data_line_type)
 	// Conditional rendering of Follow icon
 	if(data_line_type != 'timeline' && tweet.authorFollow)
 	{	
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Follow" data-follow="'+tweet.login+'"><i class="icon-eye-open"></i>&nbsp;</a>');
+		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Follow" data-follow="'+tweet.login+'"><i class="frame icon-eye-open"></i></a>&nbsp;&nbsp;');
 	}
 	
 	// Conditional rendering of unfollow icon
 	if(tweet.authorForget)
 	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop following" data-unfollow="'+tweet.login+'"><i class="icon-eye-close"></i>&nbsp;</a>');
+		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop following" data-unfollow="'+tweet.login+'"><i class="frame icon-eye-close"></i></a>&nbsp;&nbsp;');
 	}	
 	
 	// Conditional rendering for like icon
 	if(data_line_type != 'favoriteline' && tweet.addToFavorite)
 	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="icon-star"></i>&nbsp;</a>');
+		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="frame icon-star"></i></a>&nbsp;&nbsp;');
 	}
 
 	// Conditional rendering for unlike icon
 	if(data_line_type == 'favoriteline' && !tweet.addToFavorite)
 	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="icon-star-empty"></i>&nbsp;</a>');
+		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="frame icon-star-empty"></i></a>&nbsp;&nbsp;');
 	}	
 	
 	
@@ -212,9 +157,8 @@ function fillUserTemplate(user)
 	{
 		$newUserLine.find('.tweetFriend a').removeAttr('data-follow').attr('data-unfollow',user.login)
 		.attr('title','Stop following '+user.login).find('i').removeClass().addClass('icon-eye-close');
-	}
+	}	
 	bindListeners($newUserLine);
-	
 	return $newUserLine;
 	
 }

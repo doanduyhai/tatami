@@ -200,7 +200,7 @@ public class TweetController extends AbstractRESTController
 				end
 		});
 
-		this.writeWithView((Object) timelineService.getFavoriteslineByRange(start, end), response, TweetView.Full.class);
+		this.writeWithView((Object) timelineService.getFavoriteslineRange(start, end), response, TweetView.Full.class);
 	}
 
 	@RequestMapping(value = "/rest/tweetFetch/tagline/{tag}/{start}/{end}", method = RequestMethod.GET)

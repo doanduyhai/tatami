@@ -37,6 +37,9 @@
     <user-service id="userDetailsService">
         <user name="jdubois" password="password" authorities="ROLE_USER"/>
         <user name="tescolan" password="password" authorities="ROLE_USER"/>
+        <user name="tmartin" password="password" authorities="ROLE_USER"/>
+        <user name="tdupond" password="password" authorities="ROLE_USER"/>
+        <user name="tdubois" password="password" authorities="ROLE_USER"/>
         <user name="duyhai" password="a" authorities="ROLE_USER"/>
     </user-service>
 

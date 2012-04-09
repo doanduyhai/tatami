@@ -67,5 +67,12 @@
         "name" : "Tweet",
         "keyType" : "UTF8Type",
         "comparatorType" : "UTF8Type"
-    }]
+    },
+    {
+        "name" : "UserIndex",
+        "keyType" : "UTF8Type",
+        "comparatorType" : "UTF8Type",
+        "defaultColumnValueType" : "UTF8Type"
+    }
+    ]
 }

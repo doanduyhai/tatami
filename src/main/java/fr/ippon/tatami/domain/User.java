@@ -28,6 +28,7 @@ public class User
 {
 	@JsonView(
 	{
+			UserView.Minimum.class,
 			UserView.Details.class,
 			UserView.Full.class
 	})
@@ -41,6 +42,7 @@ public class User
 
 	@JsonView(
 	{
+			UserView.Minimum.class,
 			UserView.Details.class,
 			UserView.Full.class
 	})
@@ -49,6 +51,7 @@ public class User
 
 	@JsonView(
 	{
+			UserView.Minimum.class,
 			UserView.Details.class,
 			UserView.Full.class
 	})
@@ -59,6 +62,7 @@ public class User
 
 	@JsonView(
 	{
+			UserView.Minimum.class,
 			UserView.Details.class,
 			UserView.Full.class
 	})
@@ -113,6 +117,12 @@ public class User
 	@Column(name = "favoritesCount")
 	private long favoritesCount = 0;
 
+	@JsonView(value =
+	{
+			UserView.Minimum.class,
+			UserView.Full.class
+
+	})
 	private boolean follow = false;
 
 	public void incrementTweetCount()

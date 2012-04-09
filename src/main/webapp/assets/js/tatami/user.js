@@ -13,11 +13,11 @@ function updateProfile() {
 	$('#userProfileErrorPanel').hide();
 	
 	$.ajax({
-		type: 'POST',
+		type: HTTP_POST,
 		url: "rest/users/" + login,
-		contentType: "application/json; charset=UTF-8",
+		contentType: JSON_CONTENT,
 		data: JSON.stringify($("#updateUserForm").serializeObject()),
-		dataType: "json",
+		dataType: JSON_DATA,
 		success: function(data) {
 			$('#defaultTab').tab('show');
 			setTimeout(function()
@@ -45,9 +45,9 @@ function loadProfile()
 function updateUserCounters()
 {
 	$.ajax({
-		type: 'GET',
+		type: HTTP_GET,
 		url: "rest/usersStats/" + login,
-		dataType: "json",
+		dataType: JSON_DATA,
 		success: function(data) {
 			$("#tweetCount").text(data.tweetCount);
 			$("#friendsCount").text(data.friendsCount);
@@ -61,19 +61,18 @@ function tweet() {
 
 	$('#tweetErrorPanel').hide();
 	$.ajax({
-        type: 'POST',
+        type: HTTP_POST,
         url: "rest/tweets",
-        async: false,
         contentType: "application/json;  charset=UTF-8",
         data:  JSON.stringify({content: $.trim($("#tweetContent").val())}),
-        dataType: "json",
+        dataType: JSON_DATA,
         success: function(data) {
 			setTimeout(function()
 			{
 				$("#tweetContent").slideUp().val("").slideDown('fast');
 				updateUserCounters();
 				refreshTimeline();
-				loadWhoToFollow();
+				refreshUserSuggestions();
 			},300);	
         },
         error: errorHandler($('#tweetErrorPanel'))
@@ -85,9 +84,9 @@ function tweet() {
 function showUserProfile(login)
 {
 	$.ajax({
-		type: 'GET',
+		type: HTTP_GET,
 		url: "rest/usersProfile/" + login,
-		dataType: "json",
+		dataType: JSON_DATA,
 		success: function(data) {
 			
 			updateUserProfileModal(data);
@@ -109,6 +108,42 @@ function updateUserProfileModal(data)
 	.find('#userProfileTweetsCount').html(data.tweetCount).end()
 	.find('#userProfileFriendsCount').html(data.friendsCount).end()
 	.find('#userProfileFollowersCount').html(data.followersCount);
+}
+
+function registerUserSearchListener()
+{
+	$('#userSearchForm button').click(function()
+	{
+		$('#searchErrorPanel').hide();
+		$.ajax({
+			type: HTTP_POST,
+			url: "rest/usersSearch",
+	        contentType: "application/json;  charset=UTF-8",
+	        data:  JSON.stringify({searchString: $.trim($("#followUserInput").val())}),			
+			dataType: JSON_DATA,
+			success: function(data) {
+				
+				var $tableBody = $('#userSearchList');
+	    		$tableBody.empty();
+	        	if(data.length>0)
+	    		{
+		        	$.each(data,function(index, user)
+		        	{        		
+		        		$tableBody.append(fillUserTemplate(user));
+		        	});
+		        	
+	    		}
+	        	else
+	        	{
+	        		$newUserLine = $('#emptyUserSearchTemplate').clone().attr('id','').appendTo($tableBody);
+	        	}
+				$('#userSearchModal').modal('show');
+			},
+			error: errorHandler($('#searchErrorPanel'))
+		});
+		
+		return false;
+	});
 }
 
 $.fn.serializeObject = function() {

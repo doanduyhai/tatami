@@ -1,5 +1,6 @@
 package fr.ippon.tatami.repository;
 
+import static fr.ippon.tatami.service.util.TatamiConstants.DEFAULT_FAVORITE_LIST_SIZE;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
@@ -50,7 +51,7 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testAddFavorite")
 	public void testFindFavoritesForUser()
 	{
-		Collection<String> userFavorites = this.favoriteRepository.findFavoritesForUser(user);
+		Collection<String> userFavorites = this.favoriteRepository.findFavoritesRangeForUser(user, 1, DEFAULT_FAVORITE_LIST_SIZE);
 
 		assertTrue(userFavorites.size() == 5, "userFavorites.size() == 5");
 		assertTrue(userFavorites.contains("tweet1"), "refreshedUser has tweet1 as favorite");
@@ -97,7 +98,7 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 		this.favoriteRepository.removeFavorite(user, "tweet5");
 
 		User refreshedUser = this.userRepository.findUserByLogin("test");
-		Collection<String> userFavorites = this.favoriteRepository.findFavoritesForUser(user);
+		Collection<String> userFavorites = this.favoriteRepository.findFavoritesRangeForUser(user, 1, DEFAULT_FAVORITE_LIST_SIZE);
 
 		assertTrue(userFavorites.size() == 0, "userFavorites.size()==0");
 		assertTrue(refreshedUser.getFavoritesCount() == 0, "refreshedUser.getFavoritesCount()==0");

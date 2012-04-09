@@ -176,7 +176,7 @@ public class StatsRepositoryTest extends AbstractCassandraTatamiTest
 	{
 		Collection<String> tweetIds = this.statsRepository.findTweetsForYear("2012");
 
-		assertTrue(tweetIds.size() == 2, "tweetIds.size()");
+		assertTrue(tweetIds.size() == 2, "tweetIds.size() == 2");
 		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");
 		assertTrue(tweetIds.contains("tweet2"), "tweetIds has 'tweet2'");
 	}

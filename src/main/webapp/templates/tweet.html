@@ -7,7 +7,7 @@
 		<table id="tweetTemplate">
 			<tbody>
 				<tr class="data">
-					<td>
+					<td class="tweetGravatarColumn">
 						<img class="tweetGravatar"
 							data-user="" 
 							src="http://www.gravatar.com/avatar/012411?s=32"
@@ -15,9 +15,8 @@
 					</td>
 					<td>
 						<article>
-							<strong></strong>
-							<br/>					
-							<span></span> 
+							<strong class="tweetAuthor"></strong>					
+							<span class="tweetText"></span> 
 						</article>
 					</td>
 					<td class="tweetFriend">
@@ -27,6 +26,13 @@
 					</td>				
 				</tr>
 			</tbody>			
+		</table>
+		<table id="tweetPaddingTemplate">
+			<tbody>
+				<tr style="display: none;">
+					<td colspan="4"></td>
+				</tr>				
+			</tbody>
 		</table>
 	</div>			  
 </html>	  

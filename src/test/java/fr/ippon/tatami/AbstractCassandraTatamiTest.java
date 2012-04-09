@@ -30,6 +30,7 @@ import fr.ippon.tatami.repository.StatsRepository;
 import fr.ippon.tatami.repository.TagLineRepository;
 import fr.ippon.tatami.repository.TimeLineRepository;
 import fr.ippon.tatami.repository.TweetRepository;
+import fr.ippon.tatami.repository.UserIndexRepository;
 import fr.ippon.tatami.repository.UserLineRepository;
 import fr.ippon.tatami.repository.UserRepository;
 import fr.ippon.tatami.service.AuthenticationService;
@@ -76,6 +77,9 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 	protected TimeLineRepository timeLineRepository;
 
 	@Inject
+	protected UserIndexRepository userIndexRepository;
+
+	@Inject
 	protected UserService userService;
 
 	@Inject
@@ -96,8 +100,8 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 		{
 			EmbeddedCassandraServerHelper.startEmbeddedCassandra();
 			/* create structure and load data */
-			String clusterName = "Tatami cluster";
-			String host = "localhost:9171";
+			// String clusterName = "Tatami cluster";
+			// String host = "localhost:9171";
 			// DataLoader dataLoader = new DataLoader(clusterName, host);
 			// dataLoader.load(new ClassPathJsonDataSet("dataset/dataset.json"));
 			isInitialized = true;

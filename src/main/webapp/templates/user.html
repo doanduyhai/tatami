@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" 
+	  xmlns="http://www.w3.org/1999/xhtml" 
+	  xmlns:th="http://www.thymeleaf.org">
+
+	<div id="userTemplate" th:fragment="userTemplate" style="display: none;">
+		<table>
+			<tbody>
+            	<tr id="emptyUserTemplate">
+					<td colSpan="2">
+						No new people to follow today ...
+					</td>            	
+            	</tr>
+            	<tr id="emptyUserSearchTemplate">
+					<td colSpan="2" class="center">
+						No user found for your search ...
+					</td>            	
+            	</tr>            	
+            	<tr id="fullUserTemplate">
+            		<td>
+           				<img class="tweetGravatar" 
+							src="http://www.gravatar.com/avatar/012411?s=32"
+							data-user="">
+						</img>&nbsp;&nbsp;&nbsp;							            		
+            			<a id="userLink" href="#" style="text-decoration:none" data-user="" title="">
+							<em>@login</em>
+						</a>
+						<span class="userDetailsName" >DuyHai DOAN</span>		
+            		</td>
+            		<td class="tweetFriend">
+            			<a href="#" data-follow="" title="Follow">
+            				<i class="icon-eye-open"></i>
+            			</a>&nbsp;
+            		</td>
+            	</tr>
+			</tbody>			
+		</table>
+	</div>			  
+</html>	  

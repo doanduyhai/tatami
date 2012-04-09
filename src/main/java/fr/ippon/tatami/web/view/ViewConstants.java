@@ -14,8 +14,6 @@ public class ViewConstants
 
 	public static final String URL_FRAGMENT_PROFILE = "/fragments/profile";
 
-	public static final String URL_FRAGMENT_FOLLOWER = "/fragments/followUser";
-
 	public static final String PAGE_LOGIN = "pages/login";
 
 	public static final String PAGE_HOME = "pages/home";
@@ -25,16 +23,6 @@ public class ViewConstants
 	public static final String FRAGMENT_USER = "fragments/user";
 
 	public static final String FRAGMENT_PROFILE = "fragments/profile";
-
-	public static final String FRAGMENT_FOLLOWER = "fragments/followUser";
-
-	public static final String FRAGMENT_TIMELINE = "fragments/timeline";
-
-	public static final String FRAGMENT_USERLINE = "fragments/userline";
-
-	public static final String FRAGMENT_FAVLINE = "fragments/favline";
-
-	public static final String FRAGMENT_TAGLINE = "fragments/tagline";
 
 	/*
 	 * Mobile URLS & views
@@ -51,11 +39,11 @@ public class ViewConstants
 
 	public static final String URL_MOBILE_FRAGMENT_TAGLINE = "/fragments/mobile/tagline";
 
-	public static final String MOBILE_LOGIN = "mobile/login";
+	public static final String MOBILE_LOGIN = "pages/mobile/login";
 
-	public static final String MOBILE_HOME = "mobile/home";
+	public static final String MOBILE_HOME = "pages/mobile/home";
 
-	public static final String MOBILE_ABOUT = "mobile/about";
+	public static final String MOBILE_ABOUT = "pages/mobile/about";
 
 	public static final String MOBILE_FRAGMENT_SUGGESTIONS = "fragments/mobile/suggestions";
 

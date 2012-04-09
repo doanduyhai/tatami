@@ -1,5 +1,6 @@
 package fr.ippon.tatami.service;
 
+import static fr.ippon.tatami.service.util.TatamiConstants.DEFAULT_TWEET_LIST_SIZE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -20,6 +21,7 @@ import fr.ippon.tatami.domain.DayLine;
 import fr.ippon.tatami.domain.FavoriteLine;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
+import fr.ippon.tatami.service.util.TatamiConstants;
 
 public class TimelineServiceTest extends AbstractCassandraTatamiTest
 {
@@ -83,7 +85,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testPostWeet")
 	public void shouldGetUserline() throws Exception
 	{
-		Collection<Tweet> tweets = this.timelineService.getUserline("jdubois", 10);
+		Collection<Tweet> tweets = this.timelineService.getUserlineRange("jdubois", 1, DEFAULT_TWEET_LIST_SIZE);
 
 		assertEquals(tweets.size(), 10, "tweets.size == 10");
 	}
@@ -128,7 +130,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = timelineService.getUserline(null, 10);
+		Collection<Tweet> tweets = timelineService.getUserlineRange(null, 1, DEFAULT_TWEET_LIST_SIZE);
 
 		assertEquals(tweets.size(), 0, "tweets.size == 0");
 	}
@@ -139,7 +141,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = timelineService.getUserline("", 10);
+		Collection<Tweet> tweets = timelineService.getUserlineRange("", 1, DEFAULT_TWEET_LIST_SIZE);
 
 		assertEquals(tweets.size(), 0, "tweets.size == 0");
 	}
@@ -151,7 +153,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = timelineService.getTimeline(10);
+		Collection<Tweet> tweets = timelineService.getTimelineRange(1, DEFAULT_TWEET_LIST_SIZE);
 
 		assertEquals(tweets.size(), 10, "tweets.size == 10");
 	}
@@ -239,7 +241,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "shouldGetDaylineRangeNegativeLimitByDate")
 	public void shouldGetTagline() throws Exception
 	{
-		Collection<Tweet> tweets = timelineService.getTagline("Cassandra", 10);
+		Collection<Tweet> tweets = timelineService.getTaglineRange("Cassandra", 1, TatamiConstants.DEFAULT_TAG_LIST_SIZE);
 
 		assertEquals(tweets.size(), 3, "tweets.size == 3");
 		assertTrue(tweets.contains(t9), "tweets.contains(t9)");
@@ -299,7 +301,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = this.timelineService.getFavoritesline();
+		Collection<Tweet> tweets = this.timelineService.getFavoriteslineRange(1, TatamiConstants.DEFAULT_FAVORITE_LIST_SIZE);
 
 		assertTrue(tweets.size() == 4, "favorites.getFavorites().size() == 4");
 		assertTrue(tweets.contains(t1), "favorites.getFavorites().contains('t1')");
@@ -314,7 +316,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange(2, 3);
+		Collection<Tweet> tweets = this.timelineService.getFavoriteslineRange(2, 3);
 
 		assertTrue(tweets.size() == 2, "favorites.getFavorites().size() == 2");
 		assertTrue(tweets.contains(t5), "favorites.getFavorites().contains('t5')");
@@ -327,7 +329,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange(4, 10);
+		Collection<Tweet> tweets = this.timelineService.getFavoriteslineRange(4, 10);
 
 		assertTrue(tweets.size() == 1, "favorites.getFavorites().size() == 1");
 		assertTrue(tweets.contains(t1), "favorites.getFavorites().contains('t1')");
@@ -339,7 +341,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		User jdubois = this.userService.getUserByLogin("jdubois");
 		mockAuthenticatedUser(jdubois);
 
-		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange(-4, 1);
+		Collection<Tweet> tweets = this.timelineService.getFavoriteslineRange(-4, 1);
 
 		assertTrue(tweets.size() == 1, "favorites.getFavorites().size() == 1");
 		assertTrue(tweets.contains(t7), "favorites.getFavorites().contains('t7')");
@@ -353,7 +355,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 
 		this.timelineService.removeFavoriteTweet(t7.getTweetId());
 
-		Collection<Tweet> tweets = this.timelineService.getFavoriteslineByRange(1, 10);
+		Collection<Tweet> tweets = this.timelineService.getFavoriteslineRange(1, 10);
 
 		assertTrue(tweets.size() == 3, "favorites.getFavorites().size() == 3");
 		assertTrue(tweets.contains(t1), "favorites.getFavorites().contains('t1')");
@@ -386,8 +388,8 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 
 		freshTescolan = this.userService.getUserByLogin("tescolan");
 		mockAuthenticatedUser(freshTescolan);
-		Collection<Tweet> userline = this.timelineService.getUserline("tescolan", 10);
-		Collection<Tweet> timeline = this.timelineService.getTimeline(10);
+		Collection<Tweet> userline = this.timelineService.getUserlineRange("tescolan", 1, DEFAULT_TWEET_LIST_SIZE);
+		Collection<Tweet> timeline = this.timelineService.getTimelineRange(1, DEFAULT_TWEET_LIST_SIZE);
 
 		assertTrue(freshTescolan.getTimelineTweetCount() == 1, "freshTescolan.getTimelineTweetCount() == 1");
 		assertTrue(freshTescolan.getTweetCount() == 0, "freshTescolan.getTimelineTweetCount() == 0");
@@ -413,8 +415,8 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 
 		User freshTescolan = this.userService.getUserByLogin("tescolan");
 		mockAuthenticatedUser(freshTescolan);
-		Collection<Tweet> userline = this.timelineService.getUserline("tescolan", 10);
-		Collection<Tweet> timeline = this.timelineService.getTimeline(10);
+		Collection<Tweet> userline = this.timelineService.getUserlineRange("tescolan", 1, DEFAULT_TWEET_LIST_SIZE);
+		Collection<Tweet> timeline = this.timelineService.getTimelineRange(1, DEFAULT_TWEET_LIST_SIZE);
 
 		assertTrue(freshTescolan.getTimelineTweetCount() == 2, "freshTescolan.getTimelineTweetCount() == 2");
 		assertTrue(freshTescolan.getTweetCount() == 0, "freshTescolan.getTimelineTweetCount() == 0");
@@ -452,6 +454,9 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		cqlQuery.setQuery("truncate MonthLine");
 		cqlQuery.execute();
 		cqlQuery.setQuery("truncate YearLine");
+		cqlQuery.execute();
+
+		cqlQuery.setQuery("truncate UserIndex");
 		cqlQuery.execute();
 	}
 

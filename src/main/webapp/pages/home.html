@@ -3,10 +3,10 @@
 	xmlns="http://www.w3.org/1999/xhtml" 
 	xmlns:th="http://www.thymeleaf.org">
 
-  <head th:substituteby="templates/global :: header" />	
+  <head th:substituteby="templates/desktop :: header" />	
   <body>
 
-	<div id="topbar-home" th:substituteby="templates/global :: topbar-home"></div>
+	<div id="topbar-home" th:substituteby="templates/desktop :: topbar-home"></div>
 
 	<div class="container-fluid">
 		<div class="row-fluid">
@@ -33,10 +33,14 @@
 					    <div>
 					        <i class="icon-zoom-in"></i><strong>Follow another user...</strong>
 					
-					        <form class="form-search" >
-					            <input id="followUserInput" type="text" class="input-large search-query"
+					        <form id="userSearchForm" class="form-search" >
+								<div id="searchErrorPanel" class="alert alert-error" style="display: none;">
+									<h4 class="alert-heading">Error!</h4>
+									<span class="errorMessage"></span>
+								</div>				        	
+					            <input id="followUserInput" name="searchString" type="text" class="input-large search-query"
 					                   placeholder="Type the login to follow..." required="required"/>
-					            <button type="submit" class="btn btn-primary">Search User</button>
+					            <button type="button" class="btn btn-primary">Search User</button>
 					        </form>
 					        <div class="alert alert-success alert-block" id="followSuccess" style="display: none;">
 					        	<a class="close" data-dismiss="alert">&times;</a>
@@ -47,7 +51,8 @@
 					        <div id="followableUsers">
 						       <i class="icon-random"></i> <strong>Who to follow</strong>
 						        <table class="table table-striped">
-						        	<tbody id="userSuggestions"></tbody>
+						        	<tbody id="userSuggestions">					        		
+						        	</tbody>
 						        </table>					        
 					        </div>        
 					    </div>                    
@@ -59,16 +64,16 @@
 				<div class="tabbable">
 					<ul class="nav nav-tabs">
 						<li class="active">
-							<a id="mainTab" href="#timeLinePanel" data-toggle="tab">Tweets</a>
+							<a id="mainTab" href="#timelinePanel" data-toggle="tab">Tweets</a>
 						</li>
 						<li>
-							<a id="favTab" href="#favLinePanel" data-toggle="tab"><i class="icon-heart"></i> Favorite Tweets</a>
+							<a id="favTab" href="#favlinePanel" data-toggle="tab"><i class="icon-heart"></i> Favorite Tweets</a>
 						</li>
 						<li>
-							<a id="userTab" href="#userLinePanel" data-toggle="tab"><i class="icon-user"></i> Other User Tweets</a>
+							<a id="userTab" href="#userlinePanel" data-toggle="tab"><i class="icon-user"></i> Other User Tweets</a>
 						</li>
 						<li>
-							<a id="tagTab" href="#tagLinePanel" data-toggle="tab"><i class="icon-tag"></i> Tag Tweets</a>
+							<a id="tagTab" href="#taglinePanel" data-toggle="tab"><i class="icon-tag"></i> Tag Tweets</a>
 						</li>
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Statistics <b class="caret"></b></a>
@@ -81,7 +86,7 @@
 					<div id="tweetsPanel" class="tab-content alert alert-success">
 					
 						<!-- TIMELINE -->
-						<div class="tab-pane active tweetLine" id="timeLinePanel">
+						<div class="tab-pane active tweetLine" id="timelinePanel">
 							<table class="table table-striped">
 								<thead>
 									<tr>
@@ -101,17 +106,14 @@
 								</table>
 							</div>
 							
-							<footer class="row-fluid" 
+							<footer class="row-fluid noMargin" 
 								th:attr="data-rest-url=${'rest/tweetFetch/timeline/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
 								data-line-type="timeline">
-								<div class="span4" style="padding-top: 2px;">
-									<a href="#" class="tweetPagingIcon">
-										<img src="assets/img/glyphicons_200_download.png"
-											th:src="@{/assets/img/glyphicons_200_download.png}"></img></a>&nbsp;
-									<em>More</em>
+								<div class="span10 noMargin middle center">
+									<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
 								</div>
-								<div class="span8 right">
-									<em>Tweets #</em>&nbsp;
+								<div class="span2 noMargin right">
+									<em>#</em>
 									<select class="pageSelector">
 										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
 										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
@@ -122,7 +124,7 @@
 						</div>
 						
 						<!-- FAVORITE LINE -->
-						<div class="tab-pane" id="favLinePanel">
+						<div class="tab-pane" id="favlinePanel">
 							<table class="table table-striped">
 								<thead>
 									<tr>
@@ -145,14 +147,11 @@
 							<footer class="row-fluid" 
 								th:attr="data-rest-url=${'rest/tweetFetch/favoriteline/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
 								data-line-type="favoriteline">
-								<div class="span4" style="padding-top: 2px;">
-									<a href="#" class="tweetPagingIcon">
-										<img src="assets/img/glyphicons_200_download.png"
-											th:src="@{/assets/img/glyphicons_200_download.png}"></img></a>&nbsp;
-									<em>More</em>
+								<div class="span10 noMargin middle center">
+									<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
 								</div>
-								<div class="span8 right">
-									<em>Tweets #</em>&nbsp;
+								<div class="span2 noMargin right">
+									<em>#</em>
 									<select class="pageSelector">
 										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
 										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
@@ -163,7 +162,7 @@
 						</div>
 						
 						<!-- USER LINE -->
-						<div class="tab-pane" id="userLinePanel">
+						<div class="tab-pane" id="userlinePanel">
 						
 							<table class="table table-striped">
 								<thead>
@@ -187,14 +186,11 @@
 							<footer class="row-fluid" 
 								th:attr="data-rest-url=${'rest/tweetFetch/userline/'+USER_LOGIN_PATTERN+'/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
 								data-line-type="userline">
-								<div class="span4" style="padding-top: 2px;">
-									<a href="#" class="tweetPagingIcon">
-										<img src="assets/img/glyphicons_200_download.png"
-											th:src="@{/assets/img/glyphicons_200_download.png}"></img></a>&nbsp;
-									<em>More</em>
+								<div class="span10 noMargin middle center">
+									<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
 								</div>
-								<div class="span8 right">
-									<em>Tweets #</em>&nbsp;
+								<div class="span2 noMargin right">
+									<em>#</em>
 									<select class="pageSelector">
 										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
 										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
@@ -205,7 +201,7 @@
 						</div>
 						
 						<!-- TAG LINE -->
-						<div class="tab-pane" id="tagLinePanel">
+						<div class="tab-pane" id="taglinePanel">
 							<table class="table table-striped">
 								<thead>
 									<tr>
@@ -228,14 +224,11 @@
 							<footer class="row-fluid" 
 								th:attr="data-rest-url=${'rest/tweetFetch/tagline/'+TAG_PATTERN+'/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
 								data-line-type="tagline">
-								<div class="span4" style="padding-top: 2px;">
-									<a href="#" class="tweetPagingIcon">
-										<img src="assets/img/glyphicons_200_download.png"
-											th:src="@{/assets/img/glyphicons_200_download.png}"></img></a>&nbsp;
-									<em>More</em>
+								<div class="span10 noMargin middle center">
+									<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
 								</div>
-								<div class="span8 right">
-									<em>Tweets #</em>&nbsp;
+								<div class="span2 noMargin right">
+									<em>#</em>
 									<select class="pageSelector">
 										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
 										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
@@ -266,21 +259,14 @@
 		</div>
 	</div>
 
+	<div id="userTemplate" th:substituteby="templates/user :: userTemplate"></div>
 	<div id="tweetTemplate" th:substituteby="templates/tweet :: tweetTemplate"></div>
 	<div id="popoverTemplate" th:substituteby="templates/popover :: popoverTemplate"></div>
 	<div id="userProfileModal" th:substituteby="templates/userprofile :: userProfileModal"></div>
-	<footer id="center-footer" th:substituteby="templates/global :: footer"></footer>
-	<footer id="home-javascript" th:substituteby="templates/global :: home-javascript"></footer>
+	<div id="userSearchModal" th:substituteby="templates/usersearch :: userSearchModal"></div>
 	
-	<div class="bgCover">
-		<div class="overlayBox">
-			<div class="overlayContent">
-				<h2>Hello World</h2>
-				<p>Feel free to put in what ever content you wish to. Images can also be shown</p>
-			</div>
-		</div>	
-	</div>
-	
+	<footer id="center-footer" th:substituteby="templates/desktop :: footer"></footer>
+	<footer id="home-javascript" th:substituteby="templates/desktop :: home-javascript"></footer>
 			
   </body>
 </html>

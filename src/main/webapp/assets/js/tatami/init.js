@@ -1,18 +1,11 @@
 function initTimeline()
 {
-	$('#mainTab').tab('show');	
-	$('#tweetsList').load('fragments/'+DEFAULT_TWEET_LIST_SIZE+'/timeline.html .lineContent tr',function()
-	{
-		bindListeners($('#tweetsList'));
-	});
+	refreshLine('timelinePanel',1,DEFAULT_TWEET_LIST_SIZE,true,null,null);
 }
 
 function initFavoritesline()
 {
-	$('#favTweetsList').load('fragments/'+DEFAULT_FAVORITE_LIST_SIZE+'/favline.html .lineContent tr',function()
-	{
-		bindListeners($('#favTweetsList'));
-	});	
+	refreshLine('favlinePanel',1,DEFAULT_TAG_LIST_SIZE,true,null,null);	
 }
 
 google.load("visualization", "1", {packages:["corechart"]});
@@ -20,11 +13,11 @@ google.load("visualization", "1", {packages:["corechart"]});
 var clickFromLink = false;
 
 !function ( $ ) {
-	
+
 	// left panel
 	loadHome();
 	loadProfile();
-	loadWhoToFollow();
+	refreshUserSuggestions();
 	
     // auto-refresh
     $('a[data-toggle="pill"]').on('show', function(e) {
@@ -37,7 +30,7 @@ var clickFromLink = false;
     
     // auto-refresh
     $('a[data-toggle="tab"]').on('show', function(e) {
-    	if (e.target.hash == '#timeLinePanel' || e.target.hash == '#userLinePanel' || e.target.hash == '#tagLinePanel') {
+    	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' || e.target.hash == '#taglinePanel') {
     		if(!clickFromLink)
     		{	
     			setTimeout(refreshCurrentLine,10);
@@ -60,11 +53,13 @@ var clickFromLink = false;
 
 	    // right panel
 	    initFavoritesline();
-	    initTimeline();		
+	    initTimeline();
+
 		// Register refresh handler for all lines
 		registerRefreshLineListeners();
 		registerUserDetailsPopOver($('#userSuggestions'));
 		registerFetchTweetHandlers();
+		registerUserSearchListener();
 		$('#picture').click(function()
 		{
 			var login = $('#picture').attr('data-user');
@@ -74,5 +69,6 @@ var clickFromLink = false;
 	});
 
 }( window.jQuery );
+
 
 
