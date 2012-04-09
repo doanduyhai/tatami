@@ -40,7 +40,7 @@
         <user name="tmartin" password="password" authorities="ROLE_USER"/>
         <user name="tdupond" password="password" authorities="ROLE_USER"/>
         <user name="tdubois" password="password" authorities="ROLE_USER"/>
-        <user name="duyhai" password="a" authorities="ROLE_USER"/>
+        <user name="duyhai" password="password" authorities="ROLE_USER"/>
     </user-service>
 
 </beans:beans>
