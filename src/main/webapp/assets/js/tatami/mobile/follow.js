@@ -37,6 +37,9 @@ function refreshUserSuggestions()
 }
 
 function followUser(loginToFollow) {
+	
+	$('#followErrorPanel').hide();
+	
 	$.ajax({
 		type: HTTP_POST,
 		url: "rest/users/" + login + "/followUser",
@@ -53,13 +56,15 @@ function followUser(loginToFollow) {
 			},300);
 
         },
-    	error: followError()
+    	error: errorHandler($('#followErrorPanel'))
 	});
 
 	return false;
 }
 
 function removeFriend(friend) {
+	
+	$('#followErrorPanel').hide();
 	
 	$.ajax({
 		type: HTTP_POST,
@@ -76,6 +81,6 @@ function removeFriend(friend) {
 			},300);
 
         },
-    	error: followError()
+    	error: errorHandler($('#followErrorPanel'))
 	});
 }
