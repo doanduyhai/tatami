@@ -50,9 +50,13 @@ function bindListeners($target)
 		{
 			$(e.currentTarget).popover('hide');	
 		}
-		
+		var modal = $(e.currentTarget).attr('data-highlight');
 		var login = $(e.currentTarget).attr('data-user');
 		showUserProfile(login);
+		if(modal!= null)
+		{
+			$('#'+modal).css('z-index',5000);
+		}
 		return false;
 	});
 
@@ -144,7 +148,7 @@ function fillUserTemplate(user)
 	$newUserLine = $('#fullUserTemplate').clone().attr('id','');
 	
 	$newUserLine
-	.find('.tweetGravatar').attr('data-user',user.login).attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=32').end()
+	.find('.tweetGravatar').attr('data-user',user.login).attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=32').attr('data-highlight','userProfileModal').end()
 	.find('#userLink').attr('id','').attr('data-user',user.login).attr('title','Show '+user.login+' tweets').end()
 	.find('em').html('@'+user.login).end()
 	.find('.userDetailsName').html(user.firstName+' '+user.lastName);
