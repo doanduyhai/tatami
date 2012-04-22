@@ -24,7 +24,7 @@ Installation
 - Run Jetty from Maven : mvn jetty:run
 - Connect to the application at http://127.0.0.1:8080/tatami
 
-The default users are "jdubois/password" and "tescolan/password", you can check or modify the
+The default users are "duyhai/password", "jdubois/password" and "tescolan/password", you can check or modify the
 Spring Security configuration at tatami-security.xml
 
 License
