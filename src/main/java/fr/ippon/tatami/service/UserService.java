@@ -11,14 +11,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.owasp.esapi.reference.DefaultEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.stereotype.Service;
 
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
@@ -31,36 +27,27 @@ import fr.ippon.tatami.repository.UserRepository;
 import fr.ippon.tatami.service.util.GravatarUtil;
 
 /**
- * Manages the application's users.
- * 
  * @author Julien Dubois
+ * @author DuyHai DOAN
  */
-@Service
-@DependsOn(value = "authenticationService")
+
 public class UserService
 {
 
 	private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-	@Inject
 	private UserRepository userRepository;
 
-	@Inject
 	private UserIndexRepository userIndexRepository;
 
-	@Inject
 	private FollowerRepository followerRepository;
 
-	@Inject
 	private FriendRepository friendRepository;
 
-	@Inject
 	private AuthenticationService authenticationService;
 
-	@Inject
 	private TimeLineRepository timelineRepository;
 
-	@Inject
 	TweetRepository tweetRepository;
 
 	public User getUserByLogin(String login)
@@ -299,6 +286,21 @@ public class UserService
 	public void setUserRepository(UserRepository userRepository)
 	{
 		this.userRepository = userRepository;
+	}
+
+	public void setUserIndexRepository(UserIndexRepository userIndexRepository)
+	{
+		this.userIndexRepository = userIndexRepository;
+	}
+
+	public void setTimelineRepository(TimeLineRepository timelineRepository)
+	{
+		this.timelineRepository = timelineRepository;
+	}
+
+	public void setTweetRepository(TweetRepository tweetRepository)
+	{
+		this.tweetRepository = tweetRepository;
 	}
 
 }

@@ -51,6 +51,12 @@ var clickFromLink = false;
 	
 	$(function() {
 
+		$.ajaxSetup({
+			statusCode: 
+			{
+				901: sessionTimeOutPopup
+			}
+		});
 	    // right panel
 	    initFavoritesline();
 	    initTimeline();

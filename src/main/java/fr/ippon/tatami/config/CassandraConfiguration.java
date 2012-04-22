@@ -15,9 +15,6 @@ import static fr.ippon.tatami.config.ColumnFamilyKeys.USER_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.USER_INDEX_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.WEEKLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.YEARLINE_CF;
-
-import javax.inject.Inject;
-
 import me.prettyprint.cassandra.model.ConfigurableConsistencyLevel;
 import me.prettyprint.cassandra.service.CassandraHostConfigurator;
 import me.prettyprint.cassandra.service.ThriftCfDef;
@@ -33,31 +30,66 @@ import me.prettyprint.hom.EntityManagerImpl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Main configuration file.
  * 
  * @author Julien Dubois
+ * @author DuyHai DOAN
  */
-@Configuration
-public class CassandraConfiguration
+public class CassandraConfiguration implements InitializingBean
 {
 
 	private final Log log = LogFactory.getLog(CassandraConfiguration.class);
 
-	@Inject
-	Environment env;
+	private String cassandraHost = "localhost:9171";
+	private String cassandraClusterName = "Tatami test cluster";
+	private String cassandraKeyspace = "tatami-test";
+	private Keyspace keyspace;
 
-	@Bean(name = "keyspaceOperator")
-	public Keyspace keyspaceOperator()
+	private void addColumnFamilyWithStringColumn(ThriftCluster cluster, String cfName)
 	{
 
-		String cassandraHost = env.getProperty("cassandra.host");
-		String cassandraClusterName = env.getProperty("cassandra.clusterName");
-		String cassandraKeyspace = env.getProperty("cassandra.keyspace");
+		ColumnFamilyDefinition cfd = HFactory.createColumnFamilyDefinition(this.cassandraKeyspace, cfName, ComparatorType.UTF8TYPE);
+		cfd.setKeyValidationClass("org.apache.cassandra.db.marshal.UTF8Type");
+		cfd.setComparatorType(ComparatorType.UTF8TYPE);
+		cluster.addColumnFamily(cfd);
+	}
+
+	private void addColumnFamilyWithLongColumn(ThriftCluster cluster, String cfName)
+	{
+
+		ColumnFamilyDefinition cfd = HFactory.createColumnFamilyDefinition(this.cassandraKeyspace, cfName, ComparatorType.UTF8TYPE);
+		cfd.setKeyValidationClass("org.apache.cassandra.db.marshal.UTF8Type");
+		cfd.setComparatorType(ComparatorType.LONGTYPE);
+		cfd.setDefaultValidationClass("org.apache.cassandra.db.marshal.UTF8Type");
+		cluster.addColumnFamily(cfd);
+	}
+
+	public EntityManagerImpl entityManager(Keyspace keyspace)
+	{
+		return new EntityManagerImpl(keyspace, "fr.ippon.tatami.domain");
+	}
+
+	public void setCassandraHost(String cassandraHost)
+	{
+		this.cassandraHost = cassandraHost;
+	}
+
+	public void setCassandraClusterName(String cassandraClusterName)
+	{
+		this.cassandraClusterName = cassandraClusterName;
+	}
+
+	public void setCassandraKeyspace(String cassandraKeyspace)
+	{
+		this.cassandraKeyspace = cassandraKeyspace;
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception
+	{
 
 		CassandraHostConfigurator cassandraHostConfigurator = new CassandraHostConfigurator(cassandraHost);
 		ThriftCluster cluster = new ThriftCluster(cassandraClusterName, cassandraHostConfigurator);
@@ -93,34 +125,13 @@ public class CassandraConfiguration
 			cfDef.setDefaultValidationClass(ComparatorType.COUNTERTYPE.getClassName());
 			cluster.addColumnFamily(cfDef);
 		}
-		return HFactory.createKeyspace(cassandraKeyspace, cluster, consistencyLevelPolicy);
+
+		this.keyspace = HFactory.createKeyspace(cassandraKeyspace, cluster, consistencyLevelPolicy);
 	}
 
-	private void addColumnFamilyWithStringColumn(ThriftCluster cluster, String cfName)
+	public Keyspace getKeyspace()
 	{
-
-		String cassandraKeyspace = env.getProperty("cassandra.keyspace");
-		ColumnFamilyDefinition cfd = HFactory.createColumnFamilyDefinition(cassandraKeyspace, cfName, ComparatorType.UTF8TYPE);
-		cfd.setKeyValidationClass("org.apache.cassandra.db.marshal.UTF8Type");
-		cfd.setComparatorType(ComparatorType.UTF8TYPE);
-		cluster.addColumnFamily(cfd);
-	}
-
-	private void addColumnFamilyWithLongColumn(ThriftCluster cluster, String cfName)
-	{
-
-		String cassandraKeyspace = env.getProperty("cassandra.keyspace");
-		ColumnFamilyDefinition cfd = HFactory.createColumnFamilyDefinition(cassandraKeyspace, cfName, ComparatorType.UTF8TYPE);
-		cfd.setKeyValidationClass("org.apache.cassandra.db.marshal.UTF8Type");
-		cfd.setComparatorType(ComparatorType.LONGTYPE);
-		cfd.setDefaultValidationClass("org.apache.cassandra.db.marshal.UTF8Type");
-		cluster.addColumnFamily(cfd);
-	}
-
-	@Bean(name = "em")
-	public EntityManagerImpl entityManager(Keyspace keyspace)
-	{
-		return new EntityManagerImpl(keyspace, "fr.ippon.tatami.domain");
+		return keyspace;
 	}
 
 }

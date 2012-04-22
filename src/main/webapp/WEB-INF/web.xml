@@ -4,21 +4,67 @@
          version="3.0"
          metadata-complete="true">
 
-	<!--
-	Remove classpath scanning (from servlet 3.0) in order to speed jetty startup :
-	metadata-complete="true" above + empty absolute ordering below
-	-->
-	<absolute-ordering>
-	<!--
-	Empty absolute ordering is necessary to completely desactivate classpath scanning
-	-->
-	</absolute-ordering>
+
 
     <display-name>Tatami</display-name>
 
-    <!-- All the Servlets and Filters are configured by this ServletContextListener : -->
-    <listener>
-        <listener-class>fr.ippon.tatami.web.init.WebConfigurer</listener-class>
-    </listener>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/applicationContext.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<servlet>
+		<servlet-name>tatamiServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:tatami-mvc.xml</param-value>
+		</init-param>	
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
     
+    <servlet-mapping>
+        <servlet-name>tatamiServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+    	
+    <filter>
+        <filter-name>monitoringFilter</filter-name>
+        <filter-class>fr.ippon.tatami.web.monitoring.MonitoringFilter</filter-class>
+    </filter>
+
+ 	<filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+	<filter>
+    	<filter-name>deviceResolverHandlerFilter</filter-name>
+    	<filter-class>org.springframework.mobile.device.DeviceResolverHandlerFilter</filter-class>
+	</filter>
+
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <servlet-name>tatamiServlet</servlet-name>
+    </filter-mapping>
+        
+    <filter-mapping>
+        <filter-name>monitoringFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>deviceResolverHandlerFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
 </web-app>

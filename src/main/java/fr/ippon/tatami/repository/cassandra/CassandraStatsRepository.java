@@ -6,25 +6,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import me.prettyprint.hom.EntityManagerImpl;
-
-import org.springframework.stereotype.Repository;
-
 import fr.ippon.tatami.domain.DayLine;
 import fr.ippon.tatami.domain.MonthLine;
 import fr.ippon.tatami.domain.WeekLine;
 import fr.ippon.tatami.domain.YearLine;
 import fr.ippon.tatami.repository.StatsRepository;
 
-@Repository
+/**
+ * @author DuyHai DOAN
+ */
 public class CassandraStatsRepository extends CassandraAbstractRepository implements StatsRepository
 {
-
-	@Inject
-	private EntityManagerImpl em;
-
 	@Override
 	public void addTweetToDay(String tweetId, String day)
 	{

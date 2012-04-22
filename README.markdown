@@ -12,7 +12,9 @@ Tatami is made with the following technologies :
 - [The Spring Framework](http://www.springsource.org/)
 - HTML5 and [Twitter Bootstrap](http://twitter.github.com/bootstrap/)
 
-Tatami is developped by [Ippon Technologies](http://www.ippon.fr)
+Original version of Tatami was developped by [Ippon Technologies](http://www.ippon.fr)
+
+This fork has been enhance by [DuyHai DOAN](http://doanduyhai.wordpress.com)
 
 Installation
 ------------

@@ -88,11 +88,22 @@ function bindListeners($target)
 
 }
 
+function sessionTimeOutPopup()
+{
+	$('#sessionTimeOutModal').modal('show');
+	$('#sessionTimeOutModal').css('z-index',5000);
+}
+
+
 function errorHandler($targetErrorPanel)
 {
 	return function(jqXHR, textStatus, errorThrown)
 	{
-		$targetErrorPanel.find('.errorMessage').empty().html(jqXHR.responseText).end().show();
+		if(errorThrown != 901)
+		{
+			$targetErrorPanel.find('.errorMessage').empty().html(jqXHR.responseText).end().show();
+		}
+		
 	};
 }
 

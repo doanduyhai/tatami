@@ -19,9 +19,13 @@ function followError()
 {
 	return function(xhr, ajaxOptions, thrownError)
 	{
-		$('#followError').find('span').remove();
-		$('#followError').fadeIn("fast").append('<span>'+xhr.responseText+'</span>');
-        $('#followError').delay(2000).fadeOut(5000);		
+		if(thrownError != 901)
+		{
+			$('#followError').find('span').remove();
+			$('#followError').fadeIn("fast").append('<span>'+xhr.responseText+'</span>');
+	        $('#followError').delay(2000).fadeOut(5000);
+		}
+				
 	};
 }
 

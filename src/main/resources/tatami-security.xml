@@ -15,8 +15,13 @@
     <http pattern="/login" security="none"/>
     <http pattern="/about" security="none"/>
     <http pattern="/assets/**" security="none"/>
-
+	
+	<beans:bean id="ajaxTimeoutRedirectFilter" class="fr.ippon.tatami.security.AjaxTimeoutRedirectFilter">
+		<beans:property name="customSessionExpiredErrorCode" value="901"/>
+	</beans:bean>
+	
     <http auto-config="true" use-expressions="true">
+    	<custom-filter ref="ajaxTimeoutRedirectFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
         <intercept-url pattern="/**" access="isAuthenticated()" />
         <form-login
                 login-processing-url="/authentication"
@@ -33,6 +38,7 @@
     <authentication-manager>
         <authentication-provider user-service-ref="userDetailsService"/>
     </authentication-manager>
+	
 
     <user-service id="userDetailsService">
         <user name="jdubois" password="password" authorities="ROLE_USER"/>

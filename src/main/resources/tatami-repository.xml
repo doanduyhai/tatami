@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+<!-- 	<bean id="tatamiProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> -->
+<!-- 		<property name="locations"> -->
+<!-- 			<list> -->
+<!-- 				<value>classpath:tatami-test.properties</value> -->
+<!-- 				<value>classpath:tatami.properties</value> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
+<!-- 		<property name="ignoreResourceNotFound" value="true" /> -->
+<!-- 	</bean> -->
+	
+	<bean id="cassandraConfiguration" class="fr.ippon.tatami.config.CassandraConfiguration">
+		<property name="cassandraClusterName" value="${cassandra.clusterName}"/>
+		<property name="cassandraHost" value="${cassandra.host}"/>
+		<property name="cassandraKeyspace" value="${cassandra.keyspace}"/>
+	</bean>
+	
+	<bean id="entityManagerImpl" class="me.prettyprint.hom.EntityManagerImpl">
+		<constructor-arg index="0" type="me.prettyprint.hector.api.Keyspace" value="#{cassandraConfiguration.getKeyspace()}"/>
+		<constructor-arg index="1" type="java.lang.String" value="fr.ippon.tatami.domain"/>
+	</bean>
+	
+	<bean id="abstractRepository" class="fr.ippon.tatami.repository.cassandra.CassandraAbstractRepository" abstract="true">
+		<property name="keyspaceOperator" value="#{cassandraConfiguration.getKeyspace()}"/>
+		<property name="em" ref="entityManagerImpl"/>
+	</bean>
+	
+	<bean id="favoriteRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFavoriteRepository" parent="abstractRepository"/>
+	<bean id="followerRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFollowerRepository" parent="abstractRepository"/>
+	<bean id="friendRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFriendRepository" parent="abstractRepository"/>
+	<bean id="statsRepository" class="fr.ippon.tatami.repository.cassandra.CassandraStatsRepository" parent="abstractRepository"/>
+	<bean id="tagLineRepository" class="fr.ippon.tatami.repository.cassandra.CassandraTagLineRepository" parent="abstractRepository"/>
+	<bean id="timeLineRepository" class="fr.ippon.tatami.repository.cassandra.CassandraTimeLineRepository" parent="abstractRepository"/>
+	<bean id="tweetRepository" class="fr.ippon.tatami.repository.cassandra.CassandraTweetRepository" parent="abstractRepository"/>
+	<bean id="userIndexRepository" class="fr.ippon.tatami.repository.cassandra.CassandraUserIndexRepository" parent="abstractRepository"/>
+	<bean id="userLineRepository" class="fr.ippon.tatami.repository.cassandra.CassandraUserLineRepository" parent="abstractRepository"/>
+	<bean id="userRepository" class="fr.ippon.tatami.repository.cassandra.CassandraUserRepository" parent="abstractRepository"/>
+</beans>

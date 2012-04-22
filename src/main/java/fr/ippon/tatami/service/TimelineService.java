@@ -11,19 +11,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.owasp.esapi.reference.DefaultEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
 
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
@@ -37,45 +34,31 @@ import fr.ippon.tatami.repository.UserLineRepository;
 import fr.ippon.tatami.service.util.TatamiConstants;
 
 /**
- * Manages the the timeline.
- * 
  * @author Julien Dubois
+ * @author DuyHai DOAN
  */
-@Service
-public class TimelineService implements InitializingBean
+public class TimelineService
 {
 
 	private final Logger log = LoggerFactory.getLogger(TimelineService.class);
 
-	@Inject
 	private UserService userService;
 
-	@Inject
 	private TweetRepository tweetRepository;
 
-	@Inject
 	private FollowerRepository followerRepository;
 
-	@Inject
 	private UserLineRepository userLineRepository;
 
-	@Inject
 	private TimeLineRepository timeLineRepository;
 
-	@Inject
 	private TagLineRepository tagLineRepository;
 
-	@Inject
 	private StatsRepository statsRepository;
 
-	@Inject
 	private FavoriteRepository favoriteLineRepository;
 
-	@Inject
 	private AuthenticationService authenticationService;
-
-	@Inject
-	Environment env;
 
 	private String hashtagDefault;
 
@@ -114,19 +97,26 @@ public class TimelineService implements InitializingBean
 
 		// Tagline
 		Matcher m = HASHTAG_PATTERN.matcher(tweet.getContent());
+		Set<String> tagSet = new HashSet<String>();
 		while (m.find())
 		{
+
 			String tag = m.group(1);
 			assert tag != null && !tag.isEmpty() && !tag.contains(HASHTAG);
-			log.debug("tag list augmented : " + tag);
-			tagLineRepository.addTweet(tag, tweet.getTweetId());
+			if (!tagSet.contains(tag))
+			{
+				tagSet.add(tag);
+				log.debug("tag list augmented : " + tag);
+				tagLineRepository.addTweet(tag, tweet.getTweetId());
+			}
+
 		}
 
 		// Alert for quoted users
 		Matcher usermatcher = USER_PATTERN.matcher(tweet.getContent());
 		while (usermatcher.find())
 		{
-			String user = usermatcher.group(1);
+			String user = usermatcher.group(1).toLowerCase();
 			assert user != null;
 			User quotedUser = this.userService.getUserByLogin(user);
 			if (quotedUser != null)
@@ -362,10 +352,49 @@ public class TimelineService implements InitializingBean
 		this.authenticationService = authenticationService;
 	}
 
-	@Override
-	public void afterPropertiesSet() throws Exception
+	public void setUserService(UserService userService)
 	{
-		this.hashtagDefault = env.getProperty("hashtag.default");
-
+		this.userService = userService;
 	}
+
+	public void setTweetRepository(TweetRepository tweetRepository)
+	{
+		this.tweetRepository = tweetRepository;
+	}
+
+	public void setFollowerRepository(FollowerRepository followerRepository)
+	{
+		this.followerRepository = followerRepository;
+	}
+
+	public void setUserLineRepository(UserLineRepository userLineRepository)
+	{
+		this.userLineRepository = userLineRepository;
+	}
+
+	public void setTimeLineRepository(TimeLineRepository timeLineRepository)
+	{
+		this.timeLineRepository = timeLineRepository;
+	}
+
+	public void setTagLineRepository(TagLineRepository tagLineRepository)
+	{
+		this.tagLineRepository = tagLineRepository;
+	}
+
+	public void setStatsRepository(StatsRepository statsRepository)
+	{
+		this.statsRepository = statsRepository;
+	}
+
+	public void setFavoriteLineRepository(FavoriteRepository favoriteLineRepository)
+	{
+		this.favoriteLineRepository = favoriteLineRepository;
+	}
+
+	public void setHashtagDefault(String hashtagDefault)
+	{
+		this.hashtagDefault = hashtagDefault;
+	}
+
 }

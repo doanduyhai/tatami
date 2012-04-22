@@ -48,6 +48,8 @@ public class WebConfigurer implements ServletContextListener
 
 		FilterRegistration.Dynamic springMobileFilter = servletContext.addFilter("springMobileFilter", new DeviceResolverHandlerFilter());
 		springMobileFilter.addMappingForUrlPatterns(disps, true, "/*");
+
+		servletContext.getSessionCookieConfig().setMaxAge(10);
 	}
 
 	@Override

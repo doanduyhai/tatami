@@ -7,28 +7,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import me.prettyprint.cassandra.model.CqlQuery;
-import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.beans.HColumn;
-import me.prettyprint.hom.EntityManagerImpl;
-
-import org.springframework.stereotype.Repository;
-
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.UserLineRepository;
-import fr.ippon.tatami.service.util.TatamiConstants;
 
-@Repository
+/**
+ * @author Julien Dubois
+ * @author DuyHai DOAN
+ */
 public class CassandraUserLineRepository extends CassandraAbstractRepository implements UserLineRepository
 {
-	@Inject
-	private Keyspace keyspaceOperator;
-
-	@Inject
-	private EntityManagerImpl em;
-
 	@Override
 	public void addTweetToUserline(User user, String tweetId)
 	{
@@ -40,7 +29,6 @@ public class CassandraUserLineRepository extends CassandraAbstractRepository imp
 		user.incrementTweetCount();
 		em.persist(user);
 	}
-
 
 	@Override
 	public Collection<String> getTweetsRangeFromUserline(User user, int start, int end)

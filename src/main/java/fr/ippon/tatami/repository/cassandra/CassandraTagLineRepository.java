@@ -8,28 +8,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import me.prettyprint.cassandra.model.CqlQuery;
-import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.beans.HColumn;
-import me.prettyprint.hom.EntityManagerImpl;
-
-import org.springframework.stereotype.Repository;
-
 import fr.ippon.tatami.domain.TagLineCount;
 import fr.ippon.tatami.repository.TagLineRepository;
-import fr.ippon.tatami.service.util.TatamiConstants;
 
-@Repository
+/**
+ * @author Julien Dubois
+ * @author DuyHai DOAN
+ */
 public class CassandraTagLineRepository extends CassandraAbstractRepository implements TagLineRepository
 {
-	@Inject
-	private EntityManagerImpl em;
-
-	@Inject
-	private Keyspace keyspaceOperator;
-
 	@Override
 	public void addTweet(String tag, String tweetId)
 	{

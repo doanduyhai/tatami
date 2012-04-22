@@ -2,8 +2,6 @@ package fr.ippon.tatami.web.rest;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -25,12 +23,12 @@ public abstract class AbstractRESTController
 {
 	private final Logger log = LoggerFactory.getLogger(AbstractRESTController.class);
 
-	@Inject
+	// @Inject
 	protected JacksonViewAwareHttpMessageConverter jacksonConverter;
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseBody
-	public String handleFunctionalException(MethodArgumentNotValidException ex, HttpServletRequest request)
+	public String handleFunctionalException(MethodArgumentNotValidException ex, HttpServletResponse response) throws IOException
 	{
 		log.error(" Validation exception raised : " + ex.getMessage());
 		StringBuilder errorBuffer = new StringBuilder();
@@ -38,6 +36,7 @@ public abstract class AbstractRESTController
 		{
 			errorBuffer.append(fieldError.getDefaultMessage()).append("<br/>");
 		}
+
 		return errorBuffer.toString();
 	}
 
@@ -59,4 +58,10 @@ public abstract class AbstractRESTController
 			}
 		}
 	}
+
+	public void setJacksonConverter(JacksonViewAwareHttpMessageConverter jacksonConverter)
+	{
+		this.jacksonConverter = jacksonConverter;
+	}
+
 }

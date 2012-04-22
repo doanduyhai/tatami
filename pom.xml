@@ -253,6 +253,9 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>8.0.4.v20111024</version>
                 <configuration>
+					<webAppConfig>
+            			<contextPath>/tatami</contextPath>
+            		</webAppConfig>	                
                     <scanIntervalSeconds>1</scanIntervalSeconds>
                     <stopKey>stop-jetty</stopKey>
                     <contextPath>/tatami</contextPath>
@@ -263,7 +266,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cassandra-maven-plugin</artifactId>
                 <version>1.0.0-1</version>
-		        <configuration>
+		        <configuration>	        
 		          <rpcPort>9160</rpcPort>
 		          <jmxPort>7199</jmxPort>
 		          <storagePort>7000</storagePort>

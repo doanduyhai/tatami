@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="authenticationService" class="fr.ippon.tatami.service.AuthenticationService">
+		<property name="userRepository" ref="userRepository"/>
+	</bean>
+	
+	<bean id="userService" class="fr.ippon.tatami.service.UserService">
+		<property name="authenticationService" ref="authenticationService"/>
+		<property name="followerRepository" ref="followerRepository"/>
+		<property name="friendRepository" ref="friendRepository"/>
+		<property name="timelineRepository" ref="timeLineRepository"/>
+		<property name="tweetRepository" ref="tweetRepository"/>
+		<property name="userIndexRepository" ref="userIndexRepository"/>
+		<property name="userRepository" ref="userRepository"/>
+	</bean>
+	
+	<bean id="timelineService" class="fr.ippon.tatami.service.TimelineService">
+		<property name="authenticationService" ref="authenticationService"/>
+		<property name="favoriteLineRepository" ref="favoriteRepository"/>
+		<property name="followerRepository" ref="followerRepository"/>
+		<property name="hashtagDefault" value="${hashtag.default}"/>
+		<property name="statsRepository" ref="statsRepository"/>
+		<property name="tagLineRepository" ref="tagLineRepository"/>
+		<property name="timeLineRepository" ref="timeLineRepository"/>
+		<property name="tweetRepository" ref="tweetRepository"/>
+		<property name="userLineRepository" ref="userLineRepository"/>
+		<property name="userService" ref="userService"/>
+	</bean>	
+</beans>

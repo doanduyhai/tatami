@@ -9,27 +9,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.beans.HColumn;
-import me.prettyprint.hom.EntityManagerImpl;
-
-import org.springframework.stereotype.Repository;
-
 import fr.ippon.tatami.domain.FavoriteLine;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.FavoriteRepository;
 
-@Repository
+/**
+ * @author DuyHai DOAN
+ */
 public class CassandraFavoriteRepository extends CassandraAbstractRepository implements FavoriteRepository
 {
-
-	@Inject
-	private EntityManagerImpl em;
-
-	@Inject
-	private Keyspace keyspaceOperator;
 
 	private final DecimalFormat orderFormatter = new DecimalFormat("000000000");
 

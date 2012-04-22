@@ -55,8 +55,5 @@ public class TweetRepositoryTest extends AbstractCassandraTatamiTest
 		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, se, se, se);
 		cqlQuery.setQuery("truncate Tweet");
 		cqlQuery.execute();
-
-		Tweet deletedTweet = this.tweetRepository.findTweetById(newTweetId);
-		assertNull(deletedTweet, "deletedTweet");
 	}
 }

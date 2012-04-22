@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -41,7 +40,7 @@ public class TweetController extends AbstractRESTController
 {
 	private final Logger log = LoggerFactory.getLogger(TweetController.class);
 
-	@Inject
+	// @Inject
 	private TimelineService timelineService;
 
 	@RequestMapping(value = "/rest/tweetStats/day", method = RequestMethod.GET, produces = "application/json")
@@ -220,4 +219,10 @@ public class TweetController extends AbstractRESTController
 
 		this.writeWithView((Object) timelineService.getTaglineRange(tag, start, end), response, TweetView.Full.class);
 	}
+
+	public void setTimelineService(TimelineService timelineService)
+	{
+		this.timelineService = timelineService;
+	}
+
 }

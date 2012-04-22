@@ -3,12 +3,6 @@ package fr.ippon.tatami.repository.cassandra;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.inject.Inject;
-
-import me.prettyprint.hom.EntityManagerImpl;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import fr.ippon.tatami.domain.User;
@@ -16,19 +10,12 @@ import fr.ippon.tatami.domain.UserFriends;
 import fr.ippon.tatami.repository.FriendRepository;
 
 /**
- * Cassandra implementation of the Follower repository.
- * 
  * @author Julien Dubois
+ * @author DuyHai DOAN
  */
 @Repository
 public class CassandraFriendRepository extends CassandraAbstractRepository implements FriendRepository
 {
-
-	private final Logger log = LoggerFactory.getLogger(CassandraFriendRepository.class);
-
-	@Inject
-	private EntityManagerImpl em;
-
 	@Override
 	public void addFriend(User user, User friend)
 	{

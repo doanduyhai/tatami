@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -36,10 +35,10 @@ public class UserController extends AbstractRESTController
 
 	private final Logger log = LoggerFactory.getLogger(UserController.class);
 
-	@Inject
+	// @Inject
 	private UserService userService;
 
-	@Inject
+	// @Inject
 	TimelineService timelineService;
 
 	@RequestMapping(value = "/rest/users/{login}", method = RequestMethod.GET, produces = "application/json")
@@ -146,4 +145,15 @@ public class UserController extends AbstractRESTController
 		log.debug("REST request to search for user with input {}", userSearch);
 		this.writeWithView(userService.findUser(userSearch.getSearchString()), response, UserView.Minimum.class);
 	}
+
+	public void setUserService(UserService userService)
+	{
+		this.userService = userService;
+	}
+
+	public void setTimelineService(TimelineService timelineService)
+	{
+		this.timelineService = timelineService;
+	}
+
 }

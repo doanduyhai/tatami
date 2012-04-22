@@ -1,19 +1,18 @@
 package fr.ippon.tatami.service;
 
-import javax.inject.Inject;
-
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.UserRepository;
 
-@Service(value = "authenticationService")
+/**
+ * @author Julien DUBOIS
+ * @author DuyHai DOAN
+ */
 public class AuthenticationService
 {
 
-	@Inject
 	private UserRepository userRepository;
 
 	public User getCurrentUser()
@@ -24,4 +23,10 @@ public class AuthenticationService
 
 		return userRepository.findUserByLogin(springSecurityUser.getUsername());
 	}
+
+	public void setUserRepository(UserRepository userRepository)
+	{
+		this.userRepository = userRepository;
+	}
+
 }

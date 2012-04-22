@@ -9,25 +9,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-
-import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.beans.HColumn;
 import me.prettyprint.hector.api.factory.HFactory;
 import me.prettyprint.hector.api.mutation.Mutator;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Repository;
 
 import fr.ippon.tatami.repository.UserIndexRepository;
 
-@Repository
+/**
+ * @author DuyHai DOAN
+ */
 public class CassandraUserIndexRepository extends CassandraAbstractRepository implements UserIndexRepository
 {
-
-	@Inject
-	private Keyspace keyspaceOperator;
-
 	@Override
 	public void insertLogin(String login)
 	{

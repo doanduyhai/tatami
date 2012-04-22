@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
@@ -28,8 +26,8 @@ import fr.ippon.tatami.web.converter.JacksonViewAwareHttpMessageConverter;
 import fr.ippon.tatami.web.converter.UserConverter;
 import fr.ippon.tatami.web.interceptor.SecurityInterceptor;
 
-@Configuration
-@ComponentScan(basePackages = "fr.ippon.tatami.web")
+//@Configuration
+//@ComponentScan(basePackages = "fr.ippon.tatami.web")
 public class DispatcherServletConfig extends WebMvcConfigurationSupport
 {
 

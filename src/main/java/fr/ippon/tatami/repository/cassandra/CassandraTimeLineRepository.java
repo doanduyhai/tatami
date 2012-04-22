@@ -7,28 +7,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import me.prettyprint.cassandra.model.CqlQuery;
-import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.beans.HColumn;
-import me.prettyprint.hom.EntityManagerImpl;
-
-import org.springframework.stereotype.Repository;
-
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.TimeLineRepository;
 
-@Repository
+/**
+ * @author Julien Dubois
+ * @author DuyHai DOAN
+ */
 public class CassandraTimeLineRepository extends CassandraAbstractRepository implements TimeLineRepository
 {
-
-	@Inject
-	private Keyspace keyspaceOperator;
-
-	@Inject
-	private EntityManagerImpl em;
-
 	@Override
 	public void addTweetToTimeline(User user, String tweetId)
 	{

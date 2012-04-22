@@ -10,3 +10,4 @@ test-output/*
 /.classpath
 /.project
 /.springBeans
+/.externalToolBuilders

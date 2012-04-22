@@ -14,14 +14,13 @@ import me.prettyprint.hector.api.Serializer;
 import me.prettyprint.hom.EntityManagerImpl;
 
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.BeforeSuite;
 
 import com.eaio.uuid.UUID;
 
-import fr.ippon.tatami.config.ApplicationTestConfiguration;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.FavoriteRepository;
 import fr.ippon.tatami.repository.FollowerRepository;
@@ -37,13 +36,18 @@ import fr.ippon.tatami.service.AuthenticationService;
 import fr.ippon.tatami.service.TimelineService;
 import fr.ippon.tatami.service.UserService;
 
-@ContextConfiguration(classes = ApplicationTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(locations =
+{
+		"classpath:tatami-test-properties.xml",
+		"classpath:tatami-repository.xml",
+		"classpath:tatami-service.xml"
+})
 public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringContextTests
 {
 
 	private static boolean isInitialized = false;
 
-	@Inject
+	@Value("#{cassandraConfiguration.getKeyspace()}")
 	protected Keyspace keyspace;
 
 	@Inject
@@ -99,11 +103,6 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 		if (!isInitialized)
 		{
 			EmbeddedCassandraServerHelper.startEmbeddedCassandra();
-			/* create structure and load data */
-			// String clusterName = "Tatami cluster";
-			// String host = "localhost:9171";
-			// DataLoader dataLoader = new DataLoader(clusterName, host);
-			// dataLoader.load(new ClassPathJsonDataSet("dataset/dataset.json"));
 			isInitialized = true;
 		}
 		super.springTestContextPrepareTestInstance();

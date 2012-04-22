@@ -3,31 +3,16 @@ package fr.ippon.tatami.repository.cassandra;
 import java.util.Arrays;
 import java.util.Collection;
 
-import javax.inject.Inject;
-
-import me.prettyprint.hom.EntityManagerImpl;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.domain.UserFollowers;
 import fr.ippon.tatami.repository.FollowerRepository;
 
 /**
- * Cassandra implementation of the Follower repository.
- * 
  * @author Julien Dubois
+ * @author DuyHai DOAN
  */
-@Repository
 public class CassandraFollowerRepository extends CassandraAbstractRepository implements FollowerRepository
 {
-
-	private final Logger log = LoggerFactory.getLogger(CassandraFollowerRepository.class);
-
-	@Inject
-	private EntityManagerImpl em;
 
 	@Override
 	public void addFollower(User user, User follower)

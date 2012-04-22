@@ -1,7 +1,7 @@
 body {
 	padding-top: 45px !important; 
 	
-	/* 60px to make the container go all the way to the bottom of the top bar */
+	/* 45px to make the container go all the way to the bottom of the top bar */
 }
 
 #aboutPage p
@@ -16,17 +16,30 @@ body {
 #mobileLoginContainer
 {
 	width: 100%;
+	@media screen and (max-width: 25em)
+	{
+		width: 70%;
+		#j_username
+		{
+			width: 80%;
+			padding: 1px;
+		}
+		#j_password
+		{
+			width: 80%;
+			padding: 1px;
+		}		
+	}
 	.center;
 }
 
 #footerText
 {
 	text-align: center;
-/* 	position: fixed;   */
 	bottom: 0;
 }
 
-/* Below restrictions are for Iphone 4 & samsung galaxy S*/
+
 .brand
 {
 	padding-right: 0px !important;
@@ -45,7 +58,7 @@ body {
 		padding-bottom: 15px !important;
 	}
 }
-/* End of restrictions */
+
 
 .dropdown-menu a
 {
@@ -149,15 +162,12 @@ body {
 
 	#homePanelUserStats
 	{
+		padding-top: 2% !important;
 		@media screen and (min-width: 25em)
 		{
 			font-size: 1.5em;
 			padding-top: 3% !important;
 			padding-bottom: 3% !important;
-		}
-		@media screen and (max-width: 25em)
-		{
-			padding-top: 2% !important;
 		}
 	}
 	
@@ -172,6 +182,9 @@ body {
 		{
 			width: 95%;
 			height: 100%; 
+			min-height: 100px;
+			font-size: 1.4em !important;
+			line-height: 24px !important;			
 			@media screen and (min-width: 25em)
 			{
 				padding-top: 5px !important;
@@ -179,51 +192,34 @@ body {
 				min-height: 200px;
 				font-size: 2.5em !important;	
 			}
-			
-			@media screen and (max-width: 25em)
-			{
-				min-height: 100px;
-				font-size: 1.4em !important;
-				line-height: 24px !important;
-				
-			}
-			
-			
 		}
 		#tweetButton
 		{
 			width: 100%;
+			height: 50px;			
+			padding: 0px !important;
+			font-size: 1.4em !important;
+
 			@media screen and (min-width: 25em)
 			{
 				height: 100px;	
 			}
-			
-			@media screen and (max-width: 25em)
-			{
-				height: 50px;
-			}
-			
-			padding: 0px !important;
-			font-size: 1.4em !important;
 		}
 		#tweetErrorPanel
 		{
+			font-size: 1.4em !important;
+			padding-bottom: 1% !important;		
+			margin-left: auto !important;
+			margin-right: auto !important;
+			margin-bottom: 10px !important;
+			width: 90%;
+
 			@media screen and (min-width: 25em)
 			{
 				font-size: 2em !important;
 				padding-bottom: 2% !important;	
 			}
-			
-			@media screen and (max-width: 25em)
-			{
-				font-size: 1.4em !important;
-				padding-bottom: 1% !important;	
-			}
-			margin-left: auto !important;
-			margin-right: auto !important;
-			margin-bottom: 10px !important;
-			width: 90%;
-			
+
 		}
 		
 	}		
@@ -231,23 +227,18 @@ body {
 
 #updateUserForm
 {
-	@media screen and (min-width: 25em)
+	label, input, textarea
 	{
-		label, input, textarea
+		padding-top: 1% !important;
+		padding-bottom: 1% !important;
+		@media screen and (min-width: 25em)
 		{
 			font-size: 2em !important;
 			padding-top: 2% !important;
 			padding-bottom: 2% !important;
-			line-height: 24px !important;
+			line-height: 24px !important;		
 		}
-	}
-	@media screen and (max-width: 25em)
-	{
-		label, input, textarea
-		{
-			padding-top: 1% !important;
-			padding-bottom: 1% !important;
-		}	
+	
 	}
 
 	
@@ -297,6 +288,7 @@ body {
 			vertical-align: middle;
 			#followUserInput
 			{
+				margin-top: 2% !important;
 				@media screen and (min-width: 25em)
 				{
 					margin-top: 2% !important;
@@ -304,11 +296,6 @@ body {
 					padding: 2%;
 					font-size: 1.8em;
 					width: 70%;
-				}
-				
-				@media screen and (max-width: 25em)
-				{
-					margin-top: 2% !important;
 				}		
 			}
 			
@@ -349,13 +336,10 @@ body {
 	
 	.refreshCell
 	{
+		padding-right: 10px !important;
 		@media screen and (min-width: 25em)
 		{
 			padding-right: 40px !important;	
-		}
-		@media screen and (max-width: 25em)
-		{
-			padding-right: 10px !important;	
 		}
 		.right;
 		.middle;
@@ -476,17 +460,15 @@ body {
 		
 		.userProfileClose
 		{
+			font-size: 2.5em !important;	
+			color: white !important;
+			opacity: 0.7 !important;
+			filter: alpha(opacity=70) !important;
 			@media screen and (min-width: 25em)
 			{
 				font-size: 4.5em !important;
 			}
-			@media screen and (max-width: 25em)
-			{
-				font-size: 2.5em !important;
-			}	
-			color: white !important;
-			opacity: 0.7 !important;
-			filter: alpha(opacity=70) !important; 
+
 		}
 		
 		.close:hover
@@ -497,16 +479,14 @@ body {
 		
 		#userProfileLogin
 		{
+			font-size: 1.7em !important;
+			font-weight: bold;
+			font-style: italic;
 			@media screen and (min-width: 25em)
 			{
 				font-size: 2.5em !important;
 			}
-			@media screen and (max-width: 25em)
-			{
-				font-size: 1.7em !important;
-			}
-			font-weight: bold;
-			font-style: italic;	
+
 		}		
 	}
 	
@@ -597,13 +577,10 @@ body {
 		font-weight: bold;
 		font-style: italic;
 		padding: 2% !important;	
+		font-size: 1.5em !important;
 		@media screen and (min-width: 25em)
 		{
 			font-size: 2.5em !important;
-		}
-		@media screen and (max-width: 25em)
-		{
-			font-size: 1.5em !important;
 		}	
 	}
 	#userSearchList tr

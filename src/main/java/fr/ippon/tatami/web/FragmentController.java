@@ -1,7 +1,5 @@
 package fr.ippon.tatami.web;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,7 +17,7 @@ import fr.ippon.tatami.web.view.ViewConstants;
 @Controller
 public class FragmentController
 {
-	@Inject
+	// @Inject
 	UserService userService;
 
 	@ModelAttribute(value = "currentUser")
@@ -40,4 +38,8 @@ public class FragmentController
 		return ViewConstants.FRAGMENT_PROFILE;
 	}
 
+	public void setUserService(UserService userService)
+	{
+		this.userService = userService;
+	}
 }

@@ -1,6 +1,5 @@
 package fr.ippon.tatami.web;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -26,7 +25,7 @@ public class TatamiController
 
 	private final Logger log = LoggerFactory.getLogger(TatamiController.class);
 
-	@Inject
+	// @Inject
 	UserService userService;
 
 	@RequestMapping(ViewConstants.URL_LOGIN)
@@ -115,4 +114,10 @@ public class TatamiController
 			return ViewConstants.PAGE_ABOUT;
 		}
 	}
+
+	public void setUserService(UserService userService)
+	{
+		this.userService = userService;
+	}
+
 }
