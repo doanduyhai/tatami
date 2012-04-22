@@ -9,10 +9,13 @@ import fr.ippon.tatami.service.UserService;
 import fr.ippon.tatami.service.util.TatamiConstants;
 import fr.ippon.tatami.web.view.ViewConstants;
 
+/**
+ * @author DuyHai DOAN
+ */
 @Controller
 public class MobileFragmentController
 {
-	// @Inject
+
 	UserService userService;
 
 	@ModelAttribute

@@ -16,9 +16,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 import fr.ippon.tatami.web.json.view.UserView;
 
 /**
- * A user.
  * 
  * @author Julien Dubois
+ * @author DuyHai DOAN
  */
 @Entity
 @Table(name = "User")

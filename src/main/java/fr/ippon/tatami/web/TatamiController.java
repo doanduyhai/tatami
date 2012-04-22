@@ -16,9 +16,9 @@ import fr.ippon.tatami.service.util.TatamiConstants;
 import fr.ippon.tatami.web.view.ViewConstants;
 
 /**
- * Main tatami page.
  * 
- * @author Duy Hai DOAN
+ * @author Julien Dubois
+ * @author DuyHai DOAN
  */
 @Controller
 public class TatamiController

@@ -17,6 +17,9 @@ import org.springframework.security.web.access.expression.WebSecurityExpressionR
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+/**
+ * @author DuyHai DOAN
+ */
 public class SecurityInterceptor extends HandlerInterceptorAdapter
 {
 

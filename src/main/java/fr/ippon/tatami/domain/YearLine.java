@@ -14,6 +14,10 @@ import lombok.ToString;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
+/**
+ * 
+ * @author DuyHai DOAN
+ */
 @Entity
 @Table(name = "YearLine")
 @EqualsAndHashCode(of = "year")

@@ -1,5 +1,8 @@
 package fr.ippon.tatami.web.view;
 
+/**
+ * @author DuyHai DOAN
+ */
 public class ViewConstants
 {
 	public static final String URL_LOGIN = "/login";

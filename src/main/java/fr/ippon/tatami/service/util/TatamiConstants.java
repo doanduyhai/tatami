@@ -1,5 +1,9 @@
 package fr.ippon.tatami.service.util;
 
+/**
+ * 
+ * @author DuyHai DOAN
+ */
 public class TatamiConstants
 {
 	public static final int DEFAULT_TWEET_LIST_SIZE = 10;

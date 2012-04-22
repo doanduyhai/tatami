@@ -2,6 +2,10 @@ package fr.ippon.tatami.repository;
 
 import java.util.List;
 
+/**
+ * 
+ * @author DuyHai DOAN
+ */
 public interface UserIndexRepository
 {
 

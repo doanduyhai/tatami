@@ -5,8 +5,6 @@ import java.util.Collection;
 import fr.ippon.tatami.domain.User;
 
 /**
- * The Follower Respository.
- * 
  * @author Julien Dubois
  */
 public interface FriendRepository

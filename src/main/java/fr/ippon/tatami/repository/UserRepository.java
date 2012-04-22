@@ -3,9 +3,9 @@ package fr.ippon.tatami.repository;
 import fr.ippon.tatami.domain.User;
 
 /**
- * The User Respository.
  * 
  * @author Julien Dubois
+ * @author DuyHai DOAN
  */
 public interface UserRepository
 {

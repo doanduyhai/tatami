@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * Main configuration file.
  * 
  * @author Julien Dubois
  * @author DuyHai DOAN

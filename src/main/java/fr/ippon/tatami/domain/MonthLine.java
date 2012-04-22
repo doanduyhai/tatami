@@ -1,5 +1,8 @@
 package fr.ippon.tatami.domain;
 
+/**
+ * @author DuyHai DOAN
+ */
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;

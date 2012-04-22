@@ -24,9 +24,9 @@ import org.joda.time.format.PeriodFormatterBuilder;
 import fr.ippon.tatami.web.json.view.TweetView;
 
 /**
- * A user.
  * 
  * @author Julien Dubois
+ * @author DuyHai DOAN
  */
 @Entity
 @Table(name = "Tweet")

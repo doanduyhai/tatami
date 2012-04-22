@@ -22,6 +22,10 @@ import org.springframework.security.web.util.ThrowableCauseExtractor;
 import org.springframework.web.filter.GenericFilterBean;
 import org.thymeleaf.util.StringUtils;
 
+/**
+ * 
+ * @author DuyHai DOAN
+ */
 public class AjaxTimeoutRedirectFilter extends GenericFilterBean
 {
 

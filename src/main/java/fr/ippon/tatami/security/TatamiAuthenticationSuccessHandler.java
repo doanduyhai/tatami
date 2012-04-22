@@ -15,8 +15,6 @@ import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.service.UserService;
 
 /**
- * Manages a user's successful login.
- * 
  * @author Julien Dubois
  */
 @Component

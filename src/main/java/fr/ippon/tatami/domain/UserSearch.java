@@ -2,6 +2,10 @@ package fr.ippon.tatami.domain;
 
 import javax.validation.constraints.Pattern;
 
+/**
+ * 
+ * @author DuyHai DOAN
+ */
 public class UserSearch
 {
 

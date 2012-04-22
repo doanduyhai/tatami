@@ -31,9 +31,9 @@ import fr.ippon.tatami.service.util.TatamiConstants;
 import fr.ippon.tatami.web.json.view.TweetView;
 
 /**
- * REST controller for managing tweets.
  * 
  * @author Julien Dubois
+ * @author DuyHai DOAN
  */
 @Controller
 public class TweetController extends AbstractRESTController

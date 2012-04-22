@@ -13,6 +13,9 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 
 import fr.ippon.tatami.web.json.view.JacksonView;
 
+/**
+ * @author DuyHai DOAN
+ */
 public class JacksonViewAwareHttpMessageConverter extends MappingJacksonHttpMessageConverter
 {
 

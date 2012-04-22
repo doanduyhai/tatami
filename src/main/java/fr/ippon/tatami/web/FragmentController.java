@@ -10,8 +10,6 @@ import fr.ippon.tatami.service.UserService;
 import fr.ippon.tatami.web.view.ViewConstants;
 
 /**
- * Fragment controller
- * 
  * @author Duy Hai DOAN
  */
 @Controller

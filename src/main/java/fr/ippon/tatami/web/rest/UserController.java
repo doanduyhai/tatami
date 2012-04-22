@@ -25,9 +25,9 @@ import fr.ippon.tatami.service.util.TatamiConstants;
 import fr.ippon.tatami.web.json.view.UserView;
 
 /**
- * REST controller for managing users.
  * 
  * @author Julien Dubois
+ * @author DuyHai DOAN
  */
 @Controller
 public class UserController extends AbstractRESTController

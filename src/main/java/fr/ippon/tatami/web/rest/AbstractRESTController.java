@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import fr.ippon.tatami.web.converter.JacksonViewAwareHttpMessageConverter;
 import fr.ippon.tatami.web.json.view.JacksonView;
 
+/**
+ * @author DuyHai DOAN
+ */
 @Controller
 public abstract class AbstractRESTController
 {

@@ -1,7 +1,9 @@
 package fr.ippon.tatami.config;
 
 /**
+ * 
  * @author Julien Dubois
+ * @author DuyHai DOAN
  */
 public class ColumnFamilyKeys
 {

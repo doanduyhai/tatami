@@ -1,5 +1,9 @@
 package fr.ippon.tatami.domain;
 
+/**
+ * 
+ * @author DuyHai DOAN
+ */
 public class UserTweetStat implements Comparable<UserTweetStat>
 {
 

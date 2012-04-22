@@ -14,7 +14,7 @@ Tatami is made with the following technologies :
 
 Original version of Tatami was developped by [Ippon Technologies](http://www.ippon.fr)
 
-This fork has been enhance by [DuyHai DOAN](http://doanduyhai.wordpress.com)
+This fork has been enhanced by [DuyHai DOAN](http://doanduyhai.wordpress.com)
 
 Installation
 ------------
@@ -22,15 +22,15 @@ Installation
 - Install [Maven 3](http://maven.apache.org/)
 - Run Cassandra from Maven : mvn cassandra:run
 - Run Jetty from Maven : mvn jetty:run
-- Connect to the application at http://127.0.0.1:8080
+- Connect to the application at http://127.0.0.1:8080/tatami
 
 The default users are "jdubois/password" and "tescolan/password", you can check or modify the
-Spring Security configuration at /META-INF/spring/applicationContext-security.xml
+Spring Security configuration at tatami-security.xml
 
 License
 -------
 
-Copyright 2012 [Ippon Technologies](http://www.ippon.fr)
+Copyright 2012 [DuyHai DOAN](http://doanduyhai.wordpress.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this application except in compliance with the License.

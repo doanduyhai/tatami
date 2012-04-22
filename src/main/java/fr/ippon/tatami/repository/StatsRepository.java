@@ -2,6 +2,10 @@ package fr.ippon.tatami.repository;
 
 import java.util.Collection;
 
+/**
+ * 
+ * @author DuyHai DOAN
+ */
 public interface StatsRepository
 {
 	void addTweetToDay(String tweetId, String day);

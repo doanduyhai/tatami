@@ -12,6 +12,10 @@ import lombok.ToString;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+/**
+ * 
+ * @author DuyHai DOAN
+ */
 @Entity
 @Table(name = "UserFollowers")
 @EqualsAndHashCode(of = "login")

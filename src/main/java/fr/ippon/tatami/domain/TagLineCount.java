@@ -1,5 +1,8 @@
 package fr.ippon.tatami.domain;
 
+/**
+ * @author DuyHai DOAN
+ */
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;

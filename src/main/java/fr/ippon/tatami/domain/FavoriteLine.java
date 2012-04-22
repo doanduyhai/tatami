@@ -1,5 +1,8 @@
 package fr.ippon.tatami.domain;
 
+/**
+ * @author DuyHai DOAN
+ */
 import java.util.ArrayList;
 import java.util.List;
 
