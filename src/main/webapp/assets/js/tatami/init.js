@@ -54,9 +54,10 @@ var clickFromLink = false;
 		$.ajaxSetup({
 			statusCode: 
 			{
-				901: sessionTimeOutPopup
+				901 : sessionTimeOutPopup
 			}
 		});
+		
 	    // right panel
 	    initFavoritesline();
 	    initTimeline();
@@ -66,6 +67,7 @@ var clickFromLink = false;
 		registerUserDetailsPopOver($('#userSuggestions'));
 		registerFetchTweetHandlers();
 		registerUserSearchListener();
+		registerLoginRedirectListener();
 		$('#picture').click(function()
 		{
 			var login = $('#picture').attr('data-user');

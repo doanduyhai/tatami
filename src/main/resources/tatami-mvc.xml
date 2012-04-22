@@ -11,6 +11,9 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 	
+	
+	<import resource="classpath:tatami-properties.xml"/>
+	
 	<mvc:resources location="/assets/img/" mapping="/assets/img/**" /> 
 	<mvc:resources location="/assets/css/" mapping="/assets/css/**" />
 	<mvc:resources location="/assets/js/" mapping="/assets/js/**" />
@@ -27,15 +30,15 @@
 	</bean>	
 	
 	<bean id="customJacksonViewAwareMessageConverter" class="fr.ippon.tatami.web.converter.JacksonViewAwareHttpMessageConverter"/>
-	
+	<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
+			<property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
+			<property name="writeAcceptCharset" value="false"/>
+	</bean>
 	<bean id="defaultMessageConverters" class="java.util.ArrayList">
 		<constructor-arg>
 	        <list>
 	        	<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
-	        	<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
-					<property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
-					<property name="writeAcceptCharset" value="false"/>
-				</bean>
+	        	<ref bean="stringHttpMessageConverter"/>
 				<bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
 	        	<bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
 	        	<bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
@@ -67,7 +70,9 @@
 		<property name="exceptionResolvers">
 			<list>
 				<bean class="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver">
-					<property name="messageConverters" ref="defaultMessageConverters"/>
+					<property name="messageConverters">
+						<ref bean="stringHttpMessageConverter"/>
+					</property>
   				</bean>
   				<bean class="org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver"/>
   				<bean class="org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver"/>

@@ -3,18 +3,19 @@
 	  xmlns="http://www.w3.org/1999/xhtml" 
 	  xmlns:th="http://www.thymeleaf.org">
 	  
-    <div id="sessionTimeOutModal" th:fragment="sessionTimeOutModal" class="modal" style="display: none;">
-	    <div class="modal-header center">
-			<span>Session Timeout</span>
-			<a class="close" data-dismiss="modal">&times;</a>
+	<div id="sessionTimeOutModal" class="modal" style="display: none;" th:fragment="sessionTimeOutModal" >
+	    <div class="modal-header">
+		    <a class="close" data-dismiss="modal">&times;</a>
+		    <h3>Security Session Timeout</h3>
+		</div>
+		<div class="modal-body">
+		    <p>Your security session has expired, do you want to login again ?</p>
+		</div>
+		<div class="modal-footer">
+		    <a href="#" class="btn btn-primary redirectToLogin">Re-login</a>
+		    <a href="#" class="btn" data-dismiss="modal">Ignore</a>
 	    </div>
-	    
-	    <div class="modal-body row-fluid noMargin noPadding alert-error">
-			Your session has expired. You will be redirected to the login page
-	    </div>
-	    
-	    
-    </div>
+	</div>
 
 </html>
 	  

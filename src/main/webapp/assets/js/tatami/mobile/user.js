@@ -125,6 +125,9 @@ function updateUserProfileModal(data)
 	.find('#userProfileTweetsCount').html(data.tweetCount).end()
 	.find('#userProfileFriendsCount').html(data.friendsCount).end()
 	.find('#userProfileFollowersCount').html(data.followersCount);
+	
+	$('#userProfileFooter').unbind('click');
+	bindListeners($('#userProfileFooter'));	
 }
 
 function registerUserSearchListener()

@@ -42,6 +42,16 @@ function bindListeners($target)
 		return false;
 	});
 
+	$target.find('[data-modal-hide]').click(function(e)
+	{
+		var modal = $(e.currentTarget).attr('data-modal-hide');
+		if(modal!= null)
+		{
+			$(''+modal).modal('hide');
+		}
+		
+	});
+	
 	//Bind click on gravatar to display user profile modal
 	$target.find('img.tweetGravatar[data-user],#picture').click(function(e)
 	{
@@ -61,6 +71,12 @@ function bindListeners($target)
 	});
 
 
+}
+
+function sessionTimeOutPopup()
+{
+	$('#sessionTimeOutModal').modal('show');
+	$('#sessionTimeOutModal').css('z-index',6000);
 }
 
 function errorHandler($targetErrorPanel)

@@ -1,25 +1,16 @@
 function bindListeners($target)
 {
+	
 	$target.find('a[data-follow]').click(function(e)
 	{
 		var target = $(e.currentTarget).attr('data-follow');
-		var modal = $(e.currentTarget).attr('data-modal');
-		if(modal!= null)
-		{
-			$('#'+modal).modal('hide');
-		}	
 		followUser(target);
 		return false;
 	});
 	
 	$target.find('a[data-unfollow]').click(function(e)
 	{
-		var target = $(e.currentTarget).attr('data-unfollow');
-		var modal = $(e.currentTarget).attr('data-modal');
-		if(modal!= null)
-		{
-			$('#'+modal).modal('hide');
-		}			
+		var target = $(e.currentTarget).attr('data-unfollow');	
 		removeFriend(target);
 		return false;
 	});
@@ -41,11 +32,6 @@ function bindListeners($target)
 	$target.find('a[data-user],span[data-user]').click(function(e)
 	{
 		var target = $(e.currentTarget).attr('data-user');
-		var modal = $(e.currentTarget).attr('data-modal');
-		if(modal!= null)
-		{
-			$('#'+modal).modal('hide');
-		}	
 		loadUserline(target);
 		return false;
 	});
@@ -56,6 +42,17 @@ function bindListeners($target)
 		loadTagsline(target);
 		return false;
 	});
+	
+	$target.find('[data-modal-hide]').click(function(e)
+	{
+		var modal = $(e.currentTarget).attr('data-modal-hide');
+		if(modal!= null)
+		{
+			$(''+modal).modal('hide');
+		}
+		
+	});
+	
 	
 	// Bind click handler for "Tweet" button
 	$target.find('#tweetButton').click(tweet);
@@ -88,10 +85,11 @@ function bindListeners($target)
 
 }
 
+
 function sessionTimeOutPopup()
 {
 	$('#sessionTimeOutModal').modal('show');
-	$('#sessionTimeOutModal').css('z-index',5000);
+	$('#sessionTimeOutModal').css('z-index',6000);
 }
 
 
@@ -107,6 +105,14 @@ function errorHandler($targetErrorPanel)
 	};
 }
 
+function registerLoginRedirectListener()
+{
+	$('.redirectToLogin').click(function()
+	{
+		window.location.replace("./login");
+
+	});
+}
 function registerUserDetailsPopOver($target)
 {
 	$target.find('.tweetGravatar').mouseenter(function()
@@ -230,18 +236,18 @@ function fillUserTemplate(user)
 	
 	$newUserLine
 	.find('.tweetGravatar').attr('data-user',user.login).attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=32').attr('data-highlight','userProfileModal').end()
-	.find('#userLink').attr('id','').attr('data-user',user.login).attr('title','Show '+user.login+' tweets').attr('data-modal','userSearchModal').end()
+	.find('#userLink').attr('id','').attr('data-user',user.login).attr('title','Show '+user.login+' tweets').attr('data-modal-hide','#userSearchModal').end()
 	.find('em').html('@'+user.login).end()
 	.find('.userDetailsName').html(user.firstName+' '+user.lastName);
 	
 	if(user.follow)
 	{
-		$newUserLine.find('.tweetFriend a').attr('data-follow',user.login).attr('title','Follow '+user.login).attr('data-modal','userSearchModal');
+		$newUserLine.find('.tweetFriend a').attr('data-follow',user.login).attr('title','Follow '+user.login).attr('data-modal-hide','#userSearchModal');
 	}
 	else
 	{
 		$newUserLine.find('.tweetFriend a').removeAttr('data-follow').attr('data-unfollow',user.login)
-		.attr('title','Stop following '+user.login).attr('data-modal','userSearchModal')
+		.attr('title','Stop following '+user.login).attr('data-modal-hide','#userSearchModal')
 		.find('i').removeClass().addClass('icon-eye-close');
 	}
 	bindListeners($newUserLine);

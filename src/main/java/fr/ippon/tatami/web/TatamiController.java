@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.stereotype.Controller;
@@ -25,7 +26,6 @@ public class TatamiController
 
 	private final Logger log = LoggerFactory.getLogger(TatamiController.class);
 
-	// @Inject
 	UserService userService;
 
 	@RequestMapping(ViewConstants.URL_LOGIN)
@@ -51,7 +51,8 @@ public class TatamiController
 			ViewConstants.URL_ROOT,
 			ViewConstants.URL_HOME
 	})
-	public String tatami(Model model, HttpServletRequest servletRequest)
+	public String tatami(Model model, @Value("#{'${ajax.session.timeout.http.code}'}") String ajaxSessionTimeoutCode,
+			HttpServletRequest servletRequest)
 	{
 		// Set the default nb tweets value to the model to be defined as Javascript constant
 		model.addAttribute("DEFAULT_TWEET_LIST_SIZE", TatamiConstants.DEFAULT_TWEET_LIST_SIZE);

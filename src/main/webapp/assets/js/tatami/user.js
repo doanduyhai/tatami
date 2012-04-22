@@ -105,9 +105,13 @@ function updateUserProfileModal(data)
 	.find('#userProfileLocation span:nth-child(2)').html(data.location).end()
 	.find('#userProfileWebsite a').html(data.website).attr('href',data.website).end()
 	.find('#userProfileBio').html(data.biography).end()
-	.find('#userProfileTweetsCount').html(data.tweetCount).end()
+	.find('#userProfileTweetsCount').attr('data-user',data.login).html(data.tweetCount).end()
 	.find('#userProfileFriendsCount').html(data.friendsCount).end()
 	.find('#userProfileFollowersCount').html(data.followersCount);
+	
+	$('#userProfileFooter').unbind('click');
+	bindListeners($('#userProfileFooter'));
+	
 }
 
 function registerUserSearchListener()

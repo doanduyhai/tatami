@@ -19,6 +19,12 @@ var clickFromLink = false;
     
 	$(function() {
 		
+		$.ajaxSetup({
+			statusCode: 
+			{
+				901 : sessionTimeOutPopup
+			}
+		});
 		// Bind click handler for "Tweet" button
 		$('#tweetButton').click(tweet);
 		
