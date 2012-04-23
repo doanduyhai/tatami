@@ -86,6 +86,7 @@ public class User
 
 	@JsonView(value =
 	{
+			UserView.Minimum.class,
 			UserView.Stats.class,
 			UserView.Details.class,
 			UserView.Full.class

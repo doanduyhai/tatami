@@ -72,12 +72,12 @@ function bindListeners($target)
 		{
 			$(e.currentTarget).popover('hide');	
 		}
-		var modal = $(e.currentTarget).attr('data-highlight');
+		var modal = $(e.currentTarget).attr('data-modal-highlight');
 		var login = $(e.currentTarget).attr('data-user');
 		showUserProfile(login);
 		if(modal!= null)
 		{
-			$('#'+modal).css('z-index',5000);
+			$(modal).css('z-index',5000);
 		}
 		return false;
 	});
@@ -126,10 +126,12 @@ function registerUserDetailsPopOver($target)
 				trigger: 'manual',
 				title: 'User details',
 				html : true,
-				template: $('#popoverTemplate').clone().attr('id','').find('div.popover').attr('data-user',data_user).end().html()
+				template: $('#popoverTemplate').clone().attr('id','').attr('z-index',2000).find('div.popover').attr('data-user',data_user).end().html()
 			});
 		}
 		$(this).popover('show');
+		$(this).data('popover').tip().css({'z-index': 2000});
+		
 		$.ajax({
 			type: HTTP_GET,
 			url: "rest/usersDetails/" + $('.popover.in').attr('data-user'),
@@ -235,10 +237,11 @@ function fillUserTemplate(user)
 	$newUserLine = $('#fullUserTemplate').clone().attr('id','');
 	
 	$newUserLine
-	.find('.tweetGravatar').attr('data-user',user.login).attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=32').attr('data-highlight','userProfileModal').end()
-	.find('#userLink').attr('id','').attr('data-user',user.login).attr('title','Show '+user.login+' tweets').attr('data-modal-hide','#userSearchModal').end()
+	.find('.tweetGravatar').attr('data-user',user.login).attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=32').attr('data-modal-highlight','#userProfileModal').end()
+	.find('.userLink').attr('data-user',user.login).attr('title','Show '+user.login+' tweets').attr('data-modal-hide','#userSearchModal').end()
 	.find('em').html('@'+user.login).end()
-	.find('.userDetailsName').html(user.firstName+' '+user.lastName);
+	.find('.userDetailsName').html(user.firstName+' '+user.lastName).end()
+	.find('.badge').html(user.tweetCount);
 	
 	if(user.follow)
 	{

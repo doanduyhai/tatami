@@ -31,7 +31,12 @@
 	
 	<bean id="customJacksonViewAwareMessageConverter" class="fr.ippon.tatami.web.converter.JacksonViewAwareHttpMessageConverter"/>
 	<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
-			<property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
+			<property name="supportedMediaTypes">
+				<list>
+					<value>text/plain;charset=UTF-8</value>
+					<value>*/*</value>
+				</list>
+			</property>
 			<property name="writeAcceptCharset" value="false"/>
 	</bean>
 	<bean id="defaultMessageConverters" class="java.util.ArrayList">
