@@ -1,19 +1,22 @@
 var clickFromLink = false;
+var directContatTabClick = true;
 
 !function ( $ ) {
 
 	// left panel
 	loadProfile();
-	loadWhoToFollow();
+	loadSuggestions();
 	
-    // auto-refresh
-    $('a[data-toggle="tab"]').on('show', function(e) {
+	
+    // Tweet lines refresh
+    $('a[data-toggle="tab"]').on('shown', function(e) {
     	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' || e.target.hash == '#taglinePanel') {
     		if(!clickFromLink)
     		{	
-    			setTimeout(refreshCurrentLine,10);
+    			refreshCurrentLine();
     		}	
     	}
+    	
     });
     
     
@@ -22,22 +25,32 @@ var clickFromLink = false;
 		$.ajaxSetup({
 			statusCode: 
 			{
-				901 : sessionTimeOutPopup
+				901 : function () {
+						window.location.replace("./login");
+					}
+				
 			}
 		});
 		// Bind click handler for "Tweet" button
 		$('#tweetButton').click(tweet);
 		
-		//Right panel
+		//Load tweet lines
 		loadEmptyLines();
+		
+		//Load user lines
+		loadEmptyUserLines();
+		
 		$('#picture').click(function()
 		{
-			var login = $('#picture').attr('data-user');
-			showUserProfile(login);
+			var user = $('#picture').attr('data-user');
+			showUserProfile(user);
 			return false;
 		});
-		
+
+		registerUserProfileModalListeners();
+		registerHomePanelListeners();
 	});
+	
 
 }( window.jQuery );
 

@@ -9,77 +9,102 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import me.prettyprint.cassandra.model.CqlQuery;
-import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.hector.api.beans.HColumn;
 
 import org.testng.annotations.Test;
 
 import fr.ippon.tatami.AbstractCassandraTatamiTest;
-import fr.ippon.tatami.service.util.TatamiConstants;
+import fr.ippon.tatami.domain.Tweet;
 
 public class TagLineRepositoryTest extends AbstractCassandraTatamiTest
 {
-	@Test
-	public void testAddTweet()
-	{
-		this.tagLineRepository.addTweet("tag", "tweet1");
-		this.tagLineRepository.addTweet("tag", "tweet2");
-		this.tagLineRepository.addTweet("tag", "tweet3");
-		this.tagLineRepository.addTweet("tag", "tweet4");
-		this.tagLineRepository.addTweet("tag", "tweet5");
+	private Tweet tweet1;
+	private Tweet tweet2;
+	private Tweet tweet3;
+	private Tweet tweet4;
+	private Tweet tweet5;
 
-		List<HColumn<Long, String>> columns = createSliceQuery(keyspace, se, le, se).setColumnFamily(TAGLINE_CF).setKey("tag")
-				.setRange(4L, 0L, true, TatamiConstants.DEFAULT_TAG_LIST_SIZE).execute().get().getColumns();
+	@Test
+	public void testAddTweet() throws InterruptedException
+	{
+		tweet1 = this.tweetRepository.createTweet("test", "tweet1");
+		Thread.sleep(5);
+		tweet2 = this.tweetRepository.createTweet("test", "tweet2");
+		Thread.sleep(5);
+		tweet3 = this.tweetRepository.createTweet("test", "tweet3");
+		Thread.sleep(5);
+		tweet4 = this.tweetRepository.createTweet("test", "tweet4");
+		Thread.sleep(5);
+		tweet5 = this.tweetRepository.createTweet("test", "tweet5");
+
+		this.tagLineRepository.addTweet("tag", tweet1.getTweetId());
+		this.tagLineRepository.addTweet("tag", tweet2.getTweetId());
+		this.tagLineRepository.addTweet("tag", tweet3.getTweetId());
+		this.tagLineRepository.addTweet("tag", tweet4.getTweetId());
+		this.tagLineRepository.addTweet("tag", tweet5.getTweetId());
+
+		List<HColumn<String, Object>> columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(TAGLINE_CF).setKey("tag")
+				.setRange(null, null, true, 100).execute().get().getColumns();
 
 		List<String> tweetIds = new ArrayList<String>();
-		for (HColumn<Long, String> column : columns)
+		for (HColumn<String, Object> column : columns)
 		{
-			tweetIds.add(column.getValue());
+			tweetIds.add(column.getName());
 		}
 
 		assertTrue(tweetIds.size() == 5, "tweetIds.size() == 5");
-		assertTrue(tweetIds.contains("tweet1"), "tweet1 has 'tag'");
-		assertTrue(tweetIds.contains("tweet2"), "tweet2 has 'tag'");
-		assertTrue(tweetIds.contains("tweet3"), "tweet3 has 'tag'");
-		assertTrue(tweetIds.contains("tweet4"), "tweet4 has 'tag'");
-		assertTrue(tweetIds.contains("tweet5"), "tweet5 has 'tag'");
+		assertTrue(tweetIds.contains(tweet1.getTweetId()), "tweet1 has 'tag'");
+		assertTrue(tweetIds.contains(tweet2.getTweetId()), "tweet2 has 'tag'");
+		assertTrue(tweetIds.contains(tweet3.getTweetId()), "tweet3 has 'tag'");
+		assertTrue(tweetIds.contains(tweet4.getTweetId()), "tweet4 has 'tag'");
+		assertTrue(tweetIds.contains(tweet5.getTweetId()), "tweet5 has 'tag'");
 	}
 
 	@Test(dependsOnMethods = "testAddTweet")
 	public void testFindTweetsForTag()
 	{
-		Collection<String> tweetIds = this.tagLineRepository.findTweetsRangeForTag("tag", 1, DEFAULT_TAG_LIST_SIZE);
+		Collection<String> tweetIds = this.tagLineRepository.findTweetsRangeForTag("tag", null, DEFAULT_TAG_LIST_SIZE);
 
 		assertTrue(tweetIds.size() == 5, "tweetIds.size() == 5");
-		assertTrue(tweetIds.contains("tweet1"), "tweet1 has 'tag'");
-		assertTrue(tweetIds.contains("tweet2"), "tweet2 has 'tag'");
-		assertTrue(tweetIds.contains("tweet3"), "tweet3 has 'tag'");
-		assertTrue(tweetIds.contains("tweet4"), "tweet4 has 'tag'");
-		assertTrue(tweetIds.contains("tweet5"), "tweet5 has 'tag'");
+		assertTrue(tweetIds.contains(tweet1.getTweetId()), "tweet1 has 'tag'");
+		assertTrue(tweetIds.contains(tweet2.getTweetId()), "tweet2 has 'tag'");
+		assertTrue(tweetIds.contains(tweet3.getTweetId()), "tweet3 has 'tag'");
+		assertTrue(tweetIds.contains(tweet4.getTweetId()), "tweet4 has 'tag'");
+		assertTrue(tweetIds.contains(tweet5.getTweetId()), "tweet5 has 'tag'");
 	}
 
-	@Test(dependsOnMethods = "testAddTweet")
+	@Test(dependsOnMethods = "testFindTweetsForTag")
 	public void testFindTweetsRangeForTag()
 	{
-		Collection<String> tweetIds = this.tagLineRepository.findTweetsRangeForTag("tag", 1, 3);
+		Collection<String> tweetIds = this.tagLineRepository.findTweetsRangeForTag("tag", tweet5.getTweetId(), 3);
 
 		assertTrue(tweetIds.size() == 3, "tweetIds.size() == 3");
-		assertTrue(tweetIds.contains("tweet3"), "tweet3 has 'tag'");
-		assertTrue(tweetIds.contains("tweet4"), "tweet4 has 'tag'");
-		assertTrue(tweetIds.contains("tweet5"), "tweet5 has 'tag'");
+		assertTrue(tweetIds.contains(tweet2.getTweetId()), "tweet2 has 'tag'");
+		assertTrue(tweetIds.contains(tweet3.getTweetId()), "tweet3 has 'tag'");
+		assertTrue(tweetIds.contains(tweet4.getTweetId()), "tweet4 has 'tag'");
+	}
 
-		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, StringSerializer.get(), StringSerializer.get(),
-				StringSerializer.get());
-		cqlQuery.setQuery("truncate TagLine");
-		cqlQuery.execute();
+	@Test(dependsOnMethods = "testFindTweetsRangeForTag")
+	public void testFindTweetsRangeOutOfBoundsForTag()
+	{
+		Collection<String> tweetIds = this.tagLineRepository.findTweetsRangeForTag("tag", tweet1.getTweetId(), 3);
 
-		cqlQuery.setQuery("truncate TagLineCount");
-		cqlQuery.execute();
+		assertTrue(tweetIds.size() == 0, "tweetIds.size() == 0");
 
-		cqlQuery.setQuery("truncate Tweet");
-		cqlQuery.execute();
+	}
 
+	@Test(dependsOnMethods = "testFindTweetsRangeOutOfBoundsForTag")
+	public void testRemoveTweetFromTagLine()
+	{
+		this.tagLineRepository.removeTweet("tag", tweet2.getTweetId());
+
+		this.tagLineRepository.removeTweet("tag", tweet4.getTweetId());
+
+		Collection<String> tweetIds = this.tagLineRepository.findTweetsRangeForTag("tag", tweet5.getTweetId(), 2);
+
+		assertTrue(tweetIds.size() == 2, "userFavorites.size()==2");
+		assertTrue(tweetIds.contains(tweet1.getTweetId()), "tweet1 has 'tag'");
+		assertTrue(tweetIds.contains(tweet3.getTweetId()), "tweet3 has 'tag'");
 	}
 
 }

@@ -42,6 +42,8 @@ public class ViewConstants
 
 	public static final String URL_MOBILE_FRAGMENT_TAGLINE = "/fragments/mobile/tagline";
 
+	public static final String URL_MOBILE_FRAGMENT_CONTACTSLINE = "/fragments/mobile/contacts";
+
 	public static final String MOBILE_LOGIN = "pages/mobile/login";
 
 	public static final String MOBILE_HOME = "pages/mobile/home";
@@ -57,5 +59,7 @@ public class ViewConstants
 	public static final String MOBILE_FRAGMENT_USERLINE = "fragments/mobile/userline";
 
 	public static final String MOBILE_FRAGMENT_TAGLINE = "fragments/mobile/tagline";
+
+	public static final String MOBILE_FRAGMENT_CONTACTSLINE = "fragments/mobile/contacts";
 
 }

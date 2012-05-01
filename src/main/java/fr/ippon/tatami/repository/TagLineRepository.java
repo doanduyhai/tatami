@@ -11,5 +11,7 @@ public interface TagLineRepository
 {
 	void addTweet(String tag, String tweetId);
 
-	Collection<String> findTweetsRangeForTag(String tag, int start, int end);
+	void removeTweet(String tag, String tweetId);
+
+	Collection<String> findTweetsRangeForTag(String tag, String startTweetId, int count);
 }

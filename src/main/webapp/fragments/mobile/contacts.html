@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">
+<section id="contactsline">
+    <div class="tabbable">
+          <ul class="nav nav-tabs" id="contactsSubTab">
+          		<li class="active">
+           		<a id="friendsTab" href="#friendsLine" data-toggle="tab">
+					<img src="/assets/img/friends.png" th:src="@{/assets/img/friends.png}"></img>&nbsp;Friends
+				</a>           
+			</li>
+			<li>
+				<a id="followersTab" href="#followersLine" data-toggle="tab">
+					<img src="/assets/img/followers.png" th:src="@{/assets/img/followers.png}"></img>&nbsp;Followers
+				</a>				
+			</li>
+		</ul>
+		<div id="contactsContentPanel" class="tab-content alert-info noPadding">
+			<div class="tab-pane active center userLine" id="friendsLine">
+				<h2>My friends</h2>
+				<table class="table table-striped table-condensed">
+					<thead>
+						<tr>
+							<td class="iconCell floatRight">
+								<a class="refreshUserLineIcon" href="#" title="Refresh">
+									<i class="frame icon-refresh"></i>
+								</a>
+							</td>
+						</tr>
+					</thead>
+				</table>
+				<div class="row-fluid userContainer">
+					<table class="table table-striped">
+						<tbody class="userLineContent"></tbody>		
+					</table>
+				</div>															
+				<footer class="row-fluid noMargin" 
+					data-userFetch-url="rest/userFetch/friends"
+					th:attr="data-userFetch-key=${sec.principal.username}"
+					data-userFetch-type="friends">
+					
+					<div class="span9 fullHeight middle">
+						<button class="userPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
+					</div>
+					<div class="span3 right">
+						<em>#</em>
+						<select class="pageSelector">
+							<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
+							<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
+							<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+						</select>
+					</div>
+				</footer>								
+			</div>
+			<div class="tab-pane center userLine" id="followersLine">
+				<h2>My followers</h2>
+				<table class="table table-striped table-condensed">
+					<thead>
+						<tr>
+							<td class="iconCell floatRight">
+								<a class="refreshUserLineIcon" href="#" title="Refresh">
+									<i class="frame icon-refresh"></i>
+								</a>
+							</td>
+						</tr>
+					</thead>
+				</table>
+				<div class="row-fluid userContainer">
+					<table class="table table-striped">
+						<tbody class="userLineContent"></tbody>		
+					</table>
+				</div>															
+				<footer class="row-fluid noMargin" 
+					data-userFetch-url="rest/userFetch/followers"
+					th:attr="data-userFetch-key=${sec.principal.username}"
+					data-userFetch-type="followers">
+					
+					<div class="span9 fullHeight middle">
+						<button class="userPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
+					</div>
+					<div class="span3 right">
+						<em>#</em>
+						<select class="pageSelector">
+							<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
+							<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
+							<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+						</select>
+					</div>
+				</footer>					
+			</div>	
+		</div>
+	</div>		
+</section>
+</html>

@@ -23,17 +23,18 @@
 	</div>
 	
 	<footer class="row-fluid" 
-		th:attr="data-rest-url=${'rest/tweetFetch/timeline/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
-		data-line-type="timeline">
+		data-tweetFetch-url="rest/tweetFetch/timeline"
+		th:attr="data-tweetFetch-key=${sec.principal.username}"
+		data-tweetFetch-type="timeline">
 		<div class="span9 fullHeight middle">
 			<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
 		</div>
 		<div class="span3 right middle">
 			<em>#</em>&nbsp;
 			<select class="pageSelector">
-				<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
-				<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
-				<option th:inline="text">[[${TWEET_THIRD_FETCH_SIZE}]]</option>
+				<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
+				<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
+				<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
 			</select>
 		</div>
 	</footer>

@@ -325,5 +325,4 @@ public class User
 	{
 		this.follow = follow;
 	}
-
 }

@@ -1,19 +1,55 @@
-function refreshHome()
-{
+/*
+ *  User actions
+ */
+
+function followUser(loginToFollow) {
+	
+	$('#followErrorPanel').hide();
+	
 	$.ajax({
-		type: HTTP_GET,
-		url: "rest/usersProfile/" + login,
+		type: HTTP_POST,
+		url: "rest/users/" + login + "/followUser",
+		contentType: JSON_CONTENT,
+		data: loginToFollow,
 		dataType: JSON_DATA,
-		success: function(user) {
-			$('#homePanel').find('#picture').attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=64').end()
-			.find('#firstName').html(user.firstName).end()
-			.find('#latName').html(user.lastName).end()
-			.find('#tweetCount').html(user.tweetCount).end()
-			.find('#friendsCount').html(user.friendsCount).end()
-			.find('#followersCount').html(user.followersCount).end();
-			
-			bindListeners($('#homePanel'));
-		}
+        success: function(data) {
+
+			setTimeout(function()
+			{
+	            $("#followUserInput").val("");
+	            updateUserCounters();
+	            refreshUserSuggestions();
+	            refreshFriendsline(login);
+			},300);
+
+        },
+    	error: errorHandler($('#followErrorPanel'))
+	});
+
+	return false;
+}
+
+function removeFriend(friend) {
+	
+	$('#followErrorPanel').hide();
+	
+	$.ajax({
+		type: HTTP_POST,
+		url: "rest/users/" + login + "/removeFriend",
+		contentType: "application/json;  charset=UTF-8",
+		data: friend,
+		dataType: JSON_DATA,
+        success: function(data) {
+
+			setTimeout(function()
+			{
+	        	updateUserCounters();	
+	        	refreshUserSuggestions();
+	        	refreshFriendsline(login);
+			},300);
+
+        },
+    	error: errorHandler($('#followErrorPanel'))
 	});
 }
 
@@ -38,33 +74,6 @@ function updateProfile() {
 		error: errorHandler($('#userProfileErrorPanel'))
 	});
 	return false;
-}
-
-function loadProfile()
-{
-	$('#profilePanel').empty();
-	$('#profilePanel').load('fragments/mobile/profile.html #profileContent',function()
-	{
-		//Bind click handler for "Update" button
-		$('#profilePanel').find('button[type="submit"]').click(updateProfile);
-	});
-	
-}
-
-
-function updateUserCounters()
-{
-	$.ajax({
-		type: HTTP_GET,
-		url: "rest/usersStats/" + login,
-		dataType: JSON_DATA,
-		success: function(data) {
-			$("#tweetCount").text(data.tweetCount);
-			$("#friendsCount").text(data.friendsCount);
-			$("#followersCount").text(data.followersCount);
-			
-		}
-	});
 }
 
 function tweet() {
@@ -92,6 +101,21 @@ function tweet() {
 	return false;
 }
 
+function updateUserCounters()
+{
+	$.ajax({
+		type: HTTP_GET,
+		url: "rest/usersStats/" + login,
+		dataType: JSON_DATA,
+		success: function(data) {
+			$("#tweetCount").text(data.tweetCount);
+			$("#friendsCount").text(data.friendsCount);
+			$("#followersCount").text(data.followersCount);
+			
+		}
+	});
+}
+
 function showUserProfile(login)
 {
 	$.ajax({
@@ -106,6 +130,7 @@ function showUserProfile(login)
 	});
 	
 }
+
 
 function updateUserProfileModal(data)
 {
@@ -122,12 +147,255 @@ function updateUserProfileModal(data)
 	.find('#userProfileLocation span:nth-child(2)').html(data.location).end()
 	.find('#userProfileWebsite a').html(data.website).attr('href',data.website).end()
 	.find('#userProfileBio').html(data.biography).end()
-	.find('#userProfileTweetsCount').html(data.tweetCount).end()
-	.find('#userProfileFriendsCount').html(data.friendsCount).end()
-	.find('#userProfileFollowersCount').html(data.followersCount);
+	.find('#userProfileTweetsCount').attr('data-user',data.login).html(data.tweetCount).end()
+	.find('#userProfileFriendsCount').attr('data-friends',data.login).html(data.friendsCount).end()
+	.find('#userProfileFollowersCount').attr('data-followers',data.login).html(data.followersCount);
+}
+
+/*
+ *  Lines activation
+ */
+
+
+function loadSuggestions()
+{
+	$('#suggestionsPanel').empty();
+	$('#suggestionsPanel').load('fragments/mobile/suggestions.html #suggestionsline',function()
+	{
+		refreshUserSuggestions();
+		registerUserSearchListener();
+	});
+}
+
+
+function loadProfile()
+{
+	$('#profilePanel').empty();
+	$('#profilePanel').load('fragments/mobile/profile.html #profileContent',function()
+	{
+		//Bind click handler for "Update" button
+		$('#profilePanel').find('button[type="submit"]').click(updateProfile);
+	});
+}
+
+function loadEmptyUserLines()
+{
+	$('#contactsPanel').load('fragments/mobile/contacts.html #contactsline',function()
+	{
+		// Bind click listener on contact sub tabs
+		$('#contactsPanel a[data-toggle="tab"]').on('shown', function(e) {
+			if (e.target.hash == '#friendsLine') 
+	    	{
+	    		if(directContatTabClick)
+	    		{
+	    			$('#friendsLine h2').html("My friends").removeClass('red');
+	    			$('#friendsLine footer').attr('data-userFetch-key',login);
+	    		}
+	    		refreshCurrentUserLine();
+	    	}
+	    	else if (e.target.hash == '#followersLine')
+	    	{
+	    		if(directContatTabClick)
+	    		{
+	    			$('#followersLine h2').html("My followers").removeClass('red');
+	    			$('#followersLine footer').attr('data-userFetch-key',login);
+	    		}
+	    		refreshCurrentUserLine();
+	    	}	
+		});	
+		
+		registerRefreshUserLineListeners();
+		registerFetchUserHandlers();
+		
+	});
+}	
+/*
+ *  Lines refresh
+ */
+
+function refreshUserSuggestions()
+{
+	$.ajax({
+		type: HTTP_GET,
+		url: 'rest/users/suggestions',
+		dataType: JSON_DATA,
+        success: function(data)
+        {
+    		var $tableBody = $('#userSuggestions');
+    		$tableBody.empty();
+        	if(data.length>0)
+    		{
+	        	$.each(data,function(index, user)
+	        	{        		
+	        		$tableBody.append(fillUserTemplate(user));
+	        	});
+	        	
+    		}
+        	else
+        	{
+        		$newUserLine = $('#emptyUserTemplate').clone().attr('id','').appendTo($tableBody);
+        	}	
+        	
+        }
+    });	
+}
+
+function refreshHome()
+{
+	$.ajax({
+		type: HTTP_GET,
+		url: "rest/usersProfile/" + login,
+		dataType: JSON_DATA,
+		success: function(user) {
+			$('#homePanel').find('#picture').attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=64').end()
+			.find('#firstName').html(user.firstName).end()
+			.find('#latName').html(user.lastName).end()
+			.find('#tweetCount').html(user.tweetCount).end()
+			.find('#friendsCount').html(user.friendsCount).end()
+			.find('#followersCount').html(user.followersCount).end();
+			
+			
+		}
+	});
+}
+
+function refreshFriendsline(user)
+{
+	$('#contactsTab').tab('show');
+	$('#friendsLine footer').attr('data-userFetch-key',user);
+	if(user != login)
+	{
+		$('#friendsLine h2').html("Friends of "+user).addClass('red');
+	}
+	else
+	{
+		$('#friendsLine h2').html("My friends").removeClass('red');
+	}
 	
-	$('#userProfileFooter').unbind('click');
-	bindListeners($('#userProfileFooter'));	
+	if($('#friendsLine').hasClass('active'))
+	{
+		
+		refreshCurrentUserLine();
+	}	
+	else
+	{
+		directContatTabClick = false;
+		$('#friendsTab').tab('show');
+		directContatTabClick = true;
+	}	
+}
+
+function refreshFollowersline(user)
+{
+	$('#contactsTab').tab('show');
+	$('#followersLine footer').attr('data-userFetch-key',user);
+	if(user != login)
+	{
+		$('#followersLine h2').html("Followers of "+user).addClass('red');
+	}
+	else
+	{
+		$('#followersLine h2').html("My followers").removeClass('red');
+	}
+	
+	if($('#followersLine').hasClass('active'))
+	{
+		refreshCurrentUserLine();
+	}	
+	else
+	{
+		directContatTabClick = false;
+		$('#followersTab').tab('show');
+		directContatTabClick = true;
+	}
+}
+
+function refreshCurrentUserLine()
+{
+	var usersNb = $('#contactsline div.tab-pane.active tbody tr.data').size();
+	var targetLine = $('#contactsline div.tab-pane.active.userLine').attr('id');
+	if(targetLine != null)
+	{
+		refreshUserLine(targetLine,null,usersNb,true);
+	}
+		
+
+	return false;
+}	
+
+function refreshUserLine(targetLine,startUser,count,clearAll)
+{	
+	var data_userFetch_url = $('#'+targetLine+' footer').attr('data-userFetch-url');
+	var data_userFetch_type = $('#'+targetLine+' footer').attr('data-userFetch-type');
+	var data_userFetch_key = $('#'+targetLine+' footer').attr('data-userFetch-key');
+	var $tableBody = $('#'+targetLine+' .userLineContent');
+	
+	var userFetchRangeObject = buildUserFetchRange(startUser,count,data_userFetch_key);
+	 
+	$.ajax({
+		type: HTTP_POST,
+		url: data_userFetch_url,
+		contentType: JSON_CONTENT,
+        data:  JSON.stringify(userFetchRangeObject),
+		dataType: JSON_DATA,
+        success: function(data)
+        {
+        	if(data.length>0)
+    		{
+        		if(clearAll)
+        		{
+        			$tableBody.empty();
+            		$('#userPaddingTemplate tr').clone().appendTo($tableBody);
+            		$('#userPaddingTemplate tr').clone().appendTo($tableBody);
+        		}
+        		else
+        		{
+        			$tableBody.find('tr:last-child').remove();
+        		}
+        		
+	        	$.each(data,function(index, user)
+	        	{        		
+	        		$tableBody.append(fillUserTemplate(user,data_userFetch_type));
+	        	});
+	        	
+	        	$('#userPaddingTemplate tr').clone().appendTo($tableBody).show();
+    		}
+        	else if(clearAll)
+    		{
+        		$tableBody.empty();
+    		}
+        }
+    });	
+}
+
+
+function buildUserFetchRange(startUser,count,functionalKey)
+{
+	return {
+		startUser: startUser,
+		count: count,
+		functionalKey: functionalKey
+	};
+}
+
+
+/*
+ * Handlers registration
+ */
+
+function registerUserProfileModalListeners()
+{
+	bindListeners($('#userProfileFooter'));
+};
+
+function registerHomePanelListeners()
+{
+	bindListeners($('#homePanel'));
+}
+
+function registerRefreshUserLineListeners()
+{
+	$('.refreshUserLineIcon').click(refreshCurrentUserLine);
 }
 
 function registerUserSearchListener()
@@ -149,7 +417,7 @@ function registerUserSearchListener()
 	    		{
 		        	$.each(data,function(index, user)
 		        	{        		
-		        		$tableBody.append(fillUserTemplate(user));
+		        		$tableBody.append(fillUserTemplate(user,"search"));
 		        	});
 		        	
 	    		}
@@ -166,20 +434,67 @@ function registerUserSearchListener()
 	});
 }
 
-$.fn.serializeObject = function() {
-    var o = {};
-    var a = this.serializeArray();
-    $.each(a, function() {
-        if (o[this.name] !== undefined) {
-            if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-            }
-            o[this.name].push($.trim(this.value) || '');
-        } else {
-            o[this.name] = $.trim(this.value) || '';
-        }
-    });
-    return o;
-};
+function registerFetchUserHandlers()
+{
+	$('.userPagingButton').click(function(event)
+	{
+		var $target = $(event.target);
+		var userNb = $target.closest('footer').find('.pageSelector option').filter(':selected').val(); 
+		var targetLine =  $target.closest('div.tab-pane.active').attr('id');
+		var startUser = $target.closest('footer').closest('div').find('.userLineContent tr.data').last().find('.tweetGravatar').attr('data-user');
+		refreshUserLine(targetLine,startUser,parseInt(userNb),false);
+				
+		return false;
+	});
+}
+
+/*
+ *  User template handling
+ */
+function fillUserTemplate(user,data_userFetch_type)
+{
+	$newUserLine = $('#fullUserTemplate').clone().attr('id','');
+	
+	$newUserLine
+	.find('.tweetGravatar').attr('data-user',user.login).attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=32').attr('data-modal-highlight','#userProfileModal').end()
+	.find('.userLink').attr('data-user',user.login).attr('title','Show '+user.login+' tweets').end()
+	.find('em').html('@'+user.login).end()
+	.find('.userDetailsName').html(user.firstName+' '+user.lastName).end()
+	.find('.badge').html(user.tweetCount).attr('data-user',user.login);
+	
+	if(data_userFetch_type == "search" || data_userFetch_type == "followers")
+	{
+		// No action if user == currentUser
+		if(login != user.login)
+		{
+			if(user.follow)
+			{
+				$newUserLine.find('.userAction a').attr('data-follow',user.login)
+				.attr('title','Follow '+user.login).attr('data-modal-hide','.modal')
+				.find('i').addClass('icon-eye-open');
+			}
+			else
+			{
+				$newUserLine.find('.userAction a').attr('data-unfollow',user.login)
+				.attr('title','Stop following '+user.login).attr('data-modal-hide','.modal')
+				.find('i').addClass('icon-eye-close');
+			}	
+		}
+	}
+	else if(data_userFetch_type == "friends")
+	{
+		// No action if user == currentUser
+		if(login != user.login)
+		{
+			$newUserLine.find('.userAction a').attr('data-unfollow',user.login)
+			.attr('title','Stop following '+user.login)
+			.find('i').addClass('icon-eye-close');
+		}	
+	}
+	
+	bindListeners($newUserLine);
+	return $newUserLine;
+	
+}
 
 

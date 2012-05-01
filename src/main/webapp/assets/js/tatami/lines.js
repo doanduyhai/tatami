@@ -1,97 +1,6 @@
-function refreshLine(targetLine,start,end,clearAll,userLogin,tagWord)
-{
-	var data_rest_url = $('#'+targetLine+' footer').attr('data-rest-url');
-	var data_line_type = $('#'+targetLine+' footer').attr('data-line-type');
-	var $tableBody = $('#'+targetLine+' .lineContent');
-	
-	if(data_line_type == 'timeline')
-	{
-		data_rest_url = data_rest_url.replace(START_TWEET_INDEX_REGEXP,start)
-		.replace(END_TWEET_INDEX_REGEXP,end);
-	}
-	else if(data_line_type == 'favoriteline')
-	{
-		data_rest_url = data_rest_url.replace(START_TWEET_INDEX_REGEXP,start)
-		.replace(END_TWEET_INDEX_REGEXP,end);
-	}		
-	else if(data_line_type == 'userline')
-	{
-		var data_login='';
-		if(userLogin != null)
-		{
-			 data_login=userLogin;
-		}	
-		else
-		{
-			data_login=$('#'+targetLine).closest('div.tab-pane').find('.lineContent').find('tr.data').filter(':last').find('img[data-user]').attr('data-user');
-		}
-		data_rest_url = data_rest_url.replace(START_TWEET_INDEX_REGEXP,start)
-		.replace(END_TWEET_INDEX_REGEXP,end)
-		.replace(USER_LOGIN_REGEXP,data_login);
-	}	
-	else if(data_line_type == 'tagline')
-	{
-		var tag='';
-		if(tagWord != null)
-		{
-			 tag=tagWord;
-		}	
-		else
-		{
-			tag=$('#'+targetLine).closest('div.tab-pane').find('.lineContent').find('tr.data').filter(':last').find('a[data-tag]').attr('data-tag');
-		}
-		data_rest_url = data_rest_url.replace(START_TWEET_INDEX_REGEXP,start)
-		.replace(END_TWEET_INDEX_REGEXP,end)
-		.replace(TAG_REGEXP,tag);
-	}
-
-	 
-	$.ajax({
-		type: HTTP_GET,
-		url: data_rest_url,
-		dataType: JSON_DATA,
-        success: function(data)
-        {
-        	if(data.length>0)
-    		{
-        		if(clearAll)
-        		{
-        			$tableBody.empty();
-            		$('#tweetPaddingTemplate tr').clone().appendTo($tableBody);
-            		$('#tweetPaddingTemplate tr').clone().appendTo($tableBody);
-        		}
-        		else
-        		{
-        			$tableBody.find('tr:last-child').remove();
-        		}
-        		
-	        	$.each(data,function(index, tweet)
-	        	{        		
-	        		$tableBody.append(fillTweetTemplate(tweet,data_line_type));
-	        	});
-	        	
-	        	$('#tweetPaddingTemplate tr').clone().css('display','inline').appendTo($tableBody);
-    		}
-        }
-    });	
-}
-
-function refreshCurrentLine()
-{
-	var tweetsNb = $('#tweetsPanel div.tab-pane.active tbody tr.data').size();
-	var targetLine = $('#tweetsPanel div.tab-pane.active').attr('id');
-	
-	refreshLine(targetLine,1,tweetsNb,true,null,null);	
-
-	return false;
-}	
-
-function refreshTimeline()
-{
-	$('#mainTab').tab('show');
-	refreshCurrentLine();
-}
-
+/*
+ * Tweet actions 
+ */
 function addFavoriteTweet(tweet) {
 	
 	$.ajax({
@@ -132,18 +41,16 @@ function removeFavoriteTweet(tweet) {
 	return false;
 }
 
+/*
+ * Lines activation & refresh 
+ */
 function loadUserline(targetUserLogin)
 {
 	if(targetUserLogin != null)
 	{
 		$('#userTweetsList').empty();
-		clickFromLink = true;
+		$('#userlinePanel footer').attr('data-tweetFetch-key',targetUserLogin);
 		$('#userTab').tab('show');
-		jQuery.ajaxSetup({async:false});
-		
-		refreshLine('userlinePanel',1,DEFAULT_TWEET_LIST_SIZE,true,targetUserLogin,null);
-		clickFromLink = false;
-		jQuery.ajaxSetup({async:true});
 	}
 }
 
@@ -152,13 +59,161 @@ function loadTagsline(tag)
 	if(tag != null)
 	{
 		$('#tagTweetsList').empty();
-		clickFromLink = true;
+		$('#taglinePanel footer').attr('data-tweetFetch-key',tag);		
 		$('#tagTab').tab('show');
-		jQuery.ajaxSetup({async:false});
-		
-		refreshLine('taglinePanel',1,DEFAULT_TAG_LIST_SIZE,true,null,tag);
-		clickFromLink = false;
-		jQuery.ajaxSetup({async:true});		
 	}	
 	
+}
+
+function refreshTimeline()
+{
+	$('#mainTab').tab('show');
+	refreshCurrentLine();
+}
+
+
+function refreshCurrentLine()
+{
+	var tweetsNb = $('#tweetsPanel div.tab-pane.active tbody tr.data').size();
+	var targetLine = $('#tweetsPanel div.tab-pane.active').attr('id');
+	
+	refreshLine(targetLine,null,tweetsNb,true);	
+
+	return false;
+}
+
+
+function refreshLine(targetLine,startTweetId,count,clearAll)
+{
+	var data_tweetFetch_url = $('#'+targetLine+' footer').attr('data-tweetFetch-url');
+	var data_tweetFetch_type = $('#'+targetLine+' footer').attr('data-tweetFetch-type');
+	var data_tweetFetch_key = $('#'+targetLine+' footer').attr('data-tweetFetch-key');
+	var $tableBody = $('#'+targetLine+' .lineContent');
+	
+	var tweetFetchRangeObject = buildTweetFetchRange(startTweetId,count,data_tweetFetch_key);
+	 
+	$.ajax({
+		type: HTTP_POST,
+		url: data_tweetFetch_url,
+		contentType: JSON_CONTENT,
+        data:  JSON.stringify(tweetFetchRangeObject),
+		dataType: JSON_DATA,
+        success: function(data)
+        {
+        	if(data.length>0)
+    		{
+        		if(clearAll)
+        		{
+        			$tableBody.empty();
+            		$('#tweetPaddingTemplate tr').clone().appendTo($tableBody);
+            		$('#tweetPaddingTemplate tr').clone().appendTo($tableBody);
+        		}
+        		else
+        		{
+        			$tableBody.find('tr:last-child').remove();
+        		}
+        		
+	        	$.each(data,function(index, tweet)
+	        	{        		
+	        		$tableBody.append(fillTweetTemplate(tweet,data_tweetFetch_type));
+	        	});
+	        	
+	        	$('#tweetPaddingTemplate tr').clone().appendTo($tableBody).show();
+    		}
+        	else if(clearAll)
+    		{
+        		$tableBody.empty();
+    		}
+        }
+    });	
+}
+
+function buildTweetFetchRange(startTweetId,count,functionalKey)
+{
+	return {
+		startTweetId: startTweetId,
+		count: count,
+		functionalKey: functionalKey
+	};
+}
+
+/*
+ * Handlers registration
+ */
+function registerRefreshLineListeners()
+{
+	$('.refreshLineIcon').click(refreshCurrentLine);
+}
+
+function registerFetchTweetHandlers()
+{
+	$('.tweetPagingButton').click(function(event)
+	{
+		var $target = $(event.target);
+		var tweetsNb = $target.closest('footer').find('.pageSelector option').filter(':selected').val(); 
+		var targetLine =  $target.closest('div.tab-pane.active').attr('id');
+		var startTweetId = $target.closest('footer').closest('div').find('.lineContent tr.data').last().find('article').attr('data-tweetId');
+		refreshLine(targetLine,startTweetId,parseInt(tweetsNb),false);
+				
+		return false;
+	});
+}
+
+
+/*
+ *  Tweet template handling
+ */
+function fillTweetTemplate(tweet,data_tweetFetch_type)
+{
+	$newTweetLine = $('#tweetTemplate').clone().attr('id','');
+	
+	$newTweetLine.find('.tweetGravatar').attr('data-user',tweet.login).attr('src','http://www.gravatar.com/avatar/'+tweet.gravatar+'?s=32');
+	
+	if(data_tweetFetch_type != 'userline')
+	{
+		if(login != tweet.login)
+		{
+			$newTweetLine.find('article strong').empty().html(tweet.firstName+' '+tweet.lastName+' &nbsp;')
+			.after('<a class="tweetAuthor" href="#" data-user="'+tweet.login+'" title="Show '+tweet.login+' tweets"><em>@'+tweet.login+'</em></a><br/>');
+		}
+	}	
+	else
+	{
+		$newTweetLine.find('article strong').empty().html(tweet.firstName+' '+tweet.lastName+'<br/>');
+	}
+	
+	$newTweetLine.find('article span').html(tweet.content);
+	
+	// Conditional rendering of Follow icon
+	if(data_tweetFetch_type != 'timeline' && tweet.authorFollow)
+	{	
+		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Follow" data-follow="'+tweet.login+'"><i class="icon-eye-open"></i>&nbsp;</a>');
+	}
+	
+	// Conditional rendering of unfollow icon
+	if(tweet.authorForget)
+	{
+		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop following" data-unfollow="'+tweet.login+'"><i class="icon-eye-close"></i>&nbsp;</a>');
+	}	
+	
+	// Conditional rendering for like icon
+	if(data_tweetFetch_type != 'favoriteline' && tweet.addToFavorite)
+	{
+		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="icon-star"></i>&nbsp;</a>');
+	}
+
+	// Conditional rendering for unlike icon
+	if(data_tweetFetch_type == 'favoriteline' && !tweet.addToFavorite)
+	{
+		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="icon-star-empty"></i>&nbsp;</a>');
+	}	
+	
+	// Set tweetId
+	$newTweetLine.find('article').attr('data-tweetId',tweet.tweetId);
+	
+	
+	$newTweetLine.find('.tweetDate aside').empty().html(tweet.prettyPrintTweetDate);
+
+	bindListeners($newTweetLine);
+	return $newTweetLine.find('tr');
 }

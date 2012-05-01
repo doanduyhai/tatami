@@ -3,7 +3,6 @@ package fr.ippon.tatami.repository;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
-import me.prettyprint.cassandra.model.CqlQuery;
 
 import org.testng.annotations.Test;
 
@@ -52,8 +51,5 @@ public class TweetRepositoryTest extends AbstractCassandraTatamiTest
 
 		assertNull(removedTweet, "removedTweet");
 
-		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, se, se, se);
-		cqlQuery.setQuery("truncate Tweet");
-		cqlQuery.execute();
 	}
 }

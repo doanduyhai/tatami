@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import fr.ippon.tatami.domain.User;
-import fr.ippon.tatami.service.UserService;
+import fr.ippon.tatami.service.user.UserService;
 import fr.ippon.tatami.web.view.ViewConstants;
 
 /**

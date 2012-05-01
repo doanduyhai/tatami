@@ -1,195 +1,228 @@
 package fr.ippon.tatami.repository;
 
+import static fr.ippon.tatami.config.ColumnFamilyKeys.DAYLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.MONTHLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.WEEKLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.YEARLINE_CF;
+import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import me.prettyprint.hector.api.beans.HColumn;
 
 import org.testng.annotations.Test;
 
 import fr.ippon.tatami.AbstractCassandraTatamiTest;
-import fr.ippon.tatami.domain.DayLine;
-import fr.ippon.tatami.domain.MonthLine;
-import fr.ippon.tatami.domain.WeekLine;
-import fr.ippon.tatami.domain.YearLine;
+import fr.ippon.tatami.domain.User;
 
 public class StatsRepositoryTest extends AbstractCassandraTatamiTest
 {
+	private User test;
+
+	private User duyhai;
 
 	@Test
+	public void init()
+	{
+		test = new User();
+		test.setLogin("test");
+		test.setEmail("test@ippon.fr");
+		test.setFirstName("firstname");
+		test.setLastName("lastname");
+
+		duyhai = new User();
+		duyhai.setLogin("duyhai");
+		duyhai.setEmail("duyhai@ippon.fr");
+		duyhai.setFirstName("DuyHai");
+		duyhai.setLastName("DOAN");
+
+		this.userRepository.createUser(test);
+		this.userRepository.createUser(duyhai);
+	}
+
+	@Test(dependsOnMethods = "init")
 	public void testAddTweetToDay()
 	{
-		this.statsRepository.addTweetToDay("tweet1", "20120329");
-		this.statsRepository.addTweetToDay("tweet2", "20120329");
-		this.statsRepository.addTweetToDay("tweet3", "20120329");
-		this.statsRepository.addTweetToDay("tweet4", "20120329");
-		this.statsRepository.addTweetToDay("tweet5", "20120329");
+		for (int i = 0; i < 5; i++)
+		{
+			this.statsRepository.addTweetToDay("duyhai", "20120329");
+		}
 
-		Collection<String> tweetIds = this.entityManager.find(DayLine.class, "20120329").getTweetIds();
+		for (int i = 0; i < 2; i++)
+		{
+			this.statsRepository.addTweetToDay("test", "20120329");
+		}
 
-		assertTrue(tweetIds.size() == 5, "tweetIds.size() == 5");
-		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");
-		assertTrue(tweetIds.contains("tweet2"), "tweetIds has 'tweet2'");
-		assertTrue(tweetIds.contains("tweet3"), "tweetIds has 'tweet3'");
-		assertTrue(tweetIds.contains("tweet4"), "tweetIds has 'tweet4'");
-		assertTrue(tweetIds.contains("tweet5"), "tweetIds has 'tweet5'");
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspace, se, se, le).setColumnFamily(DAYLINE_CF).setKey("20120329")
+				.setRange(null, null, false, 100).execute().get().getColumns();
+
+		assertEquals(columns.size(), 2, "2 user for today stats");
+		assertEquals(columns.get(0).getValue().longValue(), 5, "duyhai has 5 tweets today");
 
 	}
 
 	@Test(dependsOnMethods = "testAddTweetToDay")
 	public void testFindTweetsForDay()
 	{
-		Collection<String> tweetIds = this.statsRepository.findTweetsForDay("20120329");
+		Map<String, Long> dayStats = this.statsRepository.findTweetsForDay("20120329");
 
-		assertTrue(tweetIds.size() == 5, "tweetIds.size() == 5");
-		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");
-		assertTrue(tweetIds.contains("tweet2"), "tweetIds has 'tweet2'");
-		assertTrue(tweetIds.contains("tweet3"), "tweetIds has 'tweet3'");
-		assertTrue(tweetIds.contains("tweet4"), "tweetIds has 'tweet4'");
-		assertTrue(tweetIds.contains("tweet5"), "tweetIds has 'tweet5'");
+		assertTrue(dayStats.size() == 2, "dayStats.size() == 2");
+		assertTrue(dayStats.containsKey("duyhai"), "dayStats has 'duyhai'");
+		assertTrue(dayStats.containsKey("test"), "dayStats has 'test'");
 	}
 
 	@Test(dependsOnMethods = "testFindTweetsForDay")
-	public void testFindTweetsRangeForDay()
-	{
-		Collection<String> tweetIds = this.statsRepository.findTweetsRangeForDay("20120329", 2, 3);
-
-		assertTrue(tweetIds.size() == 2, "tweetIds.size() == 2");
-		assertTrue(tweetIds.contains("tweet3"), "tweetIds has 'tweet3'");
-		assertTrue(tweetIds.contains("tweet4"), "tweetIds has 'tweet4'");
-	}
-
-	@Test(dependsOnMethods = "testFindTweetsRangeForDay")
-	public void testFindTweetsRangeLimitsOutOfBoundForDay()
-	{
-		Collection<String> tweetIds = this.statsRepository.findTweetsRangeForDay("20120329", 5, 10);
-
-		assertTrue(tweetIds.size() == 1, "tweetIds.size() == 1");
-		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");
-	}
-
-	@Test(dependsOnMethods = "testFindTweetsRangeLimitsOutOfBoundForDay")
-	public void testFindTweetsRangeNegativeLimitsForDay()
-	{
-		Collection<String> tweetIds = this.statsRepository.findTweetsRangeForDay("20120329", -1, 1);
-
-		assertTrue(tweetIds.size() == 1, "tweetIds.size() == 1");
-		assertTrue(tweetIds.contains("tweet5"), "tweetIds has 'tweet5'");
-	}
-
-	@Test(dependsOnMethods = "testFindTweetsRangeNegativeLimitsForDay")
 	public void testRemoveTweetFromDay()
 	{
-		this.statsRepository.removeTweetFromDay("tweet1", "20120329");
-		this.statsRepository.removeTweetFromDay("tweet2", "20120329");
-		this.statsRepository.removeTweetFromDay("tweet3", "20120329");
-		this.statsRepository.removeTweetFromDay("tweet4", "20120329");
-		this.statsRepository.removeTweetFromDay("tweet5", "20120329");
+		for (int i = 2; i > 0; i--)
+		{
+			this.statsRepository.removeTweetFromDay("duyhai", "20120329");
+		}
 
-		Collection<String> tweetIds = this.statsRepository.findTweetsForDay("20120329");
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspace, se, se, le).setColumnFamily(DAYLINE_CF).setKey("20120329")
+				.setRange(null, null, false, 100).execute().get().getColumns();
 
-		assertTrue(tweetIds.size() == 0, "tweetIds.size()==0");
+		assertEquals(columns.size(), 2, "2 user for today stats");
+		assertEquals(columns.get(0).getValue().longValue(), 3, "duyhai has 3 tweets today");
 	}
 
-	@Test
+	@Test(dependsOnMethods = "init")
 	public void testAddTweetToWeek()
 	{
-		this.statsRepository.addTweetToWeek("tweet1", "13");
-		this.statsRepository.addTweetToWeek("tweet2", "13");
+		for (int i = 0; i < 5; i++)
+		{
+			this.statsRepository.addTweetToWeek("duyhai", "12");
+		}
 
-		Collection<String> tweetIds = this.entityManager.find(WeekLine.class, "13").getTweetIds();
+		for (int i = 0; i < 2; i++)
+		{
+			this.statsRepository.addTweetToWeek("test", "12");
+		}
 
-		assertTrue(tweetIds.size() == 2, "tweetIds.size() == 2");
-		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");
-		assertTrue(tweetIds.contains("tweet2"), "tweetIds has 'tweet2'");
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspace, se, se, le).setColumnFamily(WEEKLINE_CF).setKey("12")
+				.setRange(null, null, false, 100).execute().get().getColumns();
+
+		assertEquals(columns.size(), 2, "2 user for this week stats");
+		assertEquals(columns.get(0).getValue().longValue(), 5, "duyhai has 5 tweets this week");
+
 	}
 
 	@Test(dependsOnMethods = "testAddTweetToWeek")
 	public void testFindTweetsForWeek()
 	{
-		Collection<String> tweetIds = this.statsRepository.findTweetsForWeek("13");
+		Map<String, Long> weekStats = this.statsRepository.findTweetsForWeek("12");
 
-		assertTrue(tweetIds.size() == 2, "tweetIds.size()");
-		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");
-		assertTrue(tweetIds.contains("tweet2"), "tweetIds has 'tweet2'");
+		assertTrue(weekStats.size() == 2, "weekStats.size() == 2");
+		assertTrue(weekStats.containsKey("duyhai"), "weekStats has 'duyhai'");
+		assertTrue(weekStats.containsKey("test"), "weekStats has 'test'");
 	}
 
 	@Test(dependsOnMethods = "testFindTweetsForWeek")
 	public void testRemoveTweetFromWeek()
 	{
-		this.statsRepository.removeTweetFromWeek("tweet1", "13");
-		this.statsRepository.removeTweetFromWeek("tweet2", "13");
+		for (int i = 2; i > 0; i--)
+		{
+			this.statsRepository.removeTweetFromWeek("duyhai", "12");
+		}
 
-		Collection<String> tweetIds = this.statsRepository.findTweetsForWeek("13");
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspace, se, se, le).setColumnFamily(WEEKLINE_CF).setKey("12")
+				.setRange(null, null, false, 100).execute().get().getColumns();
 
-		assertTrue(tweetIds.size() == 0, "tweetIds.size()==0");
+		assertEquals(columns.size(), 2, "2 user for this week stats");
+		assertEquals(columns.get(0).getValue().longValue(), 3, "duyhai has 3 tweets this week");
 	}
 
-	@Test
+	@Test(dependsOnMethods = "init")
 	public void testAddTweetToMonth()
 	{
-		this.statsRepository.addTweetToMonth("tweet1", "201203");
-		this.statsRepository.addTweetToMonth("tweet2", "201203");
+		for (int i = 0; i < 5; i++)
+		{
+			this.statsRepository.addTweetToMonth("duyhai", "201203");
+		}
 
-		Collection<String> tweetIds = this.entityManager.find(MonthLine.class, "201203").getTweetIds();
+		for (int i = 0; i < 2; i++)
+		{
+			this.statsRepository.addTweetToMonth("test", "201203");
+		}
 
-		assertTrue(tweetIds.size() == 2, "tweetIds.size() == 2");
-		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");
-		assertTrue(tweetIds.contains("tweet2"), "tweetIds has 'tweet2'");
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspace, se, se, le).setColumnFamily(MONTHLINE_CF).setKey("201203")
+				.setRange(null, null, false, 100).execute().get().getColumns();
+
+		assertEquals(columns.size(), 2, "2 user for this month stats");
+		assertEquals(columns.get(0).getValue().longValue(), 5, "duyhai has 5 tweets this month");
 	}
 
 	@Test(dependsOnMethods = "testAddTweetToMonth")
 	public void testFindTweetsForMonth()
 	{
-		Collection<String> tweetIds = this.statsRepository.findTweetsForMonth("201203");
+		Map<String, Long> monthStats = this.statsRepository.findTweetsForMonth("201203");
 
-		assertTrue(tweetIds.size() == 2, "tweetIds.size()");
-		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");
-		assertTrue(tweetIds.contains("tweet2"), "tweetIds has 'tweet2'");
+		assertTrue(monthStats.size() == 2, "monthStats.size() == 2");
+		assertTrue(monthStats.containsKey("duyhai"), "monthStats has 'duyhai'");
+		assertTrue(monthStats.containsKey("test"), "monthStats has 'test'");
 	}
 
 	@Test(dependsOnMethods = "testFindTweetsForMonth")
 	public void testRemoveTweetFromMonth()
 	{
-		this.statsRepository.removeTweetFromMonth("tweet1", "201203");
-		this.statsRepository.removeTweetFromMonth("tweet2", "201203");
+		for (int i = 2; i > 0; i--)
+		{
+			this.statsRepository.removeTweetFromMonth("duyhai", "201203");
+		}
 
-		Collection<String> tweetIds = this.statsRepository.findTweetsForMonth("201203");
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspace, se, se, le).setColumnFamily(MONTHLINE_CF).setKey("201203")
+				.setRange(null, null, false, 100).execute().get().getColumns();
 
-		assertTrue(tweetIds.size() == 0, "tweetIds.size()==0");
+		assertEquals(columns.size(), 2, "2 user for this month stats");
+		assertEquals(columns.get(0).getValue().longValue(), 3, "duyhai has 3 tweets this month");
 	}
 
-	@Test
+	@Test(dependsOnMethods = "init")
 	public void testAddTweetToYear()
 	{
-		this.statsRepository.addTweetToYear("tweet1", "2012");
-		this.statsRepository.addTweetToYear("tweet2", "2012");
+		for (int i = 0; i < 5; i++)
+		{
+			this.statsRepository.addTweetToYear("duyhai", "2012");
+		}
 
-		Collection<String> tweetIds = this.entityManager.find(YearLine.class, "2012").getTweetIds();
+		for (int i = 0; i < 2; i++)
+		{
+			this.statsRepository.addTweetToYear("test", "2012");
+		}
 
-		assertTrue(tweetIds.size() == 2, "tweetIds.size() == 2");
-		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");
-		assertTrue(tweetIds.contains("tweet2"), "tweetIds has 'tweet2'");
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspace, se, se, le).setColumnFamily(YEARLINE_CF).setKey("2012")
+				.setRange(null, null, false, 100).execute().get().getColumns();
+
+		assertEquals(columns.size(), 2, "2 user for this year stats");
+		assertEquals(columns.get(0).getValue().longValue(), 5, "duyhai has 5 tweets this year");
 	}
 
 	@Test(dependsOnMethods = "testAddTweetToYear")
 	public void testFindTweetsForYear()
 	{
-		Collection<String> tweetIds = this.statsRepository.findTweetsForYear("2012");
+		Map<String, Long> yearStats = this.statsRepository.findTweetsForYear("2012");
 
-		assertTrue(tweetIds.size() == 2, "tweetIds.size() == 2");
-		assertTrue(tweetIds.contains("tweet1"), "tweetIds has 'tweet1'");
-		assertTrue(tweetIds.contains("tweet2"), "tweetIds has 'tweet2'");
+		assertTrue(yearStats.size() == 2, "yearStats.size() == 2");
+		assertTrue(yearStats.containsKey("duyhai"), "yearStats has 'duyhai'");
+		assertTrue(yearStats.containsKey("test"), "yearStats has 'test'");
 	}
 
 	@Test(dependsOnMethods = "testFindTweetsForYear")
 	public void testRemoveTweetFromYear()
 	{
-		this.statsRepository.removeTweetFromYear("tweet1", "2012");
-		this.statsRepository.removeTweetFromYear("tweet2", "2012");
+		for (int i = 2; i > 0; i--)
+		{
+			this.statsRepository.removeTweetFromYear("duyhai", "2012");
+		}
 
-		Collection<String> tweetIds = this.statsRepository.findTweetsForYear("2012");
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspace, se, se, le).setColumnFamily(YEARLINE_CF).setKey("2012")
+				.setRange(null, null, false, 100).execute().get().getColumns();
 
-		assertTrue(tweetIds.size() == 0, "tweetIds.size()==0");
+		assertEquals(columns.size(), 2, "2 user for this year stats");
+		assertEquals(columns.get(0).getValue().longValue(), 3, "duyhai has 3 tweets this year");
 	}
 
 }

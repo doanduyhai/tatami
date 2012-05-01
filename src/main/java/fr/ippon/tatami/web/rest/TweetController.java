@@ -3,13 +3,10 @@ package fr.ippon.tatami.web.rest;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -26,8 +23,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import fr.ippon.tatami.domain.DayTweetStat;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.UserTweetStat;
-import fr.ippon.tatami.service.TimelineService;
-import fr.ippon.tatami.service.util.TatamiConstants;
+import fr.ippon.tatami.domain.json.TweetFetchRange;
+import fr.ippon.tatami.exception.FunctionalException;
+import fr.ippon.tatami.service.lines.FavoritelineService;
+import fr.ippon.tatami.service.lines.StatslineService;
+import fr.ippon.tatami.service.lines.TaglineService;
+import fr.ippon.tatami.service.lines.TimelineService;
+import fr.ippon.tatami.service.lines.UserlineService;
+import fr.ippon.tatami.service.pipeline.TweetPipelineManager;
 import fr.ippon.tatami.web.json.view.TweetView;
 
 /**
@@ -40,8 +43,17 @@ public class TweetController extends AbstractRESTController
 {
 	private final Logger log = LoggerFactory.getLogger(TweetController.class);
 
-	// @Inject
 	private TimelineService timelineService;
+
+	private StatslineService statslineService;
+
+	private UserlineService userlineService;
+
+	private FavoritelineService favoritelineService;
+
+	private TaglineService taglineService;
+
+	private TweetPipelineManager tweetPipelineManager;
 
 	@RequestMapping(value = "/rest/tweetStats/day", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
@@ -49,39 +61,7 @@ public class TweetController extends AbstractRESTController
 	{
 		log.debug("REST request to get the users stats.");
 
-		String date = null; // TODO parameterized version
-		Collection<Tweet> tweets = timelineService.getDayline(date);
-		return this.extractUsersTweetStats(tweets, null);
-	}
-
-	private Collection<UserTweetStat> extractUsersTweetStats(Collection<Tweet> tweets, Set<String> usersCollector)
-	{
-		log.debug("Analysing {} items...", tweets.size());
-		Map<String, Integer> users = new HashMap<String, Integer>();
-		for (Tweet tweet : tweets)
-		{
-			Integer count = users.get(tweet.getLogin());
-			if (count != null)
-			{
-				count = count.intValue() + 1;
-			}
-			else
-			{
-				if (usersCollector != null)
-					usersCollector.add(tweet.getLogin());
-				count = 1;
-			}
-			users.put(tweet.getLogin(), count);
-		}
-
-		log.debug("Fetched total of {} stats.", users.size());
-
-		Collection<UserTweetStat> stats = new TreeSet<UserTweetStat>(); // cf. UserTweetStat#compareTo
-		for (Entry<String, Integer> entry : users.entrySet())
-		{
-			stats.add(new UserTweetStat(entry.getKey(), entry.getValue()));
-		}
-		return stats;
+		return statslineService.getDayline(new Date());
 	}
 
 	@RequestMapping(value = "/rest/tweetStats/week", method = RequestMethod.GET, produces = "application/json")
@@ -99,8 +79,8 @@ public class TweetController extends AbstractRESTController
 
 			DayTweetStat dayStat = new DayTweetStat(date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.ENGLISH));
 			log.debug("Scanning {} ...", dayStat.getDay());
-			Collection<Tweet> tweets = timelineService.getDayline(date.getTime());
-			dayStat.setStats(this.extractUsersTweetStats(tweets, users));
+
+			dayStat.setStats(statslineService.getDayline(date.getTime()));
 
 			stats[i - 1] = dayStat; // oldest first
 		}
@@ -115,9 +95,9 @@ public class TweetController extends AbstractRESTController
 		{
 			for (String login : allUsers)
 			{
-				if (!stat.getStats().contains(new UserTweetStat(login, 0)))
+				if (!stat.getStats().contains(new UserTweetStat(login, 0L)))
 				{ // cf. UserTweetStat#compareTo
-					stat.getStats().add(new UserTweetStat(login, 0));
+					stat.getStats().add(new UserTweetStat(login, 0L));
 				}
 			}
 		}
@@ -125,18 +105,18 @@ public class TweetController extends AbstractRESTController
 
 	@RequestMapping(value = "/rest/tweets", method = RequestMethod.POST)
 	@ResponseBody
-	public Tweet postTweet(@Valid @RequestBody Tweet tweet)
+	public Tweet postTweet(@Valid @RequestBody Tweet tweet) throws FunctionalException
 	{
 		log.debug("REST request to add tweet : {}", tweet.getContent());
-		return timelineService.postTweet(tweet.getContent());
+		return tweetPipelineManager.onPost(tweet.getContent());
 	}
 
 	@RequestMapping(value = "/rest/likeTweet/{tweet}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean likeTweet(@PathVariable("tweet") String tweet)
+	public boolean likeTweet(@PathVariable("tweet") String tweet) throws FunctionalException
 	{
 		log.debug("REST request to like tweet : {} ", tweet);
-		timelineService.addFavoriteTweet(tweet);
+		favoritelineService.addFavoriteTweet(tweet);
 		log.info("Completed");
 
 		return true;
@@ -144,85 +124,103 @@ public class TweetController extends AbstractRESTController
 
 	@RequestMapping(value = "/rest/unlikeTweet/{tweet}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean unlikeTweet(@PathVariable("tweet") String tweet)
+	public boolean unlikeTweet(@PathVariable("tweet") String tweet) throws FunctionalException
 	{
 		log.debug("REST request to unlike tweet : {} ", tweet);
-		timelineService.removeFavoriteTweet(tweet);
+		favoritelineService.removeFavoriteTweet(tweet);
 		log.info("Completed");
 
 		return true;
 	}
 
-	@RequestMapping(value = "/rest/tweetFetch/timeline/{start}/{end}", method = RequestMethod.GET)
-	public void timelineTweetFetch(@PathVariable("start") int start, @PathVariable("end") int end, HttpServletResponse response)
+	@RequestMapping(value = "/rest/tweetFetch/timeline", method = RequestMethod.POST, consumes = "application/json")
+	public void timelineTweetFetch(@Valid @RequestBody TweetFetchRange fetchRange, HttpServletResponse response) throws FunctionalException
 	{
-		start = start == 0 ? 1 : start;
-		end = end < TatamiConstants.DEFAULT_TWEET_LIST_SIZE ? TatamiConstants.DEFAULT_TWEET_LIST_SIZE : end;
 
 		log.debug("REST fetch tweet from {} to {} for current user ", new Object[]
 		{
-				start,
-				end
+				fetchRange.getStartTweetId(),
+				fetchRange.getCount()
 		});
 
-		this.writeWithView((Object) timelineService.getTimelineRange(start, end), response, TweetView.Full.class);
+		this.writeWithView((Object) timelineService.getTimelineRange(fetchRange.getStartTweetId(), fetchRange.getCount()), response,
+				TweetView.Full.class);
 	}
 
-	@RequestMapping(value = "/rest/tweetFetch/userline/{login}/{start}/{end}", method = RequestMethod.GET)
-	public void userlineTweetFetch(@PathVariable("login") String login, @PathVariable("start") int start, @PathVariable("end") int end,
-			HttpServletResponse response)
+	@RequestMapping(value = "/rest/tweetFetch/userline", method = RequestMethod.POST, consumes = "application/json")
+	public void userlineTweetFetch(@Valid @RequestBody TweetFetchRange fetchRange, HttpServletResponse response) throws FunctionalException
 	{
-
-		start = start == 0 ? 1 : start;
-		end = end < TatamiConstants.DEFAULT_TWEET_LIST_SIZE ? TatamiConstants.DEFAULT_TWEET_LIST_SIZE : end;
 
 		log.debug("REST fetch tweet from {} to {} for user {}", new Object[]
 		{
-				start,
-				end,
-				login
+				fetchRange.getStartTweetId(),
+				fetchRange.getCount(),
+				fetchRange.getFunctionalKey()
 		});
 
-		this.writeWithView((Object) timelineService.getUserlineRange(login, start, end), response, TweetView.Full.class);
+		this.writeWithView(
+				(Object) userlineService.getUserlineRange(fetchRange.getFunctionalKey(), fetchRange.getStartTweetId(), fetchRange.getCount()),
+				response, TweetView.Full.class);
 	}
 
-	@RequestMapping(value = "/rest/tweetFetch/favoriteline/{start}/{end}", method = RequestMethod.GET)
-	public void favoriteTweetFetch(@PathVariable("start") int start, @PathVariable("end") int end, HttpServletResponse response)
+	@RequestMapping(value = "/rest/tweetFetch/favoriteline", method = RequestMethod.POST, consumes = "application/json")
+	public void favoriteTweetFetch(@Valid @RequestBody TweetFetchRange fetchRange, HttpServletResponse response) throws FunctionalException
 	{
-
-		start = start == 0 ? 1 : start;
-		end = end < TatamiConstants.DEFAULT_TWEET_LIST_SIZE ? TatamiConstants.DEFAULT_TWEET_LIST_SIZE : end;
 
 		log.debug("REST fetch tweet from {} to {} for current user ", new Object[]
 		{
-				start,
-				end
+				fetchRange.getFunctionalKey(),
+				fetchRange.getCount()
 		});
 
-		this.writeWithView((Object) timelineService.getFavoriteslineRange(start, end), response, TweetView.Full.class);
+		this.writeWithView((Object) favoritelineService.getFavoriteslineRange(fetchRange.getStartTweetId(), fetchRange.getCount()), response,
+				TweetView.Full.class);
 	}
 
-	@RequestMapping(value = "/rest/tweetFetch/tagline/{tag}/{start}/{end}", method = RequestMethod.GET)
-	public void taglineTweetFetch(@PathVariable("tag") String tag, @PathVariable("start") int start, @PathVariable("end") int end,
-			HttpServletResponse response)
+	@RequestMapping(value = "/rest/tweetFetch/tagline", method = RequestMethod.POST, consumes = "application/json")
+	public void taglineTweetFetch(@Valid @RequestBody TweetFetchRange fetchRange, HttpServletResponse response) throws FunctionalException
 	{
-
-		start = start == 0 ? 1 : start;
-		end = end < TatamiConstants.DEFAULT_TWEET_LIST_SIZE ? TatamiConstants.DEFAULT_TWEET_LIST_SIZE : end;
 
 		log.debug("REST fetch tweet from {} to {} for tag {}", new Object[]
 		{
-				start,
-				end,
-				tag
+				fetchRange.getStartTweetId(),
+				fetchRange.getCount(),
+				fetchRange.getFunctionalKey()
 		});
 
-		this.writeWithView((Object) timelineService.getTaglineRange(tag, start, end), response, TweetView.Full.class);
+		this.writeWithView(
+				(Object) taglineService.getTaglineRange(fetchRange.getFunctionalKey(), fetchRange.getStartTweetId(), fetchRange.getCount()),
+				response, TweetView.Full.class);
 	}
 
 	public void setTimelineService(TimelineService timelineService)
 	{
 		this.timelineService = timelineService;
+	}
+
+	public void setStatslineService(StatslineService statslineService)
+	{
+		this.statslineService = statslineService;
+	}
+
+	public void setUserlineService(UserlineService userlineService)
+	{
+		this.userlineService = userlineService;
+	}
+
+	public void setFavoritelineService(FavoritelineService favoritelineService)
+	{
+		this.favoritelineService = favoritelineService;
+	}
+
+	public void setTaglineService(TaglineService taglineService)
+	{
+		this.taglineService = taglineService;
+	}
+
+	public void setTweetPipelineManager(TweetPipelineManager tweetPipelineManager)
+	{
+		this.tweetPipelineManager = tweetPipelineManager;
 	}
 
 }

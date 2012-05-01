@@ -12,6 +12,8 @@ public interface TweetRepository
 
 	Tweet createTweet(String login, String content);
 
+	void saveTweet(Tweet tweet);
+
 	Tweet findTweetById(String tweetId);
 
 	void removeTweet(Tweet tweet);

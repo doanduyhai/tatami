@@ -100,30 +100,13 @@
 			var DEFAULT_TAG_LIST_SIZE = /*[[${DEFAULT_TAG_LIST_SIZE}]]*/ 10;
 
 			// Retrieve the default tweet first fetch size value from the server				           
-			var TWEET_FIRST_FETCH_SIZE = /*[[${TWEET_FIRST_FETCH_SIZE}]]*/ 5;
+			var FIRST_FETCH_SIZE = /*[[${FIRST_FETCH_SIZE}]]*/ 5;
 			
 			// Retrieve the default tweet second fetch size value from the server				           
-			var TWEET_SECOND_FETCH_SIZE = /*[[${TWEET_SECOND_FETCH_SIZE}]]*/ 10;
+			var SECOND_FETCH_SIZE = /*[[${SECOND_FETCH_SIZE}]]*/ 10;
 			
 			// Retrieve the default tweet third fetch size value from the server				           
-			var TWEET_THIRD_FETCH_SIZE = /*[[${TWEET_THIRD_FETCH_SIZE}]]*/ 20;
-			
-			
-			var TWEET_NB_PATTERN = /*[[${TWEET_NB_PATTERN}]]*/ "";
-			var TWEET_NB_REGEXP = new RegExp(TWEET_NB_PATTERN, "g");
-			
-			var START_TWEET_INDEX_PATTERN = /*[[${START_TWEET_INDEX_PATTERN}]]*/ "";
-			var START_TWEET_INDEX_REGEXP = new RegExp(START_TWEET_INDEX_PATTERN, "g");
-			
-			var END_TWEET_INDEX_PATTERN = /*[[${END_TWEET_INDEX_PATTERN}]]*/ "";
-			var END_TWEET_INDEX_REGEXP = new RegExp(END_TWEET_INDEX_PATTERN, "g");
-			
-			var USER_LOGIN_PATTERN = /*[[${USER_LOGIN_PATTERN}]]*/ "";
-			var USER_LOGIN_REGEXP = new RegExp(USER_LOGIN_PATTERN, "g");
-			
-			var TAG_PATTERN = /*[[${TAG_PATTERN}]]*/ "";
-			var TAG_REGEXP = new RegExp(TAG_PATTERN, "g");
-			
+			var THIRD_FETCH_SIZE = /*[[${THIRD_FETCH_SIZE}]]*/ 20;			
 			
 			var HTTP_GET = 'GET';
 			
@@ -137,8 +120,7 @@
 
 		<script src="/assets/js/tatami/mobile/tatami-mobile.js" th:src="@{/assets/js/tatami/mobile/tatami-mobile.js}"></script>        	 
 <!-- 		<script src="/assets/js/tatami/mobile/common.js" th:src="@{/assets/js/tatami/mobile/common.js}"></script>        	 -->
-<!--        	<script src="/assets/js/tatami/mobile/user.js" th:src="@{/assets/js/tatami/mobile/user.js}"></script> -->
-<!--        	<script src="/assets/js/tatami/mobile/follow.js" th:src="@{/assets/js/tatami/mobile/follow.js}"></script>				 -->
+<!--        <script src="/assets/js/tatami/mobile/user.js" th:src="@{/assets/js/tatami/mobile/user.js}"></script>				 -->
 <!-- 		<script src="/assets/js/tatami/mobile/lines.js" th:src="@{/assets/js/tatami/mobile/lines.js}"></script> -->
 <!-- 		<script src="/assets/js/tatami/mobile/init.js" th:src="@{/assets/js/tatami/mobile/init.js}"></script>   -->
 	</div>		  	

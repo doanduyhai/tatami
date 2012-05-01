@@ -1,3 +1,19 @@
+$.fn.serializeObject = function() {
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push($.trim(this.value) || '');
+        } else {
+            o[this.name] = $.trim(this.value) || '';
+        }
+    });
+    return o;
+};
+
 function bindListeners($target)
 {
 	
@@ -36,6 +52,20 @@ function bindListeners($target)
 		return false;
 	});
 	
+	$target.find('span[data-friends]').click(function(e)
+	{
+		var target = $(e.currentTarget).attr('data-friends');
+		refreshFriendsline(target);
+		return false;
+	});
+	
+	$target.find('span[data-followers]').click(function(e)
+	{
+		var target = $(e.currentTarget).attr('data-followers');
+		refreshFollowersline(target);
+		return false;
+	});	
+	
 	$target.find('a[data-tag]').click(function(e)
 	{
 		var target = $(e.currentTarget).attr('data-tag');
@@ -73,8 +103,8 @@ function bindListeners($target)
 			$(e.currentTarget).popover('hide');	
 		}
 		var modal = $(e.currentTarget).attr('data-modal-highlight');
-		var login = $(e.currentTarget).attr('data-user');
-		showUserProfile(login);
+		var user = $(e.currentTarget).attr('data-user');
+		showUserProfile(user);
 		if(modal!= null)
 		{
 			$(modal).css('z-index',5000);
@@ -113,148 +143,7 @@ function registerLoginRedirectListener()
 
 	});
 }
-function registerUserDetailsPopOver($target)
-{
-	$target.find('.tweetGravatar').mouseenter(function()
-	{
-		if($(this).data('popover') == null)
-		{
-			var data_user= $(this).attr('data-user');
-			$(this).popover({
-				animation: false,
-				placement: 'right',
-				trigger: 'manual',
-				title: 'User details',
-				html : true,
-				template: $('#popoverTemplate').clone().attr('id','').attr('z-index',2000).find('div.popover').attr('data-user',data_user).end().html()
-			});
-		}
-		$(this).popover('show');
-		$(this).data('popover').tip().css({'z-index': 2000});
-		
-		$.ajax({
-			type: HTTP_GET,
-			url: "rest/usersDetails/" + $('.popover.in').attr('data-user'),
-			dataType: JSON_DATA,
-	        success: function(data)
-	        {
-	        	$('.popover.in .userDetailsTitle').empty()
-	        	.append('<img class="userDetailsGravatar" src="http://www.gravatar.com/avatar/'+data.gravatar+'?s=24"></img>')
-	        	.append('<span>@'+data.login+'</span>');
-	        	
-	        	$('.popover.in .userDetailsContent').empty();
-	        	$('#userDetailsTemplate .row-fluid').clone()
-	        	.find('.userDetailsName').html(data.firstName+'&nbsp;'+data.lastName).end()
-	        	.find('.userDetailsTweetsCount').html(data.tweetCount).end()
-	        	.find('.userDetailsFriendsCount').html(data.friendsCount).end()
-	        	.find('.userDetailsFollowersCount').html(data.followersCount).end()
-	        	.appendTo('.popover.in .userDetailsContent');
-	        	
-	        }
-	    });
-		
-	});
-	
-	$target.find('.tweetGravatar').mouseleave(function()
-	{
-		$(this).popover('hide');
-	});
-}
 
-function registerRefreshLineListeners()
-{
-	$('.refreshLineIcon').click(refreshCurrentLine);
-}
 
-function registerFetchTweetHandlers()
-{
-	$('.tweetPagingButton').click(function(event)
-	{
-		var tweetsNb = $(event.target).closest('footer').find('.pageSelector option').filter(':selected').val(); 
-		var currentTweetsNb = $(event.target).closest('footer').closest('div').find('.lineContent tr.data').size();
-		var targetLine =  $(event.target).closest('div.tab-pane.active').attr('id');
-		
-		refreshLine(targetLine,currentTweetsNb+1,parseInt(currentTweetsNb)+parseInt(tweetsNb),false);
-				
-		return false;
-	});
-}
 
-function fillTweetTemplate(tweet,data_line_type)
-{
-	$newTweetLine = $('#tweetTemplate').clone().attr('id','');
-	
-	$newTweetLine.find('.tweetGravatar').attr('data-user',tweet.login).attr('src','http://www.gravatar.com/avatar/'+tweet.gravatar+'?s=32');
-	
-	if(data_line_type != 'userline')
-	{
-		if(login != tweet.login)
-		{
-			$newTweetLine.find('article strong').empty().html(tweet.firstName+' '+tweet.lastName+' &nbsp;')
-			.after('<a class="tweetAuthor" href="#" data-user="'+tweet.login+'" title="Show '+tweet.login+' tweets"><em>@'+tweet.login+'</em></a><br/>');
-		}
-	}	
-	else
-	{
-		$newTweetLine.find('article strong').empty().html(tweet.firstName+' '+tweet.lastName+'<br/>');
-	}
-	
-	$newTweetLine.find('article span').html(tweet.content);
-	
-	// Conditional rendering of Follow icon
-	if(data_line_type != 'timeline' && tweet.authorFollow)
-	{	
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Follow" data-follow="'+tweet.login+'"><i class="icon-eye-open"></i>&nbsp;</a>');
-	}
-	
-	// Conditional rendering of unfollow icon
-	if(tweet.authorForget)
-	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop following" data-unfollow="'+tweet.login+'"><i class="icon-eye-close"></i>&nbsp;</a>');
-	}	
-	
-	// Conditional rendering for like icon
-	if(data_line_type != 'favoriteline' && tweet.addToFavorite)
-	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="icon-star"></i>&nbsp;</a>');
-	}
 
-	// Conditional rendering for unlike icon
-	if(data_line_type == 'favoriteline' && !tweet.addToFavorite)
-	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="icon-star-empty"></i>&nbsp;</a>');
-	}	
-	
-	
-	$newTweetLine.find('.tweetDate aside').empty().html(tweet.prettyPrintTweetDate);
-
-	bindListeners($newTweetLine);
-	return $newTweetLine.find('tr');
-}
-
-function fillUserTemplate(user)
-{
-	$newUserLine = $('#fullUserTemplate').clone().attr('id','');
-	
-	$newUserLine
-	.find('.tweetGravatar').attr('data-user',user.login).attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=32').attr('data-modal-highlight','#userProfileModal').end()
-	.find('.userLink').attr('data-user',user.login).attr('title','Show '+user.login+' tweets').attr('data-modal-hide','#userSearchModal').end()
-	.find('em').html('@'+user.login).end()
-	.find('.userDetailsName').html(user.firstName+' '+user.lastName).end()
-	.find('.badge').html(user.tweetCount);
-	
-	if(user.follow)
-	{
-		$newUserLine.find('.tweetFriend a').attr('data-follow',user.login).attr('title','Follow '+user.login).attr('data-modal-hide','#userSearchModal');
-	}
-	else
-	{
-		$newUserLine.find('.tweetFriend a').removeAttr('data-follow').attr('data-unfollow',user.login)
-		.attr('title','Stop following '+user.login).attr('data-modal-hide','#userSearchModal')
-		.find('i').removeClass().addClass('icon-eye-close');
-	}
-	bindListeners($newUserLine);
-	
-	return $newUserLine;
-	
-}

@@ -13,5 +13,7 @@ public interface TimeLineRepository
 {
 	void addTweetToTimeline(User user, String tweetId);
 
-	Collection<String> getTweetsRangeFromTimeline(User user, int start, int end);
+	void removeTweetFromTimeline(User user, String tweetId);
+
+	Collection<String> getTweetsRangeFromTimeline(User user, String startTweetId, int count);
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<suite name="tatamiTestSuite" parallel="false">
-  <test name="repositoryTests">
+<suite name="tatamiTestSuite" parallel="false" verbose="1" >
+  <test name="repositoryTests" >
     <classes>
       <class name="fr.ippon.tatami.repository.UserRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.TweetRepositoryTest"/>   
@@ -15,10 +15,29 @@
     </classes>
   </test>
    
-  <test name="serviceTests">
+  <test name="tweetServiceTests">
     <classes>
-   	  <class name="fr.ippon.tatami.service.UserServiceTest"/>
-   	  <class name="fr.ippon.tatami.service.TimelineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.tweet.TweetServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.tweet.XssEncodingServiceTest"/>
+    </classes>
+  </test>
+  
+  <test name="userServiceTests">
+    <classes>
+   	  <class name="fr.ippon.tatami.service.user.UserServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.user.ContactsServiceTest"/>
     </classes>
   </test> 
+
+  <test name="linesServiceTests">
+    <classes>
+   	  <class name="fr.ippon.tatami.service.lines.FavoritelineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.MentionlineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.StatslineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.TaglineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.TimelineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.UserlineServiceTest"/>
+    </classes>
+  </test> 
+       
 </suite> 

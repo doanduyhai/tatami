@@ -15,36 +15,39 @@
 					<td colSpan="2" class="center">
 						No user found for your search ...
 					</td>            	
-            	</tr>            	
-            	<tr id="fullUserTemplate">
-            		<td style="width: 90%;">
-            			<table class="internalUserTemplateTable" style="border: none; width: 100%;">
-            				<td>
-            					<img class="tweetGravatar" 
-									src="http://www.gravatar.com/avatar/012411?s=32"
-									data-user="">
-								</img>
-            				</td>
-            				<td>
-            					<a class="userLink" href="#" style="text-decoration:none;" data-user="" title="">
-									<em>@login</em>
-								</a>
-            				</td>
-            				<td>
-            					<span class="userDetailsName">DuyHai DOAN</span>
-            				</td>
-            				<td>
-            					TWEETS<br/><span class="badge">1</span>
-            				</td>
-            			</table>							            			
-            		</td>
-            		<td class="tweetFriend">
-            			<a href="#" data-follow="" title="Follow">
-            				<i class="icon-eye-open"></i>
+            	</tr>
+            	<tr id="fullUserTemplate" class="internalUserCells data">
+         			<td>
+         					<img class="tweetGravatar" 
+						src="http://www.gravatar.com/avatar/012411?s=32"
+						data-user="">
+						</img>
+         			</td>
+         			<td>
+         				<a class="userLink" href="#" style="text-decoration:none;" 
+         						data-modal-hide=".modal" data-user="" title="">
+							<em>@login</em>
+						</a>
+         			</td>
+         			<td>
+         				<span class="userDetailsName">DuyHai DOAN</span>
+         			</td>
+         			<td>
+         				TWEETS<br/><span class="badge" data-user="" data-modal-hide=".modal">1</span>
+         			</td>
+            		<td class="userAction">
+            			<a href="#">
+            				<i></i>
             			</a>&nbsp;
             		</td>
             	</tr>
 			</tbody>			
 		</table>
+		<table id="userPaddingTemplate">
+			<tr style="display: none;">
+				<td colSpan="5" class="center">
+				</td>            	
+	        </tr>
+        </table>		
 	</div>			  
 </html>	  

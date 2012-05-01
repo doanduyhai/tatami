@@ -1,4 +1,4 @@
-package fr.ippon.tatami.domain;
+package fr.ippon.tatami.domain.json;
 
 import javax.validation.constraints.Pattern;
 

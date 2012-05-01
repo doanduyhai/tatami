@@ -1,15 +1,18 @@
 package fr.ippon.tatami.repository.cassandra;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.DAYLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.MONTHLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.WEEKLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.YEARLINE_CF;
+import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
 
-import fr.ippon.tatami.domain.DayLine;
-import fr.ippon.tatami.domain.MonthLine;
-import fr.ippon.tatami.domain.WeekLine;
-import fr.ippon.tatami.domain.YearLine;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import me.prettyprint.hector.api.beans.HColumn;
+import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.mutation.Mutator;
 import fr.ippon.tatami.repository.StatsRepository;
 
 /**
@@ -18,268 +21,228 @@ import fr.ippon.tatami.repository.StatsRepository;
 public class CassandraStatsRepository extends CassandraAbstractRepository implements StatsRepository
 {
 	@Override
-	public void addTweetToDay(String tweetId, String day)
+	public void addTweetToDay(String login, String day)
 	{
-		DayLine dayLine = em.find(DayLine.class, day);
-		if (dayLine == null)
-		{
-			dayLine = new DayLine();
-			dayLine.setDay(day);
-		}
+		HColumn<String, Long> result = HFactory.createColumnQuery(keyspaceOperator, se, se, le).setColumnFamily(DAYLINE_CF).setKey(day)
+				.setName(login).execute().get();
 
-		dayLine.getTweetIds().add(tweetId);
-		em.persist(dayLine);
+		long count = 0;
+
+		if (result != null && result.getValue() != null)
+		{
+			count = result.getValue();
+		}
+		Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, se);
+		mutator.insert(day, DAYLINE_CF, HFactory.createColumn(login, count + 1, se, le));
 
 	}
 
 	@Override
-	public void removeTweetFromDay(String tweetId, String day)
+	public void removeTweetFromDay(String login, String day)
 	{
-		DayLine dayLine = em.find(DayLine.class, day);
-		if (dayLine == null)
+		HColumn<String, Long> result = HFactory.createColumnQuery(keyspaceOperator, se, se, le).setColumnFamily(DAYLINE_CF).setKey(day)
+				.setName(login).execute().get();
+		if (result != null && result.getValue() != null)
 		{
-			// TODO Functional exception
-			return;
-		}
-
-		dayLine.getTweetIds().remove(tweetId);
-		em.persist(dayLine);
-
-	}
-
-	@Override
-	public Collection<String> findTweetsForDay(String day)
-	{
-		DayLine dayLine = em.find(DayLine.class, day);
-		if (dayLine != null)
-		{
-			return dayLine.getTweetIds();
-		}
-		return Arrays.asList();
-	}
-
-	@Override
-	public Collection<String> findTweetsRangeForDay(String day, int start, int end)
-	{
-		DayLine dayLine = em.find(DayLine.class, day);
-		if (dayLine != null)
-		{
-			List<String> list = new ArrayList<String>(dayLine.getTweetIds());
-
-			if (list.size() > 0)
+			long count = result.getValue();
+			Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, se);
+			if (count > 0)
 			{
-				if (start < 1)
-				{
-					start = 1;
-				}
 
-				if (end > list.size())
-				{
-					end = list.size();
-				}
-				Collections.reverse(list);
-				return list.subList(start - 1, end);
+				mutator.insert(day, DAYLINE_CF, HFactory.createColumn(login, count - 1, se, le));
 			}
-
-		}
-		return Arrays.asList();
-	}
-
-	@Override
-	public void addTweetToWeek(String tweetId, String week)
-	{
-		WeekLine weekLine = em.find(WeekLine.class, week);
-		if (weekLine == null)
-		{
-			weekLine = new WeekLine();
-			weekLine.setWeek(week);
-		}
-
-		weekLine.getTweetIds().add(tweetId);
-		em.persist(weekLine);
-
-	}
-
-	@Override
-	public void removeTweetFromWeek(String tweetId, String week)
-	{
-		WeekLine weekLine = em.find(WeekLine.class, week);
-		if (weekLine == null)
-		{
-			// TODO Functional exception
-			return;
-		}
-
-		weekLine.getTweetIds().remove(tweetId);
-		em.persist(weekLine);
-
-	}
-
-	@Override
-	public Collection<String> findTweetsForWeek(String week)
-	{
-		WeekLine weekLine = em.find(WeekLine.class, week);
-		if (weekLine != null)
-		{
-			return weekLine.getTweetIds();
-		}
-		return Arrays.asList();
-	}
-
-	@Override
-	public Collection<String> findTweetsRangeForWeek(String day, int start, int end)
-	{
-		WeekLine weekLine = em.find(WeekLine.class, day);
-		if (weekLine != null)
-		{
-			List<String> list = new ArrayList<String>(weekLine.getTweetIds());
-			if (list.size() > 0)
+			else
 			{
-				if (start < 1)
-				{
-					start = 1;
-				}
-
-				if (end > list.size())
-				{
-					end = list.size();
-				}
-				Collections.reverse(list);
-				return list.subList(start - 1, end);
+				mutator.delete(day, DAYLINE_CF, login, se);
 			}
 		}
-		return Arrays.asList();
+
 	}
 
 	@Override
-	public void addTweetToMonth(String tweetId, String month)
+	public Map<String, Long> findTweetsForDay(String day)
 	{
-		MonthLine monthLine = em.find(MonthLine.class, month);
-		if (monthLine == null)
+		int count = HFactory.createCountQuery(keyspaceOperator, se, se).setColumnFamily(DAYLINE_CF).setKey(day)
+				.setRange(null, null, Integer.MAX_VALUE).execute().get();
+
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspaceOperator, se, se, le).setColumnFamily(DAYLINE_CF).setKey(day)
+				.setRange(null, null, false, count).execute().get().getColumns();
+
+		Map<String, Long> result = new HashMap<String, Long>();
+		for (HColumn<String, Long> column : columns)
 		{
-			monthLine = new MonthLine();
-			monthLine.setMonth(month);
+			result.put(column.getName(), column.getValue());
 		}
 
-		monthLine.getTweetIds().add(tweetId);
-		em.persist(monthLine);
-
+		return result;
 	}
 
 	@Override
-	public void removeTweetFromMonth(String tweetId, String month)
+	public void addTweetToWeek(String login, String week)
 	{
-		MonthLine monthLine = em.find(MonthLine.class, month);
-		if (monthLine == null)
+		HColumn<String, Long> result = HFactory.createColumnQuery(keyspaceOperator, se, se, le).setColumnFamily(WEEKLINE_CF).setKey(week)
+				.setName(login).execute().get();
+
+		long count = 0;
+
+		if (result != null && result.getValue() != null)
 		{
-			// TODO Functional exception
-			return;
+			count = result.getValue();
 		}
-
-		monthLine.getTweetIds().remove(tweetId);
-		em.persist(monthLine);
+		Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, se);
+		mutator.insert(week, WEEKLINE_CF, HFactory.createColumn(login, count + 1, se, le));
 	}
 
 	@Override
-	public Collection<String> findTweetsForMonth(String month)
+	public void removeTweetFromWeek(String login, String week)
 	{
-		MonthLine monthLine = em.find(MonthLine.class, month);
-		if (monthLine != null)
+		HColumn<String, Long> result = HFactory.createColumnQuery(keyspaceOperator, se, se, le).setColumnFamily(WEEKLINE_CF).setKey(week)
+				.setName(login).execute().get();
+		if (result != null && result.getValue() != null)
 		{
-			return monthLine.getTweetIds();
-		}
-		return Arrays.asList();
-	}
-
-	@Override
-	public Collection<String> findTweetsRangeForMonth(String day, int start, int end)
-	{
-		MonthLine monthLine = em.find(MonthLine.class, day);
-		if (monthLine != null)
-		{
-			List<String> list = new ArrayList<String>(monthLine.getTweetIds());
-			if (list.size() > 0)
+			long count = result.getValue();
+			Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, se);
+			if (count > 0)
 			{
-				if (start < 1)
-				{
-					start = 1;
-				}
 
-				if (end > list.size())
-				{
-					end = list.size();
-				}
-				Collections.reverse(list);
-				return list.subList(start - 1, end);
+				mutator.insert(week, WEEKLINE_CF, HFactory.createColumn(login, count - 1, se, le));
+			}
+			else
+			{
+				mutator.delete(week, WEEKLINE_CF, login, se);
 			}
 		}
-		return Arrays.asList();
 	}
 
 	@Override
-	public void addTweetToYear(String tweetId, String year)
+	public Map<String, Long> findTweetsForWeek(String week)
 	{
-		YearLine yearLine = em.find(YearLine.class, year);
-		if (yearLine == null)
+		int count = HFactory.createCountQuery(keyspaceOperator, se, se).setColumnFamily(WEEKLINE_CF).setKey(week)
+				.setRange(null, null, Integer.MAX_VALUE).execute().get();
+
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspaceOperator, se, se, le).setColumnFamily(WEEKLINE_CF).setKey(week)
+				.setRange(null, null, false, count).execute().get().getColumns();
+
+		Map<String, Long> result = new HashMap<String, Long>();
+		for (HColumn<String, Long> column : columns)
 		{
-			yearLine = new YearLine();
-			yearLine.setYear(year);
+			result.put(column.getName(), column.getValue());
 		}
 
-		yearLine.getTweetIds().add(tweetId);
-		em.persist(yearLine);
-
+		return result;
 	}
 
 	@Override
-	public void removeTweetFromYear(String tweetId, String year)
+	public void addTweetToMonth(String login, String month)
 	{
-		YearLine yearLine = em.find(YearLine.class, year);
-		if (yearLine == null)
+		HColumn<String, Long> result = HFactory.createColumnQuery(keyspaceOperator, se, se, le).setColumnFamily(MONTHLINE_CF).setKey(month)
+				.setName(login).execute().get();
+
+		long count = 0;
+
+		if (result != null && result.getValue() != null)
 		{
-			// TODO Functional exception
-			return;
+			count = result.getValue();
 		}
-
-		yearLine.getTweetIds().remove(tweetId);
-		em.persist(yearLine);
+		Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, se);
+		mutator.insert(month, MONTHLINE_CF, HFactory.createColumn(login, count + 1, se, le));
 
 	}
 
 	@Override
-	public Collection<String> findTweetsRangeForYear(String day, int start, int end)
+	public void removeTweetFromMonth(String login, String month)
 	{
-		YearLine yearLine = em.find(YearLine.class, day);
-		if (yearLine != null)
+		HColumn<String, Long> result = HFactory.createColumnQuery(keyspaceOperator, se, se, le).setColumnFamily(MONTHLINE_CF).setKey(month)
+				.setName(login).execute().get();
+		if (result != null && result.getValue() != null)
 		{
-			List<String> list = new ArrayList<String>(yearLine.getTweetIds());
-			if (list.size() > 0)
+			long count = result.getValue();
+			Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, se);
+			if (count > 0)
 			{
-				if (start < 1)
-				{
-					start = 1;
-				}
 
-				if (end > list.size())
-				{
-					end = list.size();
-				}
-				Collections.reverse(list);
-				return list.subList(start - 1, end);
+				mutator.insert(month, MONTHLINE_CF, HFactory.createColumn(login, count - 1, se, le));
+			}
+			else
+			{
+				mutator.delete(month, MONTHLINE_CF, login, se);
 			}
 		}
-		return Arrays.asList();
 	}
 
 	@Override
-	public Collection<String> findTweetsForYear(String year)
+	public Map<String, Long> findTweetsForMonth(String month)
 	{
-		YearLine yearLine = em.find(YearLine.class, year);
-		if (yearLine != null)
+		int count = HFactory.createCountQuery(keyspaceOperator, se, se).setColumnFamily(MONTHLINE_CF).setKey(month)
+				.setRange(null, null, Integer.MAX_VALUE).execute().get();
+
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspaceOperator, se, se, le).setColumnFamily(MONTHLINE_CF).setKey(month)
+				.setRange(null, null, false, count).execute().get().getColumns();
+
+		Map<String, Long> result = new HashMap<String, Long>();
+		for (HColumn<String, Long> column : columns)
 		{
-			return yearLine.getTweetIds();
+			result.put(column.getName(), column.getValue());
 		}
-		return Arrays.asList();
+
+		return result;
+	}
+
+	@Override
+	public void addTweetToYear(String login, String year)
+	{
+		HColumn<String, Long> result = HFactory.createColumnQuery(keyspaceOperator, se, se, le).setColumnFamily(YEARLINE_CF).setKey(year)
+				.setName(login).execute().get();
+
+		long count = 0;
+
+		if (result != null && result.getValue() != null)
+		{
+			count = result.getValue();
+		}
+		Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, se);
+		mutator.insert(year, YEARLINE_CF, HFactory.createColumn(login, count + 1, se, le));
+
+	}
+
+	@Override
+	public void removeTweetFromYear(String login, String year)
+	{
+		HColumn<String, Long> result = HFactory.createColumnQuery(keyspaceOperator, se, se, le).setColumnFamily(YEARLINE_CF).setKey(year)
+				.setName(login).execute().get();
+		if (result != null && result.getValue() != null)
+		{
+			long count = result.getValue();
+			Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, se);
+			if (count > 0)
+			{
+
+				mutator.insert(year, YEARLINE_CF, HFactory.createColumn(login, count - 1, se, le));
+			}
+			else
+			{
+				mutator.delete(year, YEARLINE_CF, login, se);
+			}
+		}
+
+	}
+
+	@Override
+	public Map<String, Long> findTweetsForYear(String year)
+	{
+		int count = HFactory.createCountQuery(keyspaceOperator, se, se).setColumnFamily(YEARLINE_CF).setKey(year)
+				.setRange(null, null, Integer.MAX_VALUE).execute().get();
+
+		List<HColumn<String, Long>> columns = createSliceQuery(keyspaceOperator, se, se, le).setColumnFamily(YEARLINE_CF).setKey(year)
+				.setRange(null, null, false, count).execute().get().getColumns();
+
+		Map<String, Long> result = new HashMap<String, Long>();
+		for (HColumn<String, Long> column : columns)
+		{
+			result.put(column.getName(), column.getValue());
+		}
+
+		return result;
 	}
 
 }

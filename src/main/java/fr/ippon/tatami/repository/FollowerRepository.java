@@ -18,4 +18,5 @@ public interface FollowerRepository
 
 	Collection<String> findFollowersForUser(User user);
 
+	Collection<String> findFollowersForUser(User user, String startUser, int end);
 }

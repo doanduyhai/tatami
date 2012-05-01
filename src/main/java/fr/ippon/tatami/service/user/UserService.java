@@ -1,4 +1,4 @@
-package fr.ippon.tatami.service;
+package fr.ippon.tatami.service.user;
 
 import static fr.ippon.tatami.service.util.TatamiConstants.USERTAG;
 import static fr.ippon.tatami.service.util.TatamiConstants.USER_SEARCH_LIMIT;
@@ -18,13 +18,16 @@ import org.slf4j.LoggerFactory;
 
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
+import fr.ippon.tatami.exception.FunctionalException;
 import fr.ippon.tatami.repository.FollowerRepository;
 import fr.ippon.tatami.repository.FriendRepository;
 import fr.ippon.tatami.repository.TimeLineRepository;
 import fr.ippon.tatami.repository.TweetRepository;
 import fr.ippon.tatami.repository.UserIndexRepository;
 import fr.ippon.tatami.repository.UserRepository;
+import fr.ippon.tatami.service.security.AuthenticationService;
 import fr.ippon.tatami.service.util.GravatarUtil;
+import fr.ippon.tatami.service.util.TatamiConstants;
 
 /**
  * @author Julien Dubois
@@ -50,11 +53,16 @@ public class UserService
 
 	TweetRepository tweetRepository;
 
-	public User getUserByLogin(String login)
+	public User getUserByLogin(String login) throws FunctionalException
 	{
 		log.debug("Looking for user with login : {} ", login);
 
-		return userRepository.findUserByLogin(login);
+		User user = userRepository.findUserByLogin(login);
+		if (user == null)
+		{
+			throw new FunctionalException("No user found for login '" + login + "'");
+		}
+		return user;
 	}
 
 	public void updateUser(User updatedUser)
@@ -114,7 +122,7 @@ public class UserService
 
 	}
 
-	public void followUser(String loginToFollow)
+	public void followUser(String loginToFollow) throws FunctionalException
 	{
 		log.debug("Adding friend : {}", loginToFollow);
 
@@ -142,7 +150,7 @@ public class UserService
 		}
 	}
 
-	public void forgetUser(String login)
+	public void forgetUser(String login) throws FunctionalException
 	{
 		log.debug("Removing followed user : {} ", login);
 
@@ -175,13 +183,44 @@ public class UserService
 		return friendRepository.findFriendsForUser(user);
 	}
 
+	public Collection<User> getFriendsForUser(String login, String startUser, int count)
+	{
+
+		if (startUser == null && count < TatamiConstants.DEFAULT_USER_LIST_SIZE)
+		{
+			count = TatamiConstants.DEFAULT_USER_LIST_SIZE;
+		}
+
+		log.debug("Retrieving followed users : {} within range {}", login, startUser + " - " + count);
+
+		User currentUser = authenticationService.getCurrentUser();
+		User user = userRepository.findUserByLogin(login);
+
+		return this.buildUserList(currentUser, friendRepository.findFriendsForUser(user, startUser, count));
+	}
+
 	public Collection<String> getFollowersForUser(String login)
 	{
-		log.debug("Retrieving followed users : {}", login);
+		log.debug("Retrieving following users : {}", login);
 
 		User user = userRepository.findUserByLogin(login);
 
 		return followerRepository.findFollowersForUser(user);
+	}
+
+	public Collection<User> getFollowersForUser(String login, String startUser, int count)
+	{
+		if (startUser == null && count < TatamiConstants.DEFAULT_USER_LIST_SIZE)
+		{
+			count = TatamiConstants.DEFAULT_USER_LIST_SIZE;
+		}
+
+		log.debug("Retrieving following users : {} within range {}", login, startUser + " - " + count);
+
+		User currentUser = authenticationService.getCurrentUser();
+		User user = userRepository.findUserByLogin(login);
+
+		return this.buildUserList(currentUser, followerRepository.findFollowersForUser(user, startUser, count));
 	}
 
 	public List<User> findUser(String searchString)
@@ -231,7 +270,6 @@ public class UserService
 			}
 
 		}
-
 		return this.buildUserList(currentUser, logins);
 	}
 
@@ -255,7 +293,6 @@ public class UserService
 				{
 					foundUser.setFollow(true);
 				}
-
 				results.add(foundUser);
 			}
 		}

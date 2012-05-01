@@ -26,7 +26,6 @@ public abstract class AbstractRESTController
 {
 	private final Logger log = LoggerFactory.getLogger(AbstractRESTController.class);
 
-	// @Inject
 	protected JacksonViewAwareHttpMessageConverter jacksonConverter;
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)

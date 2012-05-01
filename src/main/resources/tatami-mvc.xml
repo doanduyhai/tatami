@@ -112,11 +112,16 @@
 	
 	<bean id="tweetController" class="fr.ippon.tatami.web.rest.TweetController" parent="abstractRestController">
 		<property name="timelineService" ref="timelineService"/>
+		<property name="favoritelineService" ref="favoritelineService"/>
+		<property name="statslineService" ref="statslineService"/>
+		<property name="taglineService" ref="taglineService"/>
+		<property name="userlineService" ref="userlineService"/>
+		<property name="tweetPipelineManager" ref="tweetPipelineManager"/>
 	</bean>
 
 	<bean id="userController" class="fr.ippon.tatami.web.rest.UserController" parent="abstractRestController">
 		<property name="userService" ref="userService"/>
-		<property name="timelineService" ref="timelineService"/>
+		<property name="statslineService" ref="statslineService"/>		
 	</bean>	
 	
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">

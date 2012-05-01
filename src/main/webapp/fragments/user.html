@@ -26,10 +26,14 @@
 				th:text="${currentUser.tweetCount}">20</span><br/>TWEETS
 		</div>
 		<div class="span4 center">
-			<span id="friendsCount" class="badge" th:text="${currentUser.friendsCount}">5</span><br/>FOLLOWING
+			<span id="friendsCount" class="badge"
+				th:attr="data-friends=${currentUser.login}" 
+				th:text="${currentUser.friendsCount}">5</span><br/>FRIENDS
 		</div>
 		<div class="span4 center">
-			<span id="followersCount" class="badge" th:text="${currentUser.followersCount}">100</span><br/>FOLLOWERS
+			<span id="followersCount" class="badge"
+				th:attr="data-followers=${currentUser.login}"  
+				th:text="${currentUser.followersCount}">100</span><br/>FOLLOWERS
 		</div>
 	</div>
 	<div class="row-fluid">
@@ -43,7 +47,7 @@
 				<tr>
 					<td>
 						<textarea id="tweetContent" class="focused"  
-							maxlength="140" rows="3" name="content" 
+							rows="3" name="content" 
 							placeholder="Type a new tweet..."></textarea>
 					</td>
 					<td>

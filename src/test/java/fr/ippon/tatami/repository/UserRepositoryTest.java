@@ -3,8 +3,6 @@ package fr.ippon.tatami.repository;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
-import me.prettyprint.cassandra.model.CqlQuery;
-import me.prettyprint.cassandra.serializers.StringSerializer;
 
 import org.testng.annotations.Test;
 
@@ -59,12 +57,5 @@ public class UserRepositoryTest extends AbstractCassandraTatamiTest
 
 		assertEquals(refreshedTest.getFirstName(), "another-firstname", "Firstname");
 
-		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, StringSerializer.get(), StringSerializer.get(),
-				StringSerializer.get());
-		cqlQuery.setQuery("truncate User");
-		cqlQuery.execute();
-
-		User deletedUser = this.userRepository.findUserByLogin("test");
-		assertNull(deletedUser, "deletedUser");
 	}
 }

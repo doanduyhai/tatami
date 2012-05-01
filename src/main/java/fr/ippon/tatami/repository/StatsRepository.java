@@ -1,6 +1,6 @@
 package fr.ippon.tatami.repository;
 
-import java.util.Collection;
+import java.util.Map;
 
 /**
  * 
@@ -8,35 +8,28 @@ import java.util.Collection;
  */
 public interface StatsRepository
 {
-	void addTweetToDay(String tweetId, String day);
+	void addTweetToDay(String login, String day);
 
-	void removeTweetFromDay(String tweetId, String day);
+	void removeTweetFromDay(String login, String day);
 
-	Collection<String> findTweetsForDay(String day);
+	Map<String, Long> findTweetsForDay(String day);
 
-	Collection<String> findTweetsRangeForDay(String day, int start, int end);
+	void addTweetToWeek(String login, String week);
 
-	void addTweetToWeek(String tweetId, String week);
+	void removeTweetFromWeek(String login, String week);
 
-	void removeTweetFromWeek(String tweetId, String week);
+	Map<String, Long> findTweetsForWeek(String week);
 
-	Collection<String> findTweetsForWeek(String week);
+	void addTweetToMonth(String login, String month);
 
-	Collection<String> findTweetsRangeForWeek(String day, int start, int end);
+	void removeTweetFromMonth(String login, String month);
 
-	void addTweetToMonth(String tweetId, String month);
+	Map<String, Long> findTweetsForMonth(String month);
 
-	void removeTweetFromMonth(String tweetId, String month);
+	void addTweetToYear(String login, String year);
 
-	Collection<String> findTweetsForMonth(String month);
+	void removeTweetFromYear(String login, String year);
 
-	Collection<String> findTweetsRangeForMonth(String day, int start, int end);
+	Map<String, Long> findTweetsForYear(String year);
 
-	void addTweetToYear(String tweetId, String year);
-
-	void removeTweetFromYear(String tweetId, String year);
-
-	Collection<String> findTweetsForYear(String year);
-
-	Collection<String> findTweetsRangeForYear(String day, int start, int end);
 }

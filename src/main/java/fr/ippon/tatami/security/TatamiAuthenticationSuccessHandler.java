@@ -12,7 +12,8 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 
 import fr.ippon.tatami.domain.User;
-import fr.ippon.tatami.service.UserService;
+import fr.ippon.tatami.exception.FunctionalException;
+import fr.ippon.tatami.service.user.UserService;
 
 /**
  * @author Julien Dubois
@@ -31,7 +32,20 @@ public class TatamiAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
 		super.onAuthenticationSuccess(request, response, authentication);
 		String login = authentication.getName();
-		if (userService.getUserByLogin(login) == null)
+		try
+		{
+			if (userService.getUserByLogin(login) == null)
+			{
+				User user = new User();
+				user.setLogin(login);
+				user.setFirstName(login);
+				user.setLastName("");
+				user.setEmail(login + "@ippon.fr");
+				user.setBiography("");
+				userService.createUser(user);
+			}
+		}
+		catch (FunctionalException e)
 		{
 			User user = new User();
 			user.setLogin(login);

@@ -1,10 +1,10 @@
 package fr.ippon.tatami.repository.cassandra;
 
-import java.util.Arrays;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWERS_CF;
+
 import java.util.Collection;
 
 import fr.ippon.tatami.domain.User;
-import fr.ippon.tatami.domain.UserFollowers;
 import fr.ippon.tatami.repository.FollowerRepository;
 
 /**
@@ -17,43 +17,36 @@ public class CassandraFollowerRepository extends CassandraAbstractRepository imp
 	@Override
 	public void addFollower(User user, User follower)
 	{
-		UserFollowers userFollowers = em.find(UserFollowers.class, user.getLogin());
-		if (userFollowers == null)
-		{
-			userFollowers = new UserFollowers();
-			userFollowers.setLogin(user.getLogin());
-		}
+		this.insertIntoCF(FOLLOWERS_CF, user.getLogin(), follower.getLogin());
 
-		userFollowers.getFollowers().add(follower.getLogin());
 		user.incrementFollowersCount();
 		em.persist(user);
-		em.persist(userFollowers);
+
 	}
 
 	@Override
 	public void removeFollower(User user, User follower)
 	{
-		UserFollowers userFollowers = em.find(UserFollowers.class, user.getLogin());
-		if (userFollowers == null)
-		{
-			// TODO Functional exception
-			return;
-		}
 
-		userFollowers.getFollowers().remove(follower.getLogin());
+		this.removeFromCF(FOLLOWERS_CF, user.getLogin(), follower.getLogin());
+
 		user.decrementFollowersCount();
 		em.persist(user);
-		em.persist(userFollowers);
+
 	}
 
 	@Override
 	public Collection<String> findFollowersForUser(User user)
 	{
-		UserFollowers userFollowers = em.find(UserFollowers.class, user.getLogin());
-		if (userFollowers != null)
-		{
-			return userFollowers.getFollowers();
-		}
-		return Arrays.asList();
+
+		return this.findRangeFromCF(FOLLOWERS_CF, user.getLogin(), null, false, (int) user.getFollowersCount());
+	}
+
+	@Override
+	public Collection<String> findFollowersForUser(User user, String startUser, int count)
+	{
+		assert count >= 0 : "Follower search count should be positive";
+
+		return this.findRangeFromCF(FOLLOWERS_CF, user.getLogin(), startUser, false, count);
 	}
 }

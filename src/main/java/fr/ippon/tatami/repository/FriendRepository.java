@@ -15,4 +15,6 @@ public interface FriendRepository
 	void removeFriend(User user, User friend);
 
 	Collection<String> findFriendsForUser(User user);
+
+	Collection<String> findFriendsForUser(User user, String startUser, int end);
 }

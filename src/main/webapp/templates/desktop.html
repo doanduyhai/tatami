@@ -110,29 +110,13 @@
 				var DEFAULT_TAG_LIST_SIZE = /*[[${DEFAULT_TAG_LIST_SIZE}]]*/ 10;
 
 				// Retrieve the default tweet first fetch size value from the server				           
-				var TWEET_FIRST_FETCH_SIZE = /*[[${TWEET_FIRST_FETCH_SIZE}]]*/ 5;
+				var FIRST_FETCH_SIZE = /*[[${FIRST_FETCH_SIZE}]]*/ 5;
 				
 				// Retrieve the default tweet second fetch size value from the server				           
-				var TWEET_SECOND_FETCH_SIZE = /*[[${TWEET_SECOND_FETCH_SIZE}]]*/ 10;
+				var SECOND_FETCH_SIZE = /*[[${SECOND_FETCH_SIZE}]]*/ 10;
 				
 				// Retrieve the default tweet third fetch size value from the server				           
-				var TWEET_THIRD_FETCH_SIZE = /*[[${TWEET_THIRD_FETCH_SIZE}]]*/ 20;
-				
-				
-				var TWEET_NB_PATTERN = /*[[${TWEET_NB_PATTERN}]]*/ "";
-				var TWEET_NB_REGEXP = new RegExp(TWEET_NB_PATTERN, "g");
-				
-				var START_TWEET_INDEX_PATTERN = /*[[${START_TWEET_INDEX_PATTERN}]]*/ "";
-				var START_TWEET_INDEX_REGEXP = new RegExp(START_TWEET_INDEX_PATTERN, "g");
-				
-				var END_TWEET_INDEX_PATTERN = /*[[${END_TWEET_INDEX_PATTERN}]]*/ "";
-				var END_TWEET_INDEX_REGEXP = new RegExp(END_TWEET_INDEX_PATTERN, "g");
-				
-				var USER_LOGIN_PATTERN = /*[[${USER_LOGIN_PATTERN}]]*/ "";
-				var USER_LOGIN_REGEXP = new RegExp(USER_LOGIN_PATTERN, "g");
-				
-				var TAG_PATTERN = /*[[${TAG_PATTERN}]]*/ "";
-				var TAG_REGEXP = new RegExp(TAG_PATTERN, "g");
+				var THIRD_FETCH_SIZE = /*[[${THIRD_FETCH_SIZE}]]*/ 20;
 				
 				var HTTP_GET = 'GET';
 				
@@ -148,8 +132,7 @@
         	<script src="/assets/js/tatami/raphael-min.js" th:src="@{/assets/js/tatami/raphael-min.js}"></script>
 
 			<script src="/assets/js/tatami/common.js" th:src="@{/assets/js/tatami/common.js}"></script>        	
-        	<script src="/assets/js/tatami/user.js" th:src="@{/assets/js/tatami/user.js}"></script>
-        	<script src="/assets/js/tatami/follow.js" th:src="@{/assets/js/tatami/follow.js}"></script>				
+        	<script src="/assets/js/tatami/user.js" th:src="@{/assets/js/tatami/user.js}"></script>				
 			<script src="/assets/js/tatami/lines.js" th:src="@{/assets/js/tatami/lines.js}"></script>
 			<script src="/assets/js/tatami/shortcut.js" th:src="@{/assets/js/tatami/shortcut.js}"></script>
 			<script src="/assets/js/tatami/init.js" th:src="@{/assets/js/tatami/init.js}"></script>  

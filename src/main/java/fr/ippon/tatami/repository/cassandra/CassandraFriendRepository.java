@@ -1,12 +1,12 @@
 package fr.ippon.tatami.repository.cassandra;
 
-import java.util.ArrayList;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FRIENDS_CF;
+
 import java.util.Collection;
 
 import org.springframework.stereotype.Repository;
 
 import fr.ippon.tatami.domain.User;
-import fr.ippon.tatami.domain.UserFriends;
 import fr.ippon.tatami.repository.FriendRepository;
 
 /**
@@ -19,44 +19,36 @@ public class CassandraFriendRepository extends CassandraAbstractRepository imple
 	@Override
 	public void addFriend(User user, User friend)
 	{
-		UserFriends userFriends = em.find(UserFriends.class, user.getLogin());
-		if (userFriends == null)
-		{
-			userFriends = new UserFriends();
-			userFriends.setLogin(user.getLogin());
-		}
+		this.insertIntoCF(FRIENDS_CF, user.getLogin(), friend.getLogin());
 
-		userFriends.getFriends().add(friend.getLogin());
 		user.incrementFriendsCount();
 		em.persist(user);
-		em.persist(userFriends);
+
 	}
 
 	@Override
 	public void removeFriend(User user, User friend)
 	{
-		UserFriends userFriends = em.find(UserFriends.class, user.getLogin());
-		if (userFriends == null)
-		{
-			// TODO Functional exception
-			return;
-		}
+		this.removeFromCF(FRIENDS_CF, user.getLogin(), friend.getLogin());
 
-		userFriends.getFriends().remove(friend.getLogin());
 		user.decrementFriendsCount();
 		em.persist(user);
-		em.persist(userFriends);
+
 	}
 
 	@Override
 	public Collection<String> findFriendsForUser(User user)
 	{
-		UserFriends userFriends = em.find(UserFriends.class, user.getLogin());
-		if (userFriends != null)
-		{
-			return userFriends.getFriends();
-		}
-		return new ArrayList<String>();
+		return this.findRangeFromCF(FRIENDS_CF, user.getLogin(), null, false, (int) user.getFriendsCount());
 
 	}
+
+	@Override
+	public Collection<String> findFriendsForUser(User user, String startUser, int count)
+	{
+		assert count >= 0 : "Friends search count should be positive";
+
+		return this.findRangeFromCF(FRIENDS_CF, user.getLogin(), startUser, false, count);
+	}
+
 }

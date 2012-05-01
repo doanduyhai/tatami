@@ -7,7 +7,6 @@ import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWERS_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.FRIENDS_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.MONTHLINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TAGLINE_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.TAGLINE_COUNT_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TIMELINE_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TWEET_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.USERLINE_CF;
@@ -56,16 +55,6 @@ public class CassandraConfiguration implements InitializingBean
 		cluster.addColumnFamily(cfd);
 	}
 
-	private void addColumnFamilyWithLongColumn(ThriftCluster cluster, String cfName)
-	{
-
-		ColumnFamilyDefinition cfd = HFactory.createColumnFamilyDefinition(this.cassandraKeyspace, cfName, ComparatorType.UTF8TYPE);
-		cfd.setKeyValidationClass("org.apache.cassandra.db.marshal.UTF8Type");
-		cfd.setComparatorType(ComparatorType.LONGTYPE);
-		cfd.setDefaultValidationClass("org.apache.cassandra.db.marshal.UTF8Type");
-		cluster.addColumnFamily(cfd);
-	}
-
 	public EntityManagerImpl entityManager(Keyspace keyspace)
 	{
 		return new EntityManagerImpl(keyspace, "fr.ippon.tatami.domain");
@@ -111,10 +100,9 @@ public class CassandraConfiguration implements InitializingBean
 			addColumnFamilyWithStringColumn(cluster, MONTHLINE_CF);
 			addColumnFamilyWithStringColumn(cluster, YEARLINE_CF);
 			addColumnFamilyWithStringColumn(cluster, FAVLINE_CF);
-			addColumnFamilyWithLongColumn(cluster, TAGLINE_CF);
-			addColumnFamilyWithStringColumn(cluster, TAGLINE_COUNT_CF);
-			addColumnFamilyWithLongColumn(cluster, TIMELINE_CF);
-			addColumnFamilyWithLongColumn(cluster, USERLINE_CF);
+			addColumnFamilyWithStringColumn(cluster, TAGLINE_CF);
+			addColumnFamilyWithStringColumn(cluster, TIMELINE_CF);
+			addColumnFamilyWithStringColumn(cluster, USERLINE_CF);
 
 			// CF for User search feature
 			addColumnFamilyWithStringColumn(cluster, USER_INDEX_CF);

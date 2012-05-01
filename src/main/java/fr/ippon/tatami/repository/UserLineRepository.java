@@ -13,5 +13,7 @@ public interface UserLineRepository
 {
 	void addTweetToUserline(User user, String tweetId);
 
-	Collection<String> getTweetsRangeFromUserline(User user, int start, int end);
+	void removeTweetFromUserline(User user, String tweetId);
+
+	Collection<String> getTweetsRangeFromUserline(User user, String startTweetId, int count);
 }

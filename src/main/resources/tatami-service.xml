@@ -3,11 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-	<bean id="authenticationService" class="fr.ippon.tatami.service.AuthenticationService">
+	<bean id="authenticationService" class="fr.ippon.tatami.service.security.AuthenticationService">
 		<property name="userRepository" ref="userRepository"/>
 	</bean>
 	
-	<bean id="userService" class="fr.ippon.tatami.service.UserService">
+	<bean id="userService" class="fr.ippon.tatami.service.user.UserService">
 		<property name="authenticationService" ref="authenticationService"/>
 		<property name="followerRepository" ref="followerRepository"/>
 		<property name="friendRepository" ref="friendRepository"/>
@@ -17,16 +17,66 @@
 		<property name="userRepository" ref="userRepository"/>
 	</bean>
 	
-	<bean id="timelineService" class="fr.ippon.tatami.service.TimelineService">
-		<property name="authenticationService" ref="authenticationService"/>
+	<bean id="abstractlineService" class="fr.ippon.tatami.service.lines.AbstractlineService" abstract="true">
 		<property name="favoriteLineRepository" ref="favoriteRepository"/>
-		<property name="followerRepository" ref="followerRepository"/>
-		<property name="hashtagDefault" value="${hashtag.default}"/>
-		<property name="statsRepository" ref="statsRepository"/>
-		<property name="tagLineRepository" ref="tagLineRepository"/>
-		<property name="timeLineRepository" ref="timeLineRepository"/>
 		<property name="tweetRepository" ref="tweetRepository"/>
-		<property name="userLineRepository" ref="userLineRepository"/>
 		<property name="userService" ref="userService"/>
+	</bean>
+	
+	<bean id="timelineService" class="fr.ippon.tatami.service.lines.TimelineService" parent="abstractlineService">
+		<property name="timeLineRepository" ref="timeLineRepository"/>
 	</bean>	
+	
+	<bean id="favoritelineService" class="fr.ippon.tatami.service.lines.FavoritelineService" parent="abstractlineService">
+		<property name="timeLineRepository" ref="timeLineRepository"/>
+	</bean>
+	
+	<bean id="mentionlineService" class="fr.ippon.tatami.service.lines.MentionlineService" parent="abstractlineService">
+		<property name="timeLineRepository" ref="timeLineRepository"/>
+	</bean>
+	
+	<bean id="statslineService" class="fr.ippon.tatami.service.lines.StatslineService" parent="abstractlineService">
+		<property name="statsRepository" ref="statsRepository"/>
+	</bean>	
+
+	<bean id="taglineService" class="fr.ippon.tatami.service.lines.TaglineService" parent="abstractlineService">
+		<property name="tagLineRepository" ref="tagLineRepository"/>
+		<property name="hashtagDefault" value="${hashtag.default}"/>
+	</bean>
+	
+	<bean id="userlineService" class="fr.ippon.tatami.service.lines.UserlineService" parent="abstractlineService">
+		<property name="userLineRepository" ref="userLineRepository"/>
+	</bean>	
+	
+	<bean id="tweetService" class="fr.ippon.tatami.service.tweet.TweetService">
+		<property name="authenticationService" ref="authenticationService"/>
+		<property name="tweetRepository" ref="tweetRepository"/>
+	</bean>	
+	
+	<bean id="contactsService" class="fr.ippon.tatami.service.user.ContactsService">
+		<property name="followerRepository" ref="followerRepository"/>
+		<property name="timeLineRepository" ref="timeLineRepository"/>
+		<property name="userService" ref="userService"/>
+	</bean>
+	
+	<bean id="urlShortenerService" class="fr.ippon.tatami.service.tweet.UrlShortenerService" />
+
+	<bean id="xssEncodingService" class="fr.ippon.tatami.service.tweet.XssEncodingService" />
+	
+	<bean id="tweetPipelineManager" class="fr.ippon.tatami.service.pipeline.TweetPipelineManager" >
+		<property name="tweetService" ref="tweetService"/>
+		<property name="tweetPostHandlers">
+			<list>
+				<ref bean="xssEncodingService"/>
+				<ref bean="urlShortenerService"/>
+				<ref bean="tweetService"/>
+				<ref bean="userlineService"/>
+				<ref bean="timelineService"/>
+				<ref bean="taglineService"/>
+				<ref bean="mentionlineService"/>
+				<ref bean="statslineService"/>
+				<ref bean="contactsService"/>
+			</list>
+		</property>
+	</bean>							
 </beans>

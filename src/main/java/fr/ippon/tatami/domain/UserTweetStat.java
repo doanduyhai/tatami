@@ -1,17 +1,22 @@
 package fr.ippon.tatami.domain;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 /**
- * 
+ * @author Julien Dubois
  * @author DuyHai DOAN
  */
+@EqualsAndHashCode
+@ToString
 public class UserTweetStat implements Comparable<UserTweetStat>
 {
 
 	private String login;
 
-	private Integer tweetsCount;
+	private Long tweetsCount;
 
-	public UserTweetStat(String login, Integer count) {
+	public UserTweetStat(String login, Long count) {
 		assert login != null && count != null;
 		this.login = login;
 		this.tweetsCount = count;
@@ -20,13 +25,14 @@ public class UserTweetStat implements Comparable<UserTweetStat>
 	@Override
 	public int compareTo(UserTweetStat o)
 	{
-		return this.login.compareToIgnoreCase(o.login);
-	}
-
-	@Override
-	public String toString()
-	{
-		return "TweetStat{login='" + this.login + "', tweetsCount=" + this.tweetsCount + "}";
+		if (o != null)
+		{
+			return this.tweetsCount.compareTo(o.getTweetsCount());
+		}
+		else
+		{
+			return 1;
+		}
 	}
 
 	public String getLogin()
@@ -39,12 +45,12 @@ public class UserTweetStat implements Comparable<UserTweetStat>
 		this.login = login;
 	}
 
-	public Integer getTweetsCount()
+	public Long getTweetsCount()
 	{
 		return tweetsCount;
 	}
 
-	public void setTweetsCount(Integer count)
+	public void setTweetsCount(Long count)
 	{
 		this.tweetsCount = count;
 	}

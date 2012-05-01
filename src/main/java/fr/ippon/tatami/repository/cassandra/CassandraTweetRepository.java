@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.repository.TweetRepository;
+import fr.ippon.tatami.service.util.TimeUUIdReorder;
 
 /**
  * @author Julien Dubois
@@ -25,7 +26,7 @@ public class CassandraTweetRepository extends CassandraAbstractRepository implem
 	public Tweet createTweet(String login, String content)
 	{
 		Tweet tweet = new Tweet();
-		tweet.setTweetId(TimeUUIDUtils.getUniqueTimeUUIDinMillis().toString());
+		tweet.setTweetId(TimeUUIdReorder.reorderTimeUUId(TimeUUIDUtils.getUniqueTimeUUIDinMillis().toString()));
 		tweet.setLogin(login);
 		tweet.setContent(content);
 		tweet.setTweetDate(Calendar.getInstance().getTime());
@@ -38,6 +39,12 @@ public class CassandraTweetRepository extends CassandraAbstractRepository implem
 	}
 
 	@Override
+	public void saveTweet(Tweet tweet)
+	{
+		em.persist(tweet);
+	}
+
+	@Override
 	@Cacheable("tweet-cache")
 	public Tweet findTweetById(String tweetId)
 	{
@@ -46,6 +53,10 @@ public class CassandraTweetRepository extends CassandraAbstractRepository implem
 			log.debug("Finding tweet : " + tweetId);
 		}
 		Tweet tweet = em.find(Tweet.class, tweetId);
+
+		if (tweet == null)
+			return null;
+
 		return Boolean.TRUE.equals(tweet.getRemoved()) ? null : tweet;
 	}
 

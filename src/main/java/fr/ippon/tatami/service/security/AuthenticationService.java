@@ -1,4 +1,4 @@
-package fr.ippon.tatami.service;
+package fr.ippon.tatami.service.security;
 
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;

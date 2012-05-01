@@ -12,20 +12,104 @@
 		<div class="row-fluid">
 			<div class="span4">
 				<div class="tabbable">
-                    <ul class="nav nav-tabs">
+                    <ul class="nav nav-tabs">  
 						<li class="active">
-							<a id="defaultTab" href="#homeTabContent" data-toggle="pill">Show Profile</a>
+							<a id="defaultTab" href="#homeTabContent" data-toggle="pill">
+								<img src="/assets/img/glyphicons_322_twitter.png" th:src="@{/assets/img/glyphicons_322_twitter.png}"></img> Tweet
+							</a>
 						</li>
 						<li>
-							<a href="#profileTabContent" data-toggle="pill"><i class="icon-edit"></i>Update Profile</a>
+							<a href="#profileTab" data-toggle="pill"><i class="icon-edit"></i> Update</a>
 						</li>
+						<li>
+							<a id="friendsTab" href="#friendsLine" data-toggle="pill">
+								<img src="/assets/img/friends.png" th:src="@{/assets/img/friends.png}"></img> Friends
+							</a>
+						</li>
+						<li>
+							<a id="followersTab" href="#followersLine" data-toggle="pill">
+								<img src="/assets/img/followers.png" th:src="@{/assets/img/followers.png}"></img> Followers
+							</a>
+						</li>						
 					</ul>
 					<div id="userDetailsPanel" class="tab-content alert alert-info">
 						<div class="tab-pane active" id="homeTabContent">
 									
 						</div>
-						<div class="tab-pane" id="profileTabContent">					
+						<div class="tab-pane" id="profileTab">					
 						</div>
+						<div class="tab-pane center userLine" id="friendsLine">
+							<h2>My friends</h2>
+							<table class="table table-striped table-condensed">
+								<thead>
+									<tr>
+										<td class="iconCell floatRight">
+											<a class="refreshUserLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
+												<i class="icon-refresh"></i>
+											</a>
+										</td>
+									</tr>
+								</thead>
+							</table>
+							<div class="row-fluid userContainer">
+								<table class="table table-striped">
+									<tbody class="userLineContent"></tbody>		
+								</table>
+							</div>															
+							<footer class="row-fluid noMargin" 
+								data-userFetch-url="rest/userFetch/friends"
+								th:attr="data-userFetch-key=${sec.principal.username}"
+								data-userFetch-type="friends">
+								
+								<div class="span9 noMargin middle center">
+									<button class="userPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
+								</div>
+								<div class="span3 noMargin right">
+									<em>#</em>
+									<select class="pageSelector">
+										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+									</select>
+								</div>
+							</footer>											
+						</div>
+						<div class="tab-pane center userLine" id="followersLine">
+							<h2>My followers</h2>
+							<table class="table table-striped table-condensed">
+								<thead>
+									<tr>
+										<td class="iconCell floatRight">
+											<a class="refreshUserLineIcon" href="#" title="Refresh - shortcut : ctrl+R">
+												<i class="icon-refresh"></i>
+											</a>
+										</td>
+									</tr>
+								</thead>
+							</table>
+							<div class="row-fluid userContainer">
+								<table class="table table-striped">
+									<tbody class="userLineContent"></tbody>		
+								</table>
+							</div>															
+							<footer class="row-fluid noMargin" 
+								data-userFetch-url="rest/userFetch/followers"
+								th:attr="data-userFetch-key=${sec.principal.username}"
+								data-userFetch-type="followers">
+								
+								<div class="span9 noMargin middle center">
+									<button class="userPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
+								</div>
+								<div class="span3 noMargin right">
+									<em>#</em>
+									<select class="pageSelector">
+										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+									</select>
+								</div>
+							</footer>														
+						</div>												
 					</div>
 				</div>
                 <div>
@@ -43,10 +127,8 @@
 					            <button type="button" class="btn btn-primary">Search User</button>
 					        </form>
 					        <div class="alert alert-success alert-block" id="followSuccess" style="display: none;">
-					        	<a class="close" data-dismiss="alert">&times;</a>
 					        </div>
 					        <div class="alert alert-error alert-block" id="followError" style="display: none;">
-					        	<a class="close" data-dismiss="alert">&times;</a>
 					        </div>
 					        <div id="followableUsers">
 						       <i class="icon-random"></i> <strong>Who to follow</strong>
@@ -64,7 +146,9 @@
 				<div class="tabbable">
 					<ul class="nav nav-tabs">
 						<li class="active">
-							<a id="mainTab" href="#timelinePanel" data-toggle="tab">Tweets</a>
+							<a id="mainTab" href="#timelinePanel" data-toggle="tab">
+								<img src="/assets/img/glyphicons_322_twitter.png" th:src="@{/assets/img/glyphicons_322_twitter.png}"></img> Tweets
+							</a>
 						</li>
 						<li>
 							<a id="favTab" href="#favlinePanel" data-toggle="tab"><i class="icon-heart"></i> Favorite Tweets</a>
@@ -107,17 +191,18 @@
 							</div>
 							
 							<footer class="row-fluid noMargin" 
-								th:attr="data-rest-url=${'rest/tweetFetch/timeline/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
-								data-line-type="timeline">
+								data-tweetFetch-url="rest/tweetFetch/timeline"
+								th:attr="data-tweetFetch-key=${sec.principal.username}"
+								data-tweetFetch-type="timeline">
 								<div class="span10 noMargin middle center">
 									<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
 								</div>
 								<div class="span2 noMargin right">
 									<em>#</em>
 									<select class="pageSelector">
-										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${TWEET_THIRD_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
 									</select>
 								</div>
 							</footer>
@@ -144,18 +229,19 @@
 								</table>
 							</div>
 																				
-							<footer class="row-fluid" 
-								th:attr="data-rest-url=${'rest/tweetFetch/favoriteline/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
-								data-line-type="favoriteline">
+							<footer class="row-fluid"
+								data-tweetFetch-url="rest/tweetFetch/favoriteline" 
+								th:attr="data-tweetFetch-key=${sec.principal.username}"
+								data-tweetFetch-type="favoriteline">
 								<div class="span10 noMargin middle center">
 									<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
 								</div>
 								<div class="span2 noMargin right">
 									<em>#</em>
 									<select class="pageSelector">
-										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${TWEET_THIRD_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
 									</select>
 								</div>
 							</footer>												
@@ -183,18 +269,19 @@
 								</table>
 							</div>
 												
-							<footer class="row-fluid" 
-								th:attr="data-rest-url=${'rest/tweetFetch/userline/'+USER_LOGIN_PATTERN+'/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
-								data-line-type="userline">
+							<footer class="row-fluid"
+								data-tweetFetch-url="rest/tweetFetch/userline"
+								data-tweetFetch-key=""  
+								data-tweetFetch-type="userline">
 								<div class="span10 noMargin middle center">
 									<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
 								</div>
 								<div class="span2 noMargin right">
 									<em>#</em>
 									<select class="pageSelector">
-										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${TWEET_THIRD_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
 									</select>
 								</div>
 							</footer>												
@@ -222,17 +309,18 @@
 							</div>
 													
 							<footer class="row-fluid" 
-								th:attr="data-rest-url=${'rest/tweetFetch/tagline/'+TAG_PATTERN+'/'+START_TWEET_INDEX_PATTERN+'/'+END_TWEET_INDEX_PATTERN}"
-								data-line-type="tagline">
+								data-tweetFetch-url="rest/tweetFetch/tagline"
+								data-tweetFetch-key="" 
+								data-tweetFetch-type="tagline">
 								<div class="span10 noMargin middle center">
 									<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
 								</div>
 								<div class="span2 noMargin right">
 									<em>#</em>
 									<select class="pageSelector">
-										<option th:inline="text">[[${TWEET_FIRST_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${TWEET_SECOND_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${TWEET_THIRD_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
+										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
 									</select>
 								</div>
 							</footer>	

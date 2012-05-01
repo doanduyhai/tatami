@@ -1,16 +1,17 @@
 function initTimeline()
 {
-	refreshLine('timelinePanel',1,DEFAULT_TWEET_LIST_SIZE,true,null,null);
+	refreshLine('timelinePanel',null,DEFAULT_TWEET_LIST_SIZE,true);
 }
 
 function initFavoritesline()
 {
-	refreshLine('favlinePanel',1,DEFAULT_TAG_LIST_SIZE,true,null,null);	
+	refreshLine('favlinePanel',null,DEFAULT_TWEET_LIST_SIZE,true);	
 }
 
 google.load("visualization", "1", {packages:["corechart"]});
 
 var clickFromLink = false;
+var directContatTabClick = true;
 
 !function ( $ ) {
 
@@ -20,7 +21,7 @@ var clickFromLink = false;
 	refreshUserSuggestions();
 	
     // auto-refresh
-    $('a[data-toggle="pill"]').on('show', function(e) {
+    $('a[data-toggle="pill"]').on('shown', function(e) {
     	if (e.target.hash == '#homeTabContent') {
     		updateUserCounters();
     	} 
@@ -29,12 +30,9 @@ var clickFromLink = false;
     
     
     // auto-refresh
-    $('a[data-toggle="tab"]').on('show', function(e) {
+    $('a[data-toggle="tab"]').on('shown', function(e) {
     	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' || e.target.hash == '#taglinePanel') {
-    		if(!clickFromLink)
-    		{	
-    			setTimeout(refreshCurrentLine,10);
-    		}	
+    		refreshCurrentLine();
     	}
     	else if (e.target.hash == '#piechartPanel') {
 			refreshPieChart();
@@ -44,9 +42,32 @@ var clickFromLink = false;
         }
     });
     
+    $('a[data-toggle="pill"]').on('shown', function(e) {
+    	if (e.target.hash == '#friendsLine') 
+    	{
+    		if(directContatTabClick)
+    		{
+    			$('#friendsLine h2').html("My friends").removeClass('red');
+    			$('#friendsLine footer').attr('data-userFetch-key',login);
+    		}
+    		refreshCurrentUserLine();
+    	}
+    	else if (e.target.hash == '#followersLine')
+    	{
+    		if(directContatTabClick)
+    		{
+    			$('#followersLine h2').html("My followers").removeClass('red');
+    			$('#followersLine footer').attr('data-userFetch-key',login);
+    		}
+    		refreshCurrentUserLine();
+    	}	
+    });
+    
+    
     // browser's refresh shortcut override
 	shortcut.add("Ctrl+R", function() {
 		refreshCurrentLine();
+		refreshCurrentUserLine();
 	});
 	
 	$(function() {
@@ -62,16 +83,25 @@ var clickFromLink = false;
 	    initFavoritesline();
 	    initTimeline();
 
-		// Register refresh handler for all lines
+		// Register refresh handler for all tweet lines
 		registerRefreshLineListeners();
-		registerUserDetailsPopOver($('#userSuggestions'));
 		registerFetchTweetHandlers();
+		
+		// Register refresh handler for all user lines
+		registerRefreshUserLineListeners();
+		registerFetchUserHandlers();
+		
+		registerUserDetailsPopOver($('#userSuggestions'));
 		registerUserSearchListener();
+		registerUserProfileModalListeners();
 		registerLoginRedirectListener();
+		
+		
+		
 		$('#picture').click(function()
 		{
-			var login = $('#picture').attr('data-user');
-			showUserProfile(login);
+			var user = $('#picture').attr('data-user');
+			showUserProfile(user);
 			return false;
 		});
 	});

@@ -1,14 +1,9 @@
 package fr.ippon.tatami.repository.cassandra;
 
 import static fr.ippon.tatami.config.ColumnFamilyKeys.TIMELINE_CF;
-import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import me.prettyprint.cassandra.model.CqlQuery;
-import me.prettyprint.hector.api.beans.HColumn;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.TimeLineRepository;
 
@@ -21,34 +16,29 @@ public class CassandraTimeLineRepository extends CassandraAbstractRepository imp
 	@Override
 	public void addTweetToTimeline(User user, String tweetId)
 	{
-		CqlQuery<String, Long, String> cqlQuery = new CqlQuery<String, Long, String>(keyspaceOperator, se, le, se);
-		cqlQuery.setQuery("INSERT INTO TimeLine(KEY,'" + user.getTimelineTweetCount() + "') VALUES('" + user.getLogin() + "','" + tweetId + "')");
-		cqlQuery.execute();
+		this.insertIntoCF(TIMELINE_CF, user.getLogin(), tweetId);
 
 		user.incrementTimelineTweetCount();
-
 		em.persist(user);
 
 	}
 
 	@Override
-	public Collection<String> getTweetsRangeFromTimeline(User user, int start, int end)
+	public void removeTweetFromTimeline(User user, String tweetId)
 	{
-		List<String> tweetIds = new ArrayList<String>();
+		this.removeFromCF(TIMELINE_CF, user.getLogin(), tweetId);
 
-		long maxTweetColumn = user.getTimelineTweetCount() - 1;
-		long endTweetColumn = maxTweetColumn - start + 1;
-		long startTweetColumn = maxTweetColumn - end + 1;
-		int count = end - start + 1 == 0 ? 1 : end - start + 1;
+		user.decrementTimelineTweetCount();
+		em.persist(user);
 
-		List<HColumn<Long, String>> columns = createSliceQuery(keyspaceOperator, se, le, se).setColumnFamily(TIMELINE_CF).setKey(user.getLogin())
-				.setRange(endTweetColumn, startTweetColumn, true, count).execute().get().getColumns();
+	}
 
-		for (HColumn<Long, String> column : columns)
-		{
-			tweetIds.add(column.getValue());
-		}
-		return tweetIds;
+	@Override
+	public Collection<String> getTweetsRangeFromTimeline(User user, String startTweetId, int count)
+	{
+		assert count >= 0 : "Timeline search count should be positive";
+
+		return this.findRangeFromCF(TIMELINE_CF, user.getLogin(), startTweetId, true, count);
 	}
 
 }
