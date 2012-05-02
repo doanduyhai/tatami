@@ -35,23 +35,9 @@ public abstract class AbstractlineService
 			tweet.setFirstName(tweetUser.getFirstName());
 			tweet.setLastName(tweetUser.getLastName());
 			tweet.setGravatar(tweetUser.getGravatar());
-			tweet.resetFlags();
 			if (currentUser != null)
 			{
-				Collection<String> friends = this.userService.getFriendsForUser(currentUser.getLogin());
 				Collection<String> favorites = this.favoriteLineRepository.findFavoritesForUser(currentUser);
-
-				if (!StringUtils.equals(currentUser.getLogin(), tweet.getLogin()))
-				{
-					if (!friends.contains(tweet.getLogin()))
-					{
-						tweet.setAuthorFollow(true);
-					}
-					else
-					{
-						tweet.setAuthorForget(true);
-					}
-				}
 
 				if (!favorites.contains(tweet.getTweetId()))
 				{
@@ -62,6 +48,11 @@ public abstract class AbstractlineService
 					tweet.setAddToFavorite(false);
 				}
 
+			}
+
+			if (StringUtils.equals(currentUser.getLogin(), tweet.getLogin()))
+			{
+				tweet.setDeletable(true);
 			}
 
 			tweet.setContent(tweet.getContent().replaceAll(USER_REGEXP, USER_LINK_PATTERN).replaceAll(HASHTAG_REGEXP, TAG_LINK_PATTERN));

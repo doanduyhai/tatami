@@ -139,7 +139,7 @@ public class UserService
 
 				// Tweet alert
 				String content = USERTAG + currentUser.getLogin() + " <strong>is now following you</strong>";
-				Tweet alertTweet = tweetRepository.createTweet(currentUser.getLogin(), content); // removable
+				Tweet alertTweet = tweetRepository.createTweet(loginToFollow, content); // removable
 				timelineRepository.addTweetToTimeline(followedUser, alertTweet.getTweetId());
 
 			}

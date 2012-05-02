@@ -51,10 +51,11 @@ public class TaglineService extends AbstractlineService implements TweetHandler
 	public void onTweetPost(Tweet tweet)
 	{
 		Matcher m = HASHTAG_PATTERN.matcher(tweet.getContent());
+
+		// Set to eliminate multiple additions for same tag in the source tweet
 		Set<String> tagSet = new HashSet<String>();
 		while (m.find())
 		{
-
 			String tag = m.group(1);
 			assert tag != null && !tag.isEmpty() && !tag.contains(HASHTAG);
 			if (!tagSet.contains(tag))

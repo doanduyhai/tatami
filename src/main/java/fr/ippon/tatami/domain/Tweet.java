@@ -75,14 +75,8 @@ public class Tweet
 	@JsonView(TweetView.Full.class)
 	private String gravatar;
 
-	@Column(name = "removed")
-	private Boolean removed = new Boolean(false);
-
 	@JsonView(TweetView.Full.class)
-	private Boolean authorFollow = new Boolean(false);
-
-	@JsonView(TweetView.Full.class)
-	private Boolean authorForget = new Boolean(false);
+	private Boolean deletable = new Boolean(false);
 
 	@JsonView(TweetView.Full.class)
 	private Boolean addToFavorite = new Boolean(false);
@@ -202,36 +196,6 @@ public class Tweet
 		this.likersCount = likersCount;
 	}
 
-	public Boolean getRemoved()
-	{
-		return removed;
-	}
-
-	public void setRemoved(Boolean removed)
-	{
-		this.removed = removed;
-	}
-
-	public boolean isAuthorFollow()
-	{
-		return authorFollow;
-	}
-
-	public boolean isAuthorForget()
-	{
-		return authorForget;
-	}
-
-	public void setAuthorForget(boolean authorForget)
-	{
-		this.authorForget = authorForget;
-	}
-
-	public void setAuthorFollow(boolean authorFollow)
-	{
-		this.authorFollow = authorFollow;
-	}
-
 	public boolean isAddToFavorite()
 	{
 		return addToFavorite;
@@ -242,10 +206,14 @@ public class Tweet
 		this.addToFavorite = addToFavorite;
 	}
 
-	public void resetFlags()
+	public Boolean getDeletable()
 	{
-		this.authorFollow = false;
-		this.authorForget = false;
-		this.addToFavorite = false;
+		return deletable;
 	}
+
+	public void setDeletable(Boolean deletable)
+	{
+		this.deletable = deletable;
+	}
+
 }

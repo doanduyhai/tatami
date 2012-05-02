@@ -41,6 +41,23 @@ function removeFavoriteTweet(tweet) {
 	return false;
 }
 
+function removeTweet(target)
+{
+	$.ajax({
+		type: HTTP_POST,
+		url: "rest/removeTweet/" + tweet,
+		dataType: JSON_DATA,
+        success: function()
+        {
+			setTimeout(function()
+			{
+	        	refreshCurrentLine();
+			},300);	        	
+        }
+    });
+	
+	return false;
+}
 /*
  * Lines activation & refresh 
  */
@@ -50,7 +67,15 @@ function loadUserline(targetUserLogin)
 	{
 		$('#userTweetsList').empty();
 		$('#userlinePanel footer').attr('data-tweetFetch-key',targetUserLogin);
-		$('#userTab').tab('show');
+		if($('#userlinePanel').hasClass('active'))
+		{
+			refreshCurrentLine();
+		}
+		else
+		{
+			$('#userTab').tab('show');
+		}	
+		
 	}
 }
 
@@ -59,8 +84,15 @@ function loadTagsline(tag)
 	if(tag != null)
 	{
 		$('#tagTweetsList').empty();
-		$('#taglinePanel footer').attr('data-tweetFetch-key',tag);		
-		$('#tagTab').tab('show');
+		$('#taglinePanel footer').attr('data-tweetFetch-key',tag);
+		if($('#taglinePanel').hasClass('active'))
+		{
+			refreshCurrentLine();
+		}
+		else
+		{
+			$('#tagTab').tab('show');
+		}	
 	}	
 	
 }
@@ -78,7 +110,6 @@ function refreshCurrentLine()
 	var targetLine = $('#tweetsPanel div.tab-pane.active').attr('id');
 	
 	refreshLine(targetLine,null,tweetsNb,true);	
-
 	return false;
 }
 
@@ -89,7 +120,7 @@ function refreshLine(targetLine,startTweetId,count,clearAll)
 	var data_tweetFetch_type = $('#'+targetLine+' footer').attr('data-tweetFetch-type');
 	var data_tweetFetch_key = $('#'+targetLine+' footer').attr('data-tweetFetch-key');
 	var $tableBody = $('#'+targetLine+' .lineContent');
-	
+		
 	var tweetFetchRangeObject = buildTweetFetchRange(startTweetId,count,data_tweetFetch_key);
 	 
 	$.ajax({
@@ -114,7 +145,7 @@ function refreshLine(targetLine,startTweetId,count,clearAll)
         		}
         		
 	        	$.each(data,function(index, tweet)
-	        	{        		
+	        	{   
 	        		$tableBody.append(fillTweetTemplate(tweet,data_tweetFetch_type));
 	        	});
 	        	
@@ -184,28 +215,22 @@ function fillTweetTemplate(tweet,data_tweetFetch_type)
 	
 	$newTweetLine.find('article span').html(tweet.content);
 	
-	// Conditional rendering of Follow icon
-	if(data_tweetFetch_type != 'timeline' && tweet.authorFollow)
-	{	
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Follow" data-follow="'+tweet.login+'"><i class="icon-eye-open"></i>&nbsp;</a>');
-	}
 	
-	// Conditional rendering of unfollow icon
-	if(tweet.authorForget)
+	if(tweet.deletable)
 	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop following" data-unfollow="'+tweet.login+'"><i class="icon-eye-close"></i>&nbsp;</a>');
+		$newTweetLine.find('.tweetAction').append('<a href="#" title="Remove" data-remove="'+tweet.tweetId+'"><i class="icon-remove"></i>&nbsp;</a>');
 	}	
 	
 	// Conditional rendering for like icon
 	if(data_tweetFetch_type != 'favoriteline' && tweet.addToFavorite)
 	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="icon-star"></i>&nbsp;</a>');
+		$newTweetLine.find('.tweetAction').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="icon-star"></i>&nbsp;</a>');
 	}
 
 	// Conditional rendering for unlike icon
 	if(data_tweetFetch_type == 'favoriteline' && !tweet.addToFavorite)
 	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="icon-star-empty"></i>&nbsp;</a>');
+		$newTweetLine.find('.tweetAction').append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="icon-star-empty"></i>&nbsp;</a>');
 	}	
 	
 	// Set tweetId

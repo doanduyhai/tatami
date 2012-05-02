@@ -24,26 +24,8 @@ var directContatTabClick = true;
     $('a[data-toggle="pill"]').on('shown', function(e) {
     	if (e.target.hash == '#homeTabContent') {
     		updateUserCounters();
-    	} 
-    });
-
-    
-    
-    // auto-refresh
-    $('a[data-toggle="tab"]').on('shown', function(e) {
-    	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' || e.target.hash == '#taglinePanel') {
-    		setTimeout(refreshCurrentLine,10);
     	}
-    	else if (e.target.hash == '#piechartPanel') {
-			refreshPieChart();
-    	} 
-    	else if (e.target.hash == '#punchchartPanel') {
-			refreshPunchChart();
-        }
-    });
-    
-    $('a[data-toggle="pill"]').on('shown', function(e) {
-    	if (e.target.hash == '#friendsLine') 
+    	else if (e.target.hash == '#friendsLine') 
     	{
     		if(directContatTabClick)
     		{
@@ -62,7 +44,19 @@ var directContatTabClick = true;
     		refreshCurrentUserLine();
     	}	
     });
-    
+
+    // auto-refresh
+    $('a[data-toggle="tab"]').on('shown', function(e) {
+    	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' || e.target.hash == '#taglinePanel') {
+    		refreshCurrentLine();
+    	}
+    	else if (e.target.hash == '#piechartPanel') {
+			refreshPieChart();
+    	} 
+    	else if (e.target.hash == '#punchchartPanel') {
+			refreshPunchChart();
+        }
+    });
     
     // browser's refresh shortcut override
 	shortcut.add("Ctrl+R", function() {

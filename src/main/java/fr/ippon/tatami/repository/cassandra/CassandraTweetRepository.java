@@ -54,17 +54,13 @@ public class CassandraTweetRepository extends CassandraAbstractRepository implem
 		}
 		Tweet tweet = em.find(Tweet.class, tweetId);
 
-		if (tweet == null)
-			return null;
-
-		return Boolean.TRUE.equals(tweet.getRemoved()) ? null : tweet;
+		return tweet;
 	}
 
 	@Override
 	@CacheEvict(value = "tweet-cache", key = "#tweet.tweetId")
 	public void removeTweet(Tweet tweet)
 	{
-		tweet.setRemoved(true);
 		if (log.isDebugEnabled())
 		{
 			log.debug("Updating Tweet : " + tweet);

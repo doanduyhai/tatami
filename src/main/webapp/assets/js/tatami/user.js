@@ -74,7 +74,6 @@ function updateProfile() {
 
 
 function tweet() {
-
 	$('#tweetErrorPanel').hide();
 	$.ajax({
         type: HTTP_POST,
@@ -93,7 +92,6 @@ function tweet() {
         },
         error: errorHandler($('#tweetErrorPanel'))
     });
-		
 	return false;
 }
 
@@ -195,7 +193,6 @@ function refreshUserSuggestions()
 
 function refreshFriendsline(user)
 {
-	
 	$('#friendsLine footer').attr('data-userFetch-key',user);
 	if(user != login)
 	{
@@ -208,7 +205,6 @@ function refreshFriendsline(user)
 	
 	if($('#friendsLine').hasClass('active'))
 	{
-		
 		refreshCurrentUserLine();
 	}	
 	else

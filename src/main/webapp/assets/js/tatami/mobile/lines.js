@@ -93,7 +93,14 @@ function loadUserline(targetUserLogin)
 	{
 		$('#userTweetsList').empty();
 		$('#userlinePanel footer').attr('data-tweetFetch-key',targetUserLogin);
-		$('#userlineTab').tab('show');
+		if($('#userlinePanel').hasClass('active'))
+		{
+			refreshCurrentLine();
+		}
+		else
+		{
+			$('#userlineTab').tab('show');
+		}	
 	}
 }
 
@@ -103,9 +110,15 @@ function loadTagsline(tag)
 	{
 		$('#tagTweetsList').empty();
 		$('#taglinePanel footer').attr('data-tweetFetch-key',tag);
-		$('#taglineTab').tab('show');		
+		if($('#taglinePanel').hasClass('active'))
+		{
+			refreshCurrentLine();
+		}
+		else
+		{
+			$('#taglineTab').tab('show');
+		}		
 	}	
-	
 }
 
 /*
@@ -227,28 +240,21 @@ function fillTweetTemplate(tweet,data_line_type)
 	
 	$newTweetLine.find('article span').html(tweet.content);
 	
-	// Conditional rendering of Follow icon
-	if(data_line_type != 'timeline' && tweet.authorFollow)
-	{	
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Follow" data-follow="'+tweet.login+'"><i class="frame icon-eye-open"></i></a>&nbsp;&nbsp;');
-	}
-	
-	// Conditional rendering of unfollow icon
-	if(tweet.authorForget)
+	if(tweet.deletable)
 	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop following" data-unfollow="'+tweet.login+'"><i class="frame icon-eye-close"></i></a>&nbsp;&nbsp;');
-	}	
+		$newTweetLine.find('.tweetAction').append('<a href="#" title="Remove" data-remove="'+tweet.tweetId+'"><i class="icon-remove"></i>&nbsp;</a>');
+	}
 	
 	// Conditional rendering for like icon
 	if(data_line_type != 'favoriteline' && tweet.addToFavorite)
 	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="frame icon-star"></i></a>&nbsp;&nbsp;');
+		$newTweetLine.find('.tweetAction').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="frame icon-star"></i></a>&nbsp;&nbsp;');
 	}
 
 	// Conditional rendering for unlike icon
 	if(data_line_type == 'favoriteline' && !tweet.addToFavorite)
 	{
-		$newTweetLine.find('.tweetFriend').append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="frame icon-star-empty"></i></a>&nbsp;&nbsp;');
+		$newTweetLine.find('.tweetAction').append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="frame icon-star-empty"></i></a>&nbsp;&nbsp;');
 	}	
 	
 	// Set tweetId
