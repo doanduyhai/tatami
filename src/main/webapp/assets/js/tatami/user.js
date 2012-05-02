@@ -444,7 +444,9 @@ function fillUserTemplate(user,data_userFetch_type)
 	
 	if(data_userFetch_type == "suggestions")
 	{
-			$newUserLine.find('.userAction a').attr('data-follow',user.login).attr('title','Follow '+user.login).attr('data-modal-hide','#userSearchModal');	
+			$newUserLine.find('.userAction a').attr('data-follow',user.login)
+			.attr('title','Follow '+user.login).attr('data-modal-hide','#userSearchModal')
+			.find('i').addClass('icon-eye-open');	
 	}
 	else if(data_userFetch_type == "search" || data_userFetch_type == "followers")
 	{
