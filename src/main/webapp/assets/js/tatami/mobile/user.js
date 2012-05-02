@@ -227,7 +227,7 @@ function refreshUserSuggestions()
     		{
 	        	$.each(data,function(index, user)
 	        	{        		
-	        		$tableBody.append(fillUserTemplate(user));
+	        		$tableBody.append(fillUserTemplate(user,"suggestions"));
 	        	});
 	        	
     		}
@@ -462,7 +462,13 @@ function fillUserTemplate(user,data_userFetch_type)
 	.find('.userDetailsName').html(user.firstName+' '+user.lastName).end()
 	.find('.badge').html(user.tweetCount).attr('data-user',user.login);
 	
-	if(data_userFetch_type == "search" || data_userFetch_type == "followers")
+	if(data_userFetch_type == "suggestions")
+	{
+			$newUserLine.find('.userAction a').attr('data-follow',user.login)
+			.attr('title','Follow '+user.login).attr('data-modal-hide','#userSearchModal')
+			.find('i').addClass('icon-eye-open');	
+	}
+	else if(data_userFetch_type == "search" || data_userFetch_type == "followers")
 	{
 		// No action if user == currentUser
 		if(login != user.login)
