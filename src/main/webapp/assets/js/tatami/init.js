@@ -32,7 +32,7 @@ var directContatTabClick = true;
     // auto-refresh
     $('a[data-toggle="tab"]').on('shown', function(e) {
     	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' || e.target.hash == '#taglinePanel') {
-    		refreshCurrentLine();
+    		setTimeout(refreshCurrentLine,10);
     	}
     	else if (e.target.hash == '#piechartPanel') {
 			refreshPieChart();
