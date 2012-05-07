@@ -27,12 +27,10 @@ public class FavoritelineServiceTest extends AbstractCassandraTatamiTest
 	private Tweet t8;
 	private Tweet t9;
 	private Tweet t10;
-	private Tweet mentionTweet;
-
 	private User jdubois;
 
 	@Test
-	public void testAddFavoriteTweet() throws FunctionalException, InterruptedException
+	public void testAddFavoriteTweetForFavoritelineServiceTest() throws FunctionalException
 	{
 		jdubois = new User();
 		jdubois.setLogin("jdubois");
@@ -54,36 +52,27 @@ public class FavoritelineServiceTest extends AbstractCassandraTatamiTest
 
 		this.userService.setAuthenticationService(mockAuthenticationService);
 
-		t1 = this.tweetRepository.createTweet("jdubois", "tweet1");
-		Thread.sleep(1);
-		t2 = this.tweetRepository.createTweet("jdubois", "tweet2");
-		Thread.sleep(1);
-		t3 = this.tweetRepository.createTweet("jdubois", "tweet3");
-		Thread.sleep(1);
-		t4 = this.tweetRepository.createTweet("jdubois", "tweet4");
-		Thread.sleep(1);
-		t5 = this.tweetRepository.createTweet("jdubois", "tweet5");
-		Thread.sleep(1);
-		t6 = this.tweetRepository.createTweet("jdubois", "tweet6");
-		Thread.sleep(1);
-		t7 = this.tweetRepository.createTweet("jdubois", "tweet7");
-		Thread.sleep(1);
-		t8 = this.tweetRepository.createTweet("jdubois", "tweet8");
-		Thread.sleep(1);
-		t9 = this.tweetRepository.createTweet("jdubois", "tweet9");
-		Thread.sleep(1);
-		t10 = this.tweetRepository.createTweet("jdubois", "tweet10");
+		t1 = this.tweetRepository.createTweet("jdubois", "tweet1", false);
+		t2 = this.tweetRepository.createTweet("jdubois", "tweet2", false);
+		t3 = this.tweetRepository.createTweet("jdubois", "tweet3", false);
+		t4 = this.tweetRepository.createTweet("jdubois", "tweet4", false);
+		t5 = this.tweetRepository.createTweet("jdubois", "tweet5", false);
+		t6 = this.tweetRepository.createTweet("jdubois", "tweet6", false);
+		t7 = this.tweetRepository.createTweet("jdubois", "tweet7", false);
+		t8 = this.tweetRepository.createTweet("jdubois", "tweet8", false);
+		t9 = this.tweetRepository.createTweet("jdubois", "tweet9", false);
+		t10 = this.tweetRepository.createTweet("jdubois", "tweet10", false);
 
-		this.favoritelineService.addFavoriteTweet(t1.getTweetId());
-		this.favoritelineService.addFavoriteTweet(t2.getTweetId());
-		this.favoritelineService.addFavoriteTweet(t3.getTweetId());
-		this.favoritelineService.addFavoriteTweet(t4.getTweetId());
-		this.favoritelineService.addFavoriteTweet(t5.getTweetId());
-		this.favoritelineService.addFavoriteTweet(t6.getTweetId());
-		this.favoritelineService.addFavoriteTweet(t7.getTweetId());
-		this.favoritelineService.addFavoriteTweet(t8.getTweetId());
-		this.favoritelineService.addFavoriteTweet(t9.getTweetId());
-		this.favoritelineService.addFavoriteTweet(t10.getTweetId());
+		this.favoritelineService.onAddToFavorite(t1);
+		this.favoritelineService.onAddToFavorite(t2);
+		this.favoritelineService.onAddToFavorite(t3);
+		this.favoritelineService.onAddToFavorite(t4);
+		this.favoritelineService.onAddToFavorite(t5);
+		this.favoritelineService.onAddToFavorite(t6);
+		this.favoritelineService.onAddToFavorite(t7);
+		this.favoritelineService.onAddToFavorite(t8);
+		this.favoritelineService.onAddToFavorite(t9);
+		this.favoritelineService.onAddToFavorite(t10);
 
 		User refreshedJdubois = this.userService.getUserByLogin("jdubois");
 		assertTrue(refreshedJdubois.getFavoritesCount() == 10, "refreshedJdubois.getFavoritesCount() == 10");
@@ -102,13 +91,7 @@ public class FavoritelineServiceTest extends AbstractCassandraTatamiTest
 		assertTrue(favorites.contains(t10.getTweetId()), "favorites.contains('tweet10')");
 	}
 
-	@Test(dependsOnMethods = "testAddFavoriteTweet", expectedExceptions = FunctionalException.class)
-	public void testAddFavoriteTweetWithException() throws FunctionalException
-	{
-		this.favoritelineService.addFavoriteTweet("123");
-	}
-
-	@Test(dependsOnMethods = "testAddFavoriteTweetWithException")
+	@Test(dependsOnMethods = "testAddFavoriteTweetForFavoritelineServiceTest")
 	public void testGetFavoriteslineRange() throws FunctionalException
 	{
 		Collection<Tweet> tweets = this.favoritelineService.getFavoriteslineRange(t5.getTweetId(), 3);
@@ -147,27 +130,11 @@ public class FavoritelineServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "testGetFavoriteslineRangeFromStart")
-	public void testAddFavoriteTweetWithUserMentioned() throws FunctionalException
+	public void testRemoveFavoriteTweetForFavoritelineServiceTest() throws FunctionalException
 	{
-		mentionTweet = this.tweetRepository.createTweet("duyhai", "This is my tweet");
-
-		this.favoritelineService.addFavoriteTweet(mentionTweet.getTweetId());
-
-		User refreshedDuyhai = this.userService.getUserByLogin("duyhai");
-		assertEquals(refreshedDuyhai.getTimelineTweetCount(), 1, "refreshedDuyhai.getTimelineTweetCount() == 1");
-
-		Collection<String> duyhaiTimelineTweets = this.timeLineRepository.getTweetsRangeFromTimeline(refreshedDuyhai, null, 2);
-
-		assertEquals(duyhaiTimelineTweets.size(), 1, "duyhaiTimelineTweets.size() == 1");
-	}
-
-	@Test(dependsOnMethods = "testAddFavoriteTweetWithUserMentioned")
-	public void testRemoveFavoriteTweet() throws FunctionalException
-	{
-		this.favoritelineService.removeFavoriteTweet(mentionTweet.getTweetId());
-		this.favoritelineService.removeFavoriteTweet(t9.getTweetId());
-		this.favoritelineService.removeFavoriteTweet(t8.getTweetId());
-		this.favoritelineService.removeFavoriteTweet(t7.getTweetId());
+		this.favoritelineService.onRemoveFromFavorite(t9);
+		this.favoritelineService.onRemoveFromFavorite(t8);
+		this.favoritelineService.onRemoveFromFavorite(t7);
 
 		Collection<String> favorites = this.favoriteRepository.findFavoritesRangeForUser(jdubois, t9.getTweetId(), 3);
 		assertEquals(favorites.size(), 3, "favorites.size() == 3");

@@ -29,7 +29,7 @@ public class UserLineRepositoryTest extends AbstractCassandraTatamiTest
 	private Tweet tweet5;
 
 	@Test
-	public void testAddTweetToUserLine() throws InterruptedException
+	public void testAddTweetToUserLine()
 	{
 		user = new User();
 		user.setLogin("test");
@@ -39,15 +39,11 @@ public class UserLineRepositoryTest extends AbstractCassandraTatamiTest
 
 		this.userRepository.createUser(user);
 
-		tweet1 = this.tweetRepository.createTweet("test", "tweet1");
-		Thread.sleep(5);
-		tweet2 = this.tweetRepository.createTweet("test", "tweet2");
-		Thread.sleep(5);
-		tweet3 = this.tweetRepository.createTweet("test", "tweet3");
-		Thread.sleep(5);
-		tweet4 = this.tweetRepository.createTweet("test", "tweet4");
-		Thread.sleep(5);
-		tweet5 = this.tweetRepository.createTweet("test", "tweet5");
+		tweet1 = this.tweetRepository.createTweet("test", "tweet1", false);
+		tweet2 = this.tweetRepository.createTweet("test", "tweet2", false);
+		tweet3 = this.tweetRepository.createTweet("test", "tweet3", false);
+		tweet4 = this.tweetRepository.createTweet("test", "tweet4", false);
+		tweet5 = this.tweetRepository.createTweet("test", "tweet5", false);
 
 		this.userLineRepository.addTweetToUserline(user, tweet1.getTweetId());
 		this.userLineRepository.addTweetToUserline(user, tweet2.getTweetId());

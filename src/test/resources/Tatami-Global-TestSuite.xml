@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<suite name="tatamiTestSuite" parallel="false" verbose="1" >
+<suite name="Tatami-Global-TestSuite" parallel="false" verbose="1" thread-count="1">
+
   <test name="repositoryTests" >
     <classes>
       <class name="fr.ippon.tatami.repository.UserRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.TweetRepositoryTest"/>   
       <class name="fr.ippon.tatami.repository.FriendRepositoryTest"/>      
       <class name="fr.ippon.tatami.repository.FollowerRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.FollowedTweetIndexRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.FavoriteRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.FavoriteIndexRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.TagLineRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.UserLineRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.TimeLineRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.StatsRepositoryTest"/>
-      <class name="fr.ippon.tatami.repository.UserRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.UserIndexRepositoryTest"/>
     </classes>
   </test>
-   
+  
   <test name="tweetServiceTests">
     <classes>
    	  <class name="fr.ippon.tatami.service.tweet.TweetServiceTest"/>
    	  <class name="fr.ippon.tatami.service.tweet.XssEncodingServiceTest"/>
     </classes>
-  </test>
-  
+  </test> 
+
   <test name="userServiceTests">
     <classes>
    	  <class name="fr.ippon.tatami.service.user.UserServiceTest"/>
@@ -38,6 +41,16 @@
    	  <class name="fr.ippon.tatami.service.lines.TimelineServiceTest"/>
    	  <class name="fr.ippon.tatami.service.lines.UserlineServiceTest"/>
     </classes>
-  </test> 
-       
-</suite> 
+  </test>  
+  
+  <test name="pipelineTests">
+    <classes>
+    	<class name="fr.ippon.tatami.service.pipeline.UserPipelineManagerTest"/>	
+   	  	<class name="fr.ippon.tatami.service.pipeline.TweetPipelineManagerTest"/>
+   	  	<class name="fr.ippon.tatami.service.pipeline.FavoritePipelineManagerTest"/>
+    </classes>
+  </test>         
+</suite>
+
+
+

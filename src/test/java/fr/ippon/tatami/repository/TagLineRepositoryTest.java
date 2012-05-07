@@ -25,17 +25,13 @@ public class TagLineRepositoryTest extends AbstractCassandraTatamiTest
 	private Tweet tweet5;
 
 	@Test
-	public void testAddTweet() throws InterruptedException
+	public void testAddTweetToTagline()
 	{
-		tweet1 = this.tweetRepository.createTweet("test", "tweet1");
-		Thread.sleep(5);
-		tweet2 = this.tweetRepository.createTweet("test", "tweet2");
-		Thread.sleep(5);
-		tweet3 = this.tweetRepository.createTweet("test", "tweet3");
-		Thread.sleep(5);
-		tweet4 = this.tweetRepository.createTweet("test", "tweet4");
-		Thread.sleep(5);
-		tweet5 = this.tweetRepository.createTweet("test", "tweet5");
+		tweet1 = this.tweetRepository.createTweet("test", "tweet1", false);
+		tweet2 = this.tweetRepository.createTweet("test", "tweet2", false);
+		tweet3 = this.tweetRepository.createTweet("test", "tweet3", false);
+		tweet4 = this.tweetRepository.createTweet("test", "tweet4", false);
+		tweet5 = this.tweetRepository.createTweet("test", "tweet5", false);
 
 		this.tagLineRepository.addTweet("tag", tweet1.getTweetId());
 		this.tagLineRepository.addTweet("tag", tweet2.getTweetId());
@@ -60,7 +56,7 @@ public class TagLineRepositoryTest extends AbstractCassandraTatamiTest
 		assertTrue(tweetIds.contains(tweet5.getTweetId()), "tweet5 has 'tag'");
 	}
 
-	@Test(dependsOnMethods = "testAddTweet")
+	@Test(dependsOnMethods = "testAddTweetToTagline")
 	public void testFindTweetsForTag()
 	{
 		Collection<String> tweetIds = this.tagLineRepository.findTweetsRangeForTag("tag", null, DEFAULT_TAG_LIST_SIZE);

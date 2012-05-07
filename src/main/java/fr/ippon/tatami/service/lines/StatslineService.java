@@ -64,6 +64,20 @@ public class StatslineService extends AbstractlineService implements TweetHandle
 
 	}
 
+	@Override
+	public void onTweetRemove(Tweet tweet)
+	{
+		if (!tweet.isNotification())
+		{
+			DateTime tweetDate = new DateTime(tweet.getTweetDate());
+
+			statsRepository.removeTweetFromDay(tweet.getLogin(), tweetDate.toString(DAYLINE_KEY_FORMAT));
+			statsRepository.removeTweetFromWeek(tweet.getLogin(), tweetDate.toString(WEEKLINE_KEY_FORMAT));
+			statsRepository.removeTweetFromMonth(tweet.getLogin(), tweetDate.toString(MONTHLINE_KEY_FORMAT));
+			statsRepository.removeTweetFromYear(tweet.getLogin(), tweetDate.toString(YEARLINE_KEY_FORMAT));
+		}
+	}
+
 	public void setStatsRepository(StatsRepository statsRepository)
 	{
 		this.statsRepository = statsRepository;

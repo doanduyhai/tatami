@@ -94,9 +94,6 @@ public class User
 	@Column(name = "tweetCount")
 	private long tweetCount = 0;
 
-	@Column(name = "timelineTweetCount")
-	private long timelineTweetCount = 0;
-
 	@JsonView(value =
 	{
 			UserView.Stats.class,
@@ -136,18 +133,6 @@ public class User
 		this.tweetCount--;
 		if (this.tweetCount < 0)
 			this.tweetCount = 0;
-	}
-
-	public void incrementTimelineTweetCount()
-	{
-		this.timelineTweetCount++;
-	}
-
-	public void decrementTimelineTweetCount()
-	{
-		this.timelineTweetCount--;
-		if (this.timelineTweetCount < 0)
-			this.timelineTweetCount = 0;
 	}
 
 	public void incrementFriendsCount()
@@ -274,16 +259,6 @@ public class User
 	public void setFavoritesCount(long favoritesCount)
 	{
 		this.favoritesCount = favoritesCount;
-	}
-
-	public long getTimelineTweetCount()
-	{
-		return timelineTweetCount;
-	}
-
-	public void setTimelineTweetCount(long timelineTweetCount)
-	{
-		this.timelineTweetCount = timelineTweetCount;
 	}
 
 	public String getBiography()

@@ -30,6 +30,7 @@ import fr.ippon.tatami.service.lines.StatslineService;
 import fr.ippon.tatami.service.lines.TaglineService;
 import fr.ippon.tatami.service.lines.TimelineService;
 import fr.ippon.tatami.service.lines.UserlineService;
+import fr.ippon.tatami.service.pipeline.FavoritePipelineManager;
 import fr.ippon.tatami.service.pipeline.TweetPipelineManager;
 import fr.ippon.tatami.web.json.view.TweetView;
 
@@ -54,6 +55,8 @@ public class TweetController extends AbstractRESTController
 	private TaglineService taglineService;
 
 	private TweetPipelineManager tweetPipelineManager;
+
+	private FavoritePipelineManager favoritePipelineManager;
 
 	@RequestMapping(value = "/rest/tweetStats/day", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
@@ -111,13 +114,23 @@ public class TweetController extends AbstractRESTController
 		return tweetPipelineManager.onPost(tweet.getContent());
 	}
 
+	@RequestMapping(value = "/rest/removeTweet/{tweet}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean removeTweet(@PathVariable("tweet") String tweetId) throws FunctionalException
+	{
+		log.debug("REST request to remove tweet : {}", tweetId);
+		tweetPipelineManager.onRemove(tweetId);
+
+		return true;
+	}
+
 	@RequestMapping(value = "/rest/likeTweet/{tweet}", method = RequestMethod.GET)
 	@ResponseBody
 	public boolean likeTweet(@PathVariable("tweet") String tweet) throws FunctionalException
 	{
 		log.debug("REST request to like tweet : {} ", tweet);
-		favoritelineService.addFavoriteTweet(tweet);
-		log.info("Completed");
+
+		this.favoritePipelineManager.onAddToFavorite(tweet);
 
 		return true;
 	}
@@ -127,8 +140,8 @@ public class TweetController extends AbstractRESTController
 	public boolean unlikeTweet(@PathVariable("tweet") String tweet) throws FunctionalException
 	{
 		log.debug("REST request to unlike tweet : {} ", tweet);
-		favoritelineService.removeFavoriteTweet(tweet);
-		log.info("Completed");
+
+		this.favoritePipelineManager.onRemoveFromFavorite(tweet);
 
 		return true;
 	}
@@ -221,6 +234,11 @@ public class TweetController extends AbstractRESTController
 	public void setTweetPipelineManager(TweetPipelineManager tweetPipelineManager)
 	{
 		this.tweetPipelineManager = tweetPipelineManager;
+	}
+
+	public void setFavoritePipelineManager(FavoritePipelineManager favoritePipelineManager)
+	{
+		this.favoritePipelineManager = favoritePipelineManager;
 	}
 
 }

@@ -1,5 +1,20 @@
 package fr.ippon.tatami;
 
+import static fr.ippon.tatami.config.ColumnFamilyKeys.COUNTER_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.DAYLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVORITELINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWED_TWEET_INDEX_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWERS_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FRIENDS_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.MONTHLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.TAGLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.TIMELINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.TWEET_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.USERLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.USER_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.USER_INDEX_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.WEEKLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.YEARLINE_CF;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -24,7 +39,9 @@ import org.testng.annotations.BeforeSuite;
 import com.eaio.uuid.UUID;
 
 import fr.ippon.tatami.domain.User;
+import fr.ippon.tatami.repository.FavoriteIndexRepository;
 import fr.ippon.tatami.repository.FavoriteRepository;
+import fr.ippon.tatami.repository.FollowedTweetIndexRepository;
 import fr.ippon.tatami.repository.FollowerRepository;
 import fr.ippon.tatami.repository.FriendRepository;
 import fr.ippon.tatami.repository.StatsRepository;
@@ -40,7 +57,9 @@ import fr.ippon.tatami.service.lines.StatslineService;
 import fr.ippon.tatami.service.lines.TaglineService;
 import fr.ippon.tatami.service.lines.TimelineService;
 import fr.ippon.tatami.service.lines.UserlineService;
+import fr.ippon.tatami.service.pipeline.FavoritePipelineManager;
 import fr.ippon.tatami.service.pipeline.TweetPipelineManager;
+import fr.ippon.tatami.service.pipeline.UserPipelineManager;
 import fr.ippon.tatami.service.security.AuthenticationService;
 import fr.ippon.tatami.service.tweet.TweetService;
 import fr.ippon.tatami.service.tweet.XssEncodingService;
@@ -77,7 +96,13 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 	protected FollowerRepository followerRepository;
 
 	@Inject
+	protected FollowedTweetIndexRepository followedTweetIndexRepository;
+
+	@Inject
 	protected FavoriteRepository favoriteRepository;
+
+	@Inject
+	protected FavoriteIndexRepository favoriteIndexRepository;
 
 	@Inject
 	protected TagLineRepository tagLineRepository;
@@ -119,7 +144,13 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 	protected UserlineService userlineService;
 
 	@Inject
+	protected UserPipelineManager userPipelineManager;
+
+	@Inject
 	protected TweetPipelineManager tweetPipelineManager;
+
+	@Inject
+	protected FavoritePipelineManager favoritePipelineManager;
 
 	@Inject
 	protected TweetService tweetService;
@@ -142,42 +173,47 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 		{
 			EmbeddedCassandraServerHelper.startEmbeddedCassandra();
 			isInitialized = true;
+			super.springTestContextPrepareTestInstance();
 		}
-		super.springTestContextPrepareTestInstance();
+
 	}
 
+	// @AfterSuite
 	@BeforeClass
 	public void cleanCF()
 	{
 		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, se, se, se);
 
-		cqlQuery.setQuery(" truncate User");
+		cqlQuery.setQuery(" truncate " + USER_CF);
 		cqlQuery.execute();
-
-		cqlQuery.setQuery(" truncate UserFriends");
+		cqlQuery.setQuery(" truncate " + FRIENDS_CF);
 		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate UserFollowers");
+		cqlQuery.setQuery(" truncate " + FOLLOWERS_CF);
 		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate Tweet");
+		cqlQuery.setQuery(" truncate " + FOLLOWED_TWEET_INDEX_CF);
 		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate DayLine");
+		cqlQuery.setQuery(" truncate " + TWEET_CF);
 		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate WeekLine");
+		cqlQuery.setQuery(" truncate " + DAYLINE_CF);
 		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate MonthLine");
+		cqlQuery.setQuery(" truncate " + WEEKLINE_CF);
 		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate YearLine");
+		cqlQuery.setQuery(" truncate " + MONTHLINE_CF);
 		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate FavoriteLine");
+		cqlQuery.setQuery(" truncate " + YEARLINE_CF);
 		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate TagLine");
+		cqlQuery.setQuery(" truncate " + FAVORITELINE_CF);
 		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate TimeLine");
+		cqlQuery.setQuery(" truncate " + TAGLINE_CF);
 		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate UserLine");
+		cqlQuery.setQuery(" truncate " + TIMELINE_CF);
 		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate UserIndex");
-
+		cqlQuery.setQuery(" truncate " + USERLINE_CF);
+		cqlQuery.execute();
+		cqlQuery.setQuery(" truncate " + USER_INDEX_CF);
+		cqlQuery.execute();
+		cqlQuery.setQuery(" truncate " + COUNTER_CF);
+		cqlQuery.execute();
 	}
 
 	protected void mockAuthenticatedUser(User targetUser)

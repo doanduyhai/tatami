@@ -1,7 +1,10 @@
 package fr.ippon.tatami.repository.cassandra;
 
+import static fr.ippon.tatami.config.ColumnFamilyKeys.TWEET_CF;
+
 import java.util.Calendar;
 
+import me.prettyprint.cassandra.model.CqlQuery;
 import me.prettyprint.cassandra.utils.TimeUUIDUtils;
 
 import org.slf4j.Logger;
@@ -23,17 +26,17 @@ public class CassandraTweetRepository extends CassandraAbstractRepository implem
 	private final Logger log = LoggerFactory.getLogger(CassandraTweetRepository.class);
 
 	@Override
-	public Tweet createTweet(String login, String content)
+	public Tweet createTweet(String login, String content, boolean notification)
 	{
 		Tweet tweet = new Tweet();
 		tweet.setTweetId(TimeUUIdReorder.reorderTimeUUId(TimeUUIDUtils.getUniqueTimeUUIDinMillis().toString()));
 		tweet.setLogin(login);
 		tweet.setContent(content);
 		tweet.setTweetDate(Calendar.getInstance().getTime());
-		if (log.isDebugEnabled())
-		{
-			log.debug("Persisting Tweet : " + tweet);
-		}
+		tweet.setNotification(notification);
+
+		log.debug("Persisting Tweet : " + tweet);
+
 		em.persist(tweet);
 		return tweet;
 	}
@@ -48,10 +51,7 @@ public class CassandraTweetRepository extends CassandraAbstractRepository implem
 	@Cacheable("tweet-cache")
 	public Tweet findTweetById(String tweetId)
 	{
-		if (log.isDebugEnabled())
-		{
-			log.debug("Finding tweet : " + tweetId);
-		}
+		log.debug("Finding tweet : " + tweetId);
 		Tweet tweet = em.find(Tweet.class, tweetId);
 
 		return tweet;
@@ -61,10 +61,11 @@ public class CassandraTweetRepository extends CassandraAbstractRepository implem
 	@CacheEvict(value = "tweet-cache", key = "#tweet.tweetId")
 	public void removeTweet(Tweet tweet)
 	{
-		if (log.isDebugEnabled())
-		{
-			log.debug("Updating Tweet : " + tweet);
-		}
-		em.persist(tweet);
+		log.debug("Removing Tweet : " + tweet);
+		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspaceOperator, se, se, se);
+
+		cqlQuery.setQuery(" DELETE FROM " + TWEET_CF + " WHERE KEY = '" + tweet.getTweetId() + "';");
+		cqlQuery.execute();
+
 	}
 }

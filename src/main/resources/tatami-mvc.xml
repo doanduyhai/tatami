@@ -117,11 +117,17 @@
 		<property name="taglineService" ref="taglineService"/>
 		<property name="userlineService" ref="userlineService"/>
 		<property name="tweetPipelineManager" ref="tweetPipelineManager"/>
+		<property name="favoritePipelineManager" ref="favoritePipelineManager"/>
 	</bean>
 
 	<bean id="userController" class="fr.ippon.tatami.web.rest.UserController" parent="abstractRestController">
-		<property name="userService" ref="userService"/>
-		<property name="statslineService" ref="statslineService"/>		
+		<property name="userService" ref="userService"/>		
+	</bean>
+	
+	<bean id="contactsController" class="fr.ippon.tatami.web.rest.ContactsController" parent="abstractRestController">
+		<property name="statslineService" ref="statslineService"/>
+		<property name="contactsService" ref="contactsService"/>
+		<property name="userPipelineManager" ref="userPipelineManager"/>	
 	</bean>	
 	
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">

@@ -45,6 +45,13 @@ function bindListeners($target)
 		return false;
 	});
 
+	$target.find('a[data-remove]').click(function(e)
+	{
+		var target = $(e.currentTarget).attr('data-remove');
+		removeTweet(target);
+		return false;
+	});
+	
 	$target.find('a[data-user],span[data-user]').click(function(e)
 	{
 		var target = $(e.currentTarget).attr('data-user');

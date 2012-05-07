@@ -17,7 +17,7 @@ public class TweetRepositoryTest extends AbstractCassandraTatamiTest
 	@Test
 	public void testCreateTweet()
 	{
-		Tweet newTweet = this.tweetRepository.createTweet("test", "My First tweet to #jdubois");
+		Tweet newTweet = this.tweetRepository.createTweet("test", "My First tweet to #jdubois", false);
 
 		assertNotNull(newTweet, "newTweet");
 

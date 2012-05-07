@@ -2,8 +2,6 @@ package fr.ippon.tatami.repository;
 
 import java.util.Collection;
 
-import fr.ippon.tatami.domain.User;
-
 /**
  * 
  * @author Julien Dubois
@@ -11,9 +9,9 @@ import fr.ippon.tatami.domain.User;
  */
 public interface TimeLineRepository
 {
-	void addTweetToTimeline(User user, String tweetId);
+	void addTweetToTimeline(String userLogin, String tweetId);
 
-	void removeTweetFromTimeline(User user, String tweetId);
+	void removeTweetFromTimeline(String userLogin, String tweetId);
 
-	Collection<String> getTweetsRangeFromTimeline(User user, String startTweetId, int count);
+	Collection<String> getTweetsRangeFromTimeline(String userLogin, String startTweetId, int count);
 }

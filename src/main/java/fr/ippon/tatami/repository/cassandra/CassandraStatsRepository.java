@@ -46,7 +46,7 @@ public class CassandraStatsRepository extends CassandraAbstractRepository implem
 		{
 			long count = result.getValue();
 			Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, se);
-			if (count > 0)
+			if (count > 1)
 			{
 
 				mutator.insert(day, DAYLINE_CF, HFactory.createColumn(login, count - 1, se, le));

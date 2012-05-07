@@ -3,6 +3,7 @@ package fr.ippon.tatami.service.lines;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Collection;
@@ -86,5 +87,15 @@ public class UserlineServiceTest extends AbstractCassandraTatamiTest
 		Collection<Tweet> tweets = this.userlineService.getUserlineRange("jdubois", null, 10);
 		assertEquals(tweets.size(), 6, "6 tweets in jdubois userline");
 		assertTrue(tweets.contains(tweet), "tweets contains 'tweet6'");
+	}
+
+	@Test(dependsOnMethods = "testOnPostTweetForUserline")
+	public void testOnRemoveTweetForUserline() throws FunctionalException
+	{
+		this.userlineService.onTweetRemove(tweet);
+
+		Collection<Tweet> tweets = this.userlineService.getUserlineRange("jdubois", null, 10);
+		assertEquals(tweets.size(), 5, "5 tweets in jdubois userline");
+		assertFalse(tweets.contains(tweet), "tweets no longer contains 'tweet6'");
 	}
 }

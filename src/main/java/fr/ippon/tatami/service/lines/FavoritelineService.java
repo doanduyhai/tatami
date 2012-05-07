@@ -1,7 +1,5 @@
 package fr.ippon.tatami.service.lines;
 
-import static fr.ippon.tatami.service.util.TatamiConstants.USERTAG;
-
 import java.util.Collection;
 
 import org.slf4j.Logger;
@@ -10,69 +8,80 @@ import org.slf4j.LoggerFactory;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.repository.TimeLineRepository;
+import fr.ippon.tatami.repository.FavoriteIndexRepository;
+import fr.ippon.tatami.service.pipeline.FavoriteHandler;
+import fr.ippon.tatami.service.pipeline.TweetHandler;
 import fr.ippon.tatami.service.util.TatamiConstants;
 
-public class FavoritelineService extends AbstractlineService
+public class FavoritelineService extends AbstractlineService implements FavoriteHandler, TweetHandler
 {
 
 	private final Logger log = LoggerFactory.getLogger(FavoritelineService.class);
 
-	private TimeLineRepository timeLineRepository;
+	private FavoriteIndexRepository favoriteIndexRepository;
 
-	public void addFavoriteTweet(String tweetId) throws FunctionalException
+	@Override
+	public void onAddToFavorite(Tweet tweet) throws FunctionalException
 	{
 		User currentUser = userService.getCurrentUser();
 
-		log.debug("Adding tweet : {} to favorites for {} ", tweetId, currentUser.getLogin());
+		log.debug("Adding tweet : {} to favorites for {} ", tweet.getTweetId(), currentUser.getLogin());
 
-		Tweet tweet = tweetRepository.findTweetById(tweetId);
-		if (tweet == null)
+		Collection<String> favoriteTweets = this.favoriteLineRepository.findFavoritesForUser(currentUser);
+
+		if (!favoriteTweets.contains(tweet.getTweetId()))
 		{
-			throw new FunctionalException("Cannot add non-existing tweet to favorite");
+			this.favoriteLineRepository.addFavorite(currentUser, tweet.getTweetId());
+			this.favoriteIndexRepository.addTweetToFavoriteIndex(currentUser.getLogin(), tweet.getTweetId());
+		}
+		else
+		{
+			throw new FunctionalException("You already have this tweet in your favorites !");
 		}
 
-		// FavoriteLine
-		favoriteLineRepository.addFavorite(currentUser, tweetId);
-
-		// Tweet alert
-		if (!currentUser.getLogin().equals(tweet.getLogin()))
-		{
-
-			String content = USERTAG + currentUser.getLogin() + " <strong>liked your tweet:</strong><br/><em>_PH_...</em>";
-
-			int maxLength = TatamiConstants.MAX_TWEET_SIZE - content.length() + 4;
-			if (tweet.getContent().length() > maxLength)
-			{
-				content = content.replace("_PH_", tweet.getContent().substring(0, maxLength));
-			}
-			else
-			{
-				content = content.replace("_PH_", tweet.getContent());
-			}
-
-			Tweet helloTweet = tweetRepository.createTweet(tweet.getLogin(), content); // removable
-
-			User author = this.userService.getUserByLogin(tweet.getLogin());
-
-			timeLineRepository.addTweetToTimeline(author, helloTweet.getTweetId());
-		}
 	}
 
-	public void removeFavoriteTweet(String tweetId) throws FunctionalException
+	@Override
+	public void onRemoveFromFavorite(Tweet tweet) throws FunctionalException
 	{
 		User currentUser = userService.getCurrentUser();
 
-		log.debug("Removing tweet : {} from favorites for {} ", tweetId, currentUser.getLogin());
+		log.debug("Removing tweet : {} from favorites for {} ", tweet.getTweetId(), currentUser.getLogin());
 
-		Tweet tweet = tweetRepository.findTweetById(tweetId);
-		if (tweet == null)
+		Collection<String> favoriteTweets = this.favoriteLineRepository.findFavoritesForUser(currentUser);
+
+		if (favoriteTweets.contains(tweet.getTweetId()))
 		{
-			throw new FunctionalException("Cannot remove non-existing tweet from favorite");
+			this.favoriteLineRepository.removeFavorite(currentUser, tweet.getTweetId());
+			this.favoriteIndexRepository.removeTweetFromFavoriteIndex(currentUser.getLogin(), tweet.getTweetId());
+		}
+		else
+		{
+			throw new FunctionalException("You do not have this tweet in your favorites so you can't remove it!");
 		}
 
-		// FavoriteLine
-		favoriteLineRepository.removeFavorite(currentUser, tweetId);
+	}
+
+	@Override
+	public void onTweetPost(Tweet tweet) throws FunctionalException
+	{
+		// Do nothing
+
+	}
+
+	@Override
+	public void onTweetRemove(Tweet tweet) throws FunctionalException
+	{
+		Collection<String> userLogins = this.favoriteIndexRepository.getUsersForTweetFromIndex(tweet.getTweetId());
+
+		User user;
+		for (String login : userLogins)
+		{
+			user = this.userService.getUserByLogin(login);
+			this.favoriteLineRepository.removeFavorite(user, tweet.getTweetId());
+		}
+
+		this.favoriteIndexRepository.removeIndexForTweet(tweet.getTweetId());
 	}
 
 	public Collection<Tweet> getFavoriteslineRange(String startTweetId, int count) throws FunctionalException
@@ -88,9 +97,9 @@ public class FavoritelineService extends AbstractlineService
 		return this.buildTweetsList(currentUser, tweetIds);
 	}
 
-	public void setTimeLineRepository(TimeLineRepository timeLineRepository)
+	public void setFavoriteIndexRepository(FavoriteIndexRepository favoriteIndexRepository)
 	{
-		this.timeLineRepository = timeLineRepository;
+		this.favoriteIndexRepository = favoriteIndexRepository;
 	}
 
 }

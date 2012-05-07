@@ -41,6 +41,28 @@ function removeFavoriteTweet(tweet) {
 	return false;
 }
 
+function removeTweet(target)
+{
+	$.ajax({
+		type: HTTP_GET,
+		url: "rest/removeTweet/" + target,
+		dataType: JSON_DATA,
+        success: function()
+        {
+			setTimeout(refreshCurrentLine,300);	        	
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+        	console.log(jqXHR.responseText);
+        	console.log(textStatus);
+        	console.log(errorThrown);
+        	
+        }
+    });
+	
+	return false;
+}
+
 /*
  *  Lines activation
  */

@@ -1,6 +1,6 @@
 package fr.ippon.tatami.repository;
 
-import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVORITELINE_CF;
 import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
 import static org.testng.Assert.assertTrue;
 
@@ -27,7 +27,7 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 	private Tweet tweet5;
 
 	@Test
-	public void testAddFavorite() throws InterruptedException
+	public void testAddFavorite()
 	{
 		user = new User();
 		user.setLogin("test");
@@ -37,15 +37,11 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 
 		this.userRepository.createUser(user);
 
-		tweet1 = this.tweetRepository.createTweet("test", "tweet1");
-		Thread.sleep(5);
-		tweet2 = this.tweetRepository.createTweet("test", "tweet2");
-		Thread.sleep(5);
-		tweet3 = this.tweetRepository.createTweet("test", "tweet3");
-		Thread.sleep(5);
-		tweet4 = this.tweetRepository.createTweet("test", "tweet4");
-		Thread.sleep(5);
-		tweet5 = this.tweetRepository.createTweet("test", "tweet5");
+		tweet1 = this.tweetRepository.createTweet("test", "tweet1", false);
+		tweet2 = this.tweetRepository.createTweet("test", "tweet2", false);
+		tweet3 = this.tweetRepository.createTweet("test", "tweet3", false);
+		tweet4 = this.tweetRepository.createTweet("test", "tweet4", false);
+		tweet5 = this.tweetRepository.createTweet("test", "tweet5", false);
 
 		this.favoriteRepository.addFavorite(user, tweet1.getTweetId());
 		this.favoriteRepository.addFavorite(user, tweet2.getTweetId());
@@ -57,7 +53,7 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 
 		List<String> userFavorites = new ArrayList<String>();
 
-		List<HColumn<String, Object>> columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(FAVLINE_CF).setKey(user.getLogin())
+		List<HColumn<String, Object>> columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(FAVORITELINE_CF).setKey(user.getLogin())
 				.setRange(null, null, true, 100).execute().get().getColumns();
 
 		for (HColumn<String, Object> column : columns)

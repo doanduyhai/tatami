@@ -95,6 +95,7 @@ function tweet() {
 	return false;
 }
 
+
 function updateUserCounters()
 {
 	$.ajax({

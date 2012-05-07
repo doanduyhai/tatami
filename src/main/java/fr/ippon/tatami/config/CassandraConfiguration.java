@@ -2,7 +2,9 @@ package fr.ippon.tatami.config;
 
 import static fr.ippon.tatami.config.ColumnFamilyKeys.COUNTER_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.DAYLINE_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVLINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVORITELINE_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVORITE_INDEX_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWED_TWEET_INDEX_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWERS_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.FRIENDS_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.MONTHLINE_CF;
@@ -94,12 +96,14 @@ public class CassandraConfiguration implements InitializingBean
 			addColumnFamilyWithStringColumn(cluster, USER_CF);
 			addColumnFamilyWithStringColumn(cluster, FRIENDS_CF);
 			addColumnFamilyWithStringColumn(cluster, FOLLOWERS_CF);
+			addColumnFamilyWithStringColumn(cluster, FOLLOWED_TWEET_INDEX_CF);
 			addColumnFamilyWithStringColumn(cluster, TWEET_CF);
 			addColumnFamilyWithStringColumn(cluster, DAYLINE_CF);
 			addColumnFamilyWithStringColumn(cluster, WEEKLINE_CF);
 			addColumnFamilyWithStringColumn(cluster, MONTHLINE_CF);
 			addColumnFamilyWithStringColumn(cluster, YEARLINE_CF);
-			addColumnFamilyWithStringColumn(cluster, FAVLINE_CF);
+			addColumnFamilyWithStringColumn(cluster, FAVORITELINE_CF);
+			addColumnFamilyWithStringColumn(cluster, FAVORITE_INDEX_CF);
 			addColumnFamilyWithStringColumn(cluster, TAGLINE_CF);
 			addColumnFamilyWithStringColumn(cluster, TIMELINE_CF);
 			addColumnFamilyWithStringColumn(cluster, USERLINE_CF);
@@ -108,7 +112,6 @@ public class CassandraConfiguration implements InitializingBean
 			addColumnFamilyWithStringColumn(cluster, USER_INDEX_CF);
 
 			ThriftCfDef cfDef = new ThriftCfDef(cassandraKeyspace, COUNTER_CF, ComparatorType.UTF8TYPE);
-
 			cfDef.setDefaultValidationClass(ComparatorType.COUNTERTYPE.getClassName());
 			cluster.addColumnFamily(cfDef);
 		}

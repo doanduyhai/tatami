@@ -1,11 +1,9 @@
 package fr.ippon.tatami.service.user;
 
-import static fr.ippon.tatami.service.util.TatamiConstants.USERTAG;
 import static fr.ippon.tatami.service.util.TatamiConstants.USER_SEARCH_LIMIT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -16,40 +14,26 @@ import org.owasp.esapi.reference.DefaultEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.repository.FollowerRepository;
-import fr.ippon.tatami.repository.FriendRepository;
-import fr.ippon.tatami.repository.TimeLineRepository;
 import fr.ippon.tatami.repository.TweetRepository;
 import fr.ippon.tatami.repository.UserIndexRepository;
-import fr.ippon.tatami.repository.UserRepository;
 import fr.ippon.tatami.service.security.AuthenticationService;
 import fr.ippon.tatami.service.util.GravatarUtil;
-import fr.ippon.tatami.service.util.TatamiConstants;
 
 /**
  * @author Julien Dubois
  * @author DuyHai DOAN
  */
 
-public class UserService
+public class UserService extends AbstractUserService
 {
 
 	private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-	private UserRepository userRepository;
-
 	private UserIndexRepository userIndexRepository;
 
-	private FollowerRepository followerRepository;
-
-	private FriendRepository friendRepository;
-
 	private AuthenticationService authenticationService;
-
-	private TimeLineRepository timelineRepository;
 
 	TweetRepository tweetRepository;
 
@@ -122,107 +106,6 @@ public class UserService
 
 	}
 
-	public void followUser(String loginToFollow) throws FunctionalException
-	{
-		log.debug("Adding friend : {}", loginToFollow);
-
-		User currentUser = authenticationService.getCurrentUser();
-		Collection<String> friends = this.friendRepository.findFriendsForUser(currentUser);
-		User followedUser = getUserByLogin(loginToFollow);
-
-		if (followedUser != null && !followedUser.equals(currentUser))
-		{
-			if (!friends.contains(followedUser.getLogin()))
-			{
-				friendRepository.addFriend(currentUser, followedUser);
-				followerRepository.addFollower(followedUser, currentUser);
-
-				// Tweet alert
-				String content = USERTAG + currentUser.getLogin() + " <strong>is now following you</strong>";
-				Tweet alertTweet = tweetRepository.createTweet(loginToFollow, content); // removable
-				timelineRepository.addTweetToTimeline(followedUser, alertTweet.getTweetId());
-
-			}
-		}
-		else
-		{
-			log.debug("Followed user does not exist : {} ", loginToFollow);
-		}
-	}
-
-	public void forgetUser(String login) throws FunctionalException
-	{
-		log.debug("Removing followed user : {} ", login);
-
-		User currentUser = authenticationService.getCurrentUser();
-		Collection<String> friends = this.friendRepository.findFriendsForUser(currentUser);
-
-		User followedUser = getUserByLogin(login);
-
-		if (followedUser != null)
-		{
-			if (friends.contains(followedUser.getLogin()))
-			{
-				friendRepository.removeFriend(currentUser, followedUser);
-				followerRepository.removeFollower(followedUser, currentUser);
-
-			}
-		}
-		else
-		{
-			log.debug("Followed user does not exist : {}", login);
-		}
-	}
-
-	public Collection<String> getFriendsForUser(String login)
-	{
-		log.debug("Retrieving followed users : {}", login);
-
-		User user = userRepository.findUserByLogin(login);
-
-		return friendRepository.findFriendsForUser(user);
-	}
-
-	public Collection<User> getFriendsForUser(String login, String startUser, int count)
-	{
-
-		if (startUser == null && count < TatamiConstants.DEFAULT_USER_LIST_SIZE)
-		{
-			count = TatamiConstants.DEFAULT_USER_LIST_SIZE;
-		}
-
-		log.debug("Retrieving followed users : {} within range {}", login, startUser + " - " + count);
-
-		User currentUser = authenticationService.getCurrentUser();
-		User user = userRepository.findUserByLogin(login);
-
-		return this.buildUserList(currentUser, friendRepository.findFriendsForUser(user, startUser, count));
-	}
-
-	public Collection<String> getFollowersForUser(String login)
-	{
-		log.debug("Retrieving following users : {}", login);
-
-		User user = userRepository.findUserByLogin(login);
-
-		return followerRepository.findFollowersForUser(user);
-	}
-
-	public Collection<User> getFollowersForUser(String login, String startUser, int count)
-	{
-		if (startUser == null && count < TatamiConstants.DEFAULT_USER_LIST_SIZE)
-		{
-			count = TatamiConstants.DEFAULT_USER_LIST_SIZE;
-		}
-
-		log.debug("Retrieving following users : {} within range {}", login, startUser + " - " + count);
-
-		User currentUser = authenticationService.getCurrentUser();
-		User user = userRepository.findUserByLogin(login);
-
-		return this.buildUserList(currentUser, followerRepository.findFollowersForUser(user, startUser, count));
-	}
-
 	public List<User> findUser(String searchString)
 	{
 		return this.findUser(searchString, 1, USER_SEARCH_LIMIT);
@@ -273,33 +156,6 @@ public class UserService
 		return this.buildUserList(currentUser, logins);
 	}
 
-	public List<User> buildUserList(User currentUser, Collection<String> logins)
-	{
-		List<User> results = new ArrayList<User>();
-
-		Collection<String> userFriends = this.friendRepository.findFriendsForUser(currentUser);
-
-		User foundUser = null;
-		for (String login : logins)
-		{
-			foundUser = this.userRepository.findUserByLogin(login);
-			if (foundUser != null)
-			{
-				if (userFriends.contains(login))
-				{
-					foundUser.setFollow(false);
-				}
-				else
-				{
-					foundUser.setFollow(true);
-				}
-				results.add(foundUser);
-			}
-		}
-
-		return results;
-	}
-
 	public User getCurrentUser()
 	{
 		return authenticationService.getCurrentUser();
@@ -310,29 +166,9 @@ public class UserService
 		this.authenticationService = authenticationService;
 	}
 
-	public void setFollowerRepository(FollowerRepository followerRepository)
-	{
-		this.followerRepository = followerRepository;
-	}
-
-	public void setFriendRepository(FriendRepository friendRepository)
-	{
-		this.friendRepository = friendRepository;
-	}
-
-	public void setUserRepository(UserRepository userRepository)
-	{
-		this.userRepository = userRepository;
-	}
-
 	public void setUserIndexRepository(UserIndexRepository userIndexRepository)
 	{
 		this.userIndexRepository = userIndexRepository;
-	}
-
-	public void setTimelineRepository(TimeLineRepository timelineRepository)
-	{
-		this.timelineRepository = timelineRepository;
 	}
 
 	public void setTweetRepository(TweetRepository tweetRepository)

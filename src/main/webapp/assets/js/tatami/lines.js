@@ -44,15 +44,19 @@ function removeFavoriteTweet(tweet) {
 function removeTweet(target)
 {
 	$.ajax({
-		type: HTTP_POST,
-		url: "rest/removeTweet/" + tweet,
+		type: HTTP_GET,
+		url: "rest/removeTweet/" + target,
 		dataType: JSON_DATA,
         success: function()
         {
-			setTimeout(function()
-			{
-	        	refreshCurrentLine();
-			},300);	        	
+			setTimeout(refreshCurrentLine,300);	        	
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+        	console.log(jqXHR.responseText);
+        	console.log(textStatus);
+        	console.log(errorThrown);
+        	
         }
     });
 	

@@ -4,7 +4,6 @@ import static fr.ippon.tatami.config.ColumnFamilyKeys.TIMELINE_CF;
 
 import java.util.Collection;
 
-import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.TimeLineRepository;
 
 /**
@@ -14,31 +13,23 @@ import fr.ippon.tatami.repository.TimeLineRepository;
 public class CassandraTimeLineRepository extends CassandraAbstractRepository implements TimeLineRepository
 {
 	@Override
-	public void addTweetToTimeline(User user, String tweetId)
+	public void addTweetToTimeline(String userLogin, String tweetId)
 	{
-		this.insertIntoCF(TIMELINE_CF, user.getLogin(), tweetId);
-
-		user.incrementTimelineTweetCount();
-		em.persist(user);
-
+		this.insertIntoCF(TIMELINE_CF, userLogin, tweetId);
 	}
 
 	@Override
-	public void removeTweetFromTimeline(User user, String tweetId)
+	public void removeTweetFromTimeline(String userLogin, String tweetId)
 	{
-		this.removeFromCF(TIMELINE_CF, user.getLogin(), tweetId);
-
-		user.decrementTimelineTweetCount();
-		em.persist(user);
-
+		this.removeFromCF(TIMELINE_CF, userLogin, tweetId);
 	}
 
 	@Override
-	public Collection<String> getTweetsRangeFromTimeline(User user, String startTweetId, int count)
+	public Collection<String> getTweetsRangeFromTimeline(String userLogin, String startTweetId, int count)
 	{
 		assert count >= 0 : "Timeline search count should be positive";
 
-		return this.findRangeFromCF(TIMELINE_CF, user.getLogin(), startTweetId, true, count);
+		return this.findRangeFromCF(TIMELINE_CF, userLogin, startTweetId, true, count);
 	}
 
 }

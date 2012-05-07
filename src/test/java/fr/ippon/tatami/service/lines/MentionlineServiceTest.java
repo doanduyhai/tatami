@@ -24,7 +24,7 @@ public class MentionlineServiceTest extends AbstractCassandraTatamiTest
 	private AuthenticationService mockAuthenticationService;
 
 	@Test
-	public void init()
+	public void initForMentionlineServiceTest()
 	{
 		jdubois = new User();
 		jdubois.setLogin("jdubois");
@@ -48,47 +48,64 @@ public class MentionlineServiceTest extends AbstractCassandraTatamiTest
 		this.userService.setAuthenticationService(mockAuthenticationService);
 	}
 
-	@Test(dependsOnMethods = "init")
-	public void testOnTweetPostSpreadTweet() throws FunctionalException
+	@Test(dependsOnMethods = "initForMentionlineServiceTest")
+	public void testOnTweetPostSpreadTweetForMentionLine() throws FunctionalException
 	{
 		tweet = this.tweetService.createTransientTweet("Hello &#x40;duyhai, how are you ?");
 		this.mentionlineService.onTweetPost(tweet);
 
-		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline(duyhai, null, 2);
+		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
 
 		assertEquals(duyhaiTimeline.size(), 1, "duyhai' timeline has 1 tweet");
 		assertTrue(duyhaiTimeline.contains(tweet.getTweetId()), "duyhaiTimeline contains 'Hello &#x40;duyhai, how are you ?'");
 	}
 
-	@Test(dependsOnMethods = "testOnTweetPostSpreadTweet")
-	public void testOnTweetPostNoAction() throws FunctionalException
+	@Test(dependsOnMethods = "testOnTweetPostSpreadTweetForMentionLine")
+	public void testOnTweetPostNoActionForMentionLine() throws FunctionalException
 	{
 		randomTweet = this.tweetService.createTransientTweet("Random tweet with no mention");
 		this.mentionlineService.onTweetPost(randomTweet);
 
-		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline(duyhai, null, 2);
+		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
 
 		assertEquals(duyhaiTimeline.size(), 1, "duyhai' timeline has 1 tweet");
 		assertFalse(duyhaiTimeline.contains(randomTweet.getTweetId()), "duyhaiTimeline does not contain 'Random tweet with no mention'");
 	}
 
-	@Test(dependsOnMethods = "testOnTweetPostNoAction")
-	public void testOnTweetPostNoActionBecauseFollower() throws FunctionalException
+	@Test(dependsOnMethods = "testOnTweetPostNoActionForMentionLine")
+	public void testOnTweetPostNoActionBecauseFollowerForMentionLine() throws FunctionalException
 	{
 		// DuyHai now follows Julien
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(duyhai);
-		this.userService.followUser("jdubois");
+		this.contactsService.onUserFollow("jdubois");
 
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
 
 		tweet2 = this.tweetService.createTransientTweet("Hello &#x40;duyhai, how are you second time?");
 		this.mentionlineService.onTweetPost(tweet2);
 
-		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline(duyhai, null, 2);
+		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
 
 		assertEquals(duyhaiTimeline.size(), 1, "duyhai' timeline has 1 tweet");
 		assertFalse(duyhaiTimeline.contains(tweet2.getTweetId()), "duyhaiTimeline does not contain 'Hello &#x40;duyhai, how are you second time?'");
 
 	}
 
+	@Test(dependsOnMethods = "testOnTweetPostNoActionBecauseFollowerForMentionLine")
+	public void testOnTweetRemoveNoActionForMentionLine() throws FunctionalException
+	{
+		this.mentionlineService.onTweetRemove(tweet2);
+		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
+
+		assertEquals(duyhaiTimeline.size(), 1, "duyhai' timeline has 1 tweet");
+	}
+
+	@Test(dependsOnMethods = "testOnTweetRemoveNoActionForMentionLine")
+	public void testOnTweetRemoveForMentionLine() throws FunctionalException
+	{
+		this.mentionlineService.onTweetRemove(tweet);
+		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
+
+		assertEquals(duyhaiTimeline.size(), 0, "duyhai' timeline has no tweet");
+	}
 }

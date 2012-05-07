@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Tatami-Service_User-TestSuite" parallel="false" verbose="1">
+  <test name="userServiceTests">
+    <classes>
+   	  <class name="fr.ippon.tatami.service.user.UserServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.user.ContactsServiceTest"/>
+    </classes>
+  </test>         
+</suite> 

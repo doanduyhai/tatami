@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Tatami-Service_Pipeline-TestSuite" parallel="false" verbose="1">
+  <test name="pipelineTests">
+    <classes>
+    	<class name="fr.ippon.tatami.service.pipeline.UserPipelineManagerTest"/>	
+   	  	<class name="fr.ippon.tatami.service.pipeline.TweetPipelineManagerTest"/>
+   	  	<class name="fr.ippon.tatami.service.pipeline.FavoritePipelineManagerTest"/>
+    </classes>
+  </test>                    
+</suite> 

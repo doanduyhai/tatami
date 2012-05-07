@@ -1,19 +1,15 @@
 package fr.ippon.tatami.service.user;
 
-import static fr.ippon.tatami.service.util.TatamiConstants.DEFAULT_TWEET_LIST_SIZE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.testng.annotations.Test;
 
 import fr.ippon.tatami.AbstractCassandraTatamiTest;
-import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
 import fr.ippon.tatami.service.util.GravatarUtil;
@@ -39,7 +35,6 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 		assertThat(user.getLastName(), is("DUBOIS"));
 		assertThat(user.getEmail(), is("jdubois@ippon.fr"));
 		assertThat(user.getTweetCount(), is(0L));
-		assertThat(user.getTimelineTweetCount(), is(0L));
 		assertThat(user.getFollowersCount(), is(0L));
 		assertThat(user.getFriendsCount(), is(0L));
 		assertThat(user.getFavoritesCount(), is(0L));
@@ -102,144 +97,6 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "shouldCreateAUser")
-	public void shouldFollowUser() throws FunctionalException
-	{
-
-		User jdubois = userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
-
-		// "jdubois" follows "userToFollow"
-		userService.followUser("userToFollow");
-
-		User refreshedJdubois = userService.getUserByLogin("jdubois");
-		User userToFollow = userService.getUserByLogin("userToFollow");
-
-		Collection<String> jduboisFriends = this.friendRepository.findFriendsForUser(jdubois);
-
-		Collection<String> userToFollowFollowers = this.followerRepository.findFollowersForUser(userToFollow);
-
-		assertNotNull(jduboisFriends, "jduboisFriends");
-		assertTrue(jduboisFriends.size() == 1, "jduboisFriends.getFriends().size() == 1");
-		assertTrue(jduboisFriends.contains("userToFollow"), "jduboisFriends.getFriends().contains('userToFollow')");
-		assertThat(refreshedJdubois.getFriendsCount(), is(1L));
-
-		assertNotNull(userToFollowFollowers, "userToFollowFollowers");
-		assertTrue(userToFollowFollowers.size() == 1, "userToFollowFollowers.getFollowers().size() == 1");
-		assertTrue(userToFollowFollowers.contains("jdubois"), "userToFollowFollowers.getFollowers().contains('jdubois')");
-		assertThat(userToFollow.getFollowersCount(), is(1L));
-
-		// "userToFollow" receives an alert tweet
-		Collection<String> tweets = timeLineRepository.getTweetsRangeFromTimeline(userToFollow, null, DEFAULT_TWEET_LIST_SIZE);
-		assertTrue(tweets.size() == 1, "tweets.size() == 1");
-
-		Tweet alertTweet = entityManager.find(Tweet.class, tweets.iterator().next());
-		assertTrue(alertTweet.getContent().contains("jdubois <strong>is now following you</strong>"),
-				"alertTweet contains 'jdubois <strong>is now following you</strong>'");
-
-	}
-
-	@Test(dependsOnMethods = "shouldFollowUser", expectedExceptions = FunctionalException.class)
-	public void shouldNotFollowUserBecauseUserNotExist() throws FunctionalException
-	{
-		User jdubois = userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
-
-		userService.followUser("unknownUser");
-	}
-
-	@Test(dependsOnMethods = "shouldNotFollowUserBecauseUserNotExist")
-	public void shouldNotFollowUserBecauseUserAlreadyFollowed() throws Exception
-	{
-		User jdubois = userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
-
-		userService.followUser("userToFollow");
-
-		User refreshedJdubois = userService.getUserByLogin("jdubois");
-		Collection<String> jduboisFriends = this.friendRepository.findFriendsForUser(jdubois);
-
-		assertNotNull(jduboisFriends, "jduboisFriends");
-		assertTrue(jduboisFriends.size() == 1, "jduboisFriends.getFriends().size() == 1");
-		assertThat(refreshedJdubois.getFriendsCount(), is(1L));
-	}
-
-	@Test(dependsOnMethods = "shouldNotFollowUserBecauseUserAlreadyFollowed")
-	public void shouldNotFollowUserBecauseSameUser() throws Exception
-	{
-		User jdubois = userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
-
-		userService.followUser("jdubois");
-
-		User refreshedJdubois = userService.getUserByLogin("jdubois");
-		Collection<String> jduboisFriends = this.friendRepository.findFriendsForUser(jdubois);
-
-		assertNotNull(jduboisFriends, "jduboisFriends");
-		assertTrue(jduboisFriends.size() == 1, "jduboisFriends.getFriends().size() == 1");
-		assertThat(refreshedJdubois.getFriendsCount(), is(1L));
-	}
-
-	@Test(dependsOnMethods = "shouldNotFollowUserBecauseSameUser")
-	public void shouldFindFriendsForUser()
-	{
-		Collection<String> jduboisFriends = this.userService.getFriendsForUser("jdubois");
-
-		assertNotNull(jduboisFriends, "jduboisFriends");
-		assertTrue(jduboisFriends.size() == 1, "jduboisFriends.size() == 1");
-		assertTrue(jduboisFriends.contains("userToFollow"), "jduboisFriends.contains('userToFollow')");
-	}
-
-	@Test(dependsOnMethods = "shouldFindFriendsForUser")
-	public void shouldFindFollowersForUser()
-	{
-		Collection<String> userToFollowFollowers = this.userService.getFollowersForUser("userToFollow");
-
-		assertNotNull(userToFollowFollowers, "userToFollowFollowers");
-		assertTrue(userToFollowFollowers.size() == 1, "userToFollowFollowers.size() == 1");
-		assertTrue(userToFollowFollowers.contains("jdubois"), "userToFollowFollowers.contains('jdubois')");
-	}
-
-	@Test(dependsOnMethods = "shouldFindFollowersForUser")
-	public void shouldForgetUser() throws FunctionalException
-	{
-		User jdubois = userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
-
-		userService.forgetUser("userToFollow");
-
-		User refreshedJdubois = userService.getUserByLogin("jdubois");
-		User userToFollow = userService.getUserByLogin("userToFollow");
-
-		Collection<String> jduboisFriends = this.friendRepository.findFriendsForUser(jdubois);
-		Collection<String> userToFollowFollowers = this.followerRepository.findFollowersForUser(userToFollow);
-
-		assertNotNull(jduboisFriends, "jduboisFriends");
-		assertTrue(jduboisFriends.size() == 0, "jduboisFriends.getFriends().size() == 0");
-		assertThat(refreshedJdubois.getFriendsCount(), is(0L));
-
-		assertNotNull(userToFollowFollowers, "userToFollowFollowers");
-		assertTrue(userToFollowFollowers.size() == 0, "userToFollowFollowers.getFollowers().size() == 0");
-		assertThat(userToFollow.getFollowersCount(), is(0L));
-
-	}
-
-	@Test(dependsOnMethods = "shouldForgetUser")
-	public void shouldNotForgetUserBecauseUserNotExist() throws FunctionalException
-	{
-		User jdubois = userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
-
-		userService.forgetUser("userToFollow");
-
-		User refreshedJdubois = userService.getUserByLogin("jdubois");
-		Collection<String> jduboisFriends = this.friendRepository.findFriendsForUser(jdubois);
-
-		assertNotNull(jduboisFriends, "jduboisFriends");
-		assertTrue(jduboisFriends.size() == 0, "jduboisFriends.getFriends().size() == 0");
-		assertThat(refreshedJdubois.getFriendsCount(), is(0L));
-	}
-
-	@Test(dependsOnMethods = "shouldNotForgetUserBecauseUserNotExist")
 	public void shouldCreateNewUserWithIndexes()
 	{
 		User tescolan = new User();

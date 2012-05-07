@@ -6,4 +6,6 @@ import fr.ippon.tatami.exception.FunctionalException;
 public interface TweetHandler
 {
 	void onTweetPost(Tweet tweet) throws FunctionalException;
+
+	void onTweetRemove(Tweet tweet) throws FunctionalException;
 }

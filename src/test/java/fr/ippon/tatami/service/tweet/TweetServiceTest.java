@@ -45,7 +45,7 @@ public class TweetServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "testCreateTransientTweet")
-	public void testOnTweetPost()
+	public void testOnTweetPostForTweetService()
 	{
 		this.tweetService.onTweetPost(t1);
 
@@ -54,4 +54,14 @@ public class TweetServiceTest extends AbstractCassandraTatamiTest
 		assertNotNull(savedTweet, "savedTweet was persisted");
 		assertEquals(savedTweet.getTweetId(), t1.getTweetId(), "savedTweet == t1");
 	}
+
+	@Test(dependsOnMethods = "testOnTweetPostForTweetService")
+	public void testOnTweetRemoveForTweetService()
+	{
+		this.tweetService.onTweetRemove(t1);
+
+		Tweet savedTweet = this.tweetRepository.findTweetById(t1.getTweetId());
+		assertNull(savedTweet, "savedTweet was removed");
+	}
+
 }

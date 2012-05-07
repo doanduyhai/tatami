@@ -25,7 +25,7 @@ public class StatsRepositoryTest extends AbstractCassandraTatamiTest
 	private User duyhai;
 
 	@Test
-	public void init()
+	public void initStatsRepositoryTest()
 	{
 		test = new User();
 		test.setLogin("test");
@@ -43,7 +43,7 @@ public class StatsRepositoryTest extends AbstractCassandraTatamiTest
 		this.userRepository.createUser(duyhai);
 	}
 
-	@Test(dependsOnMethods = "init")
+	@Test(dependsOnMethods = "initStatsRepositoryTest")
 	public void testAddTweetToDay()
 	{
 		for (int i = 0; i < 5; i++)
@@ -89,7 +89,7 @@ public class StatsRepositoryTest extends AbstractCassandraTatamiTest
 		assertEquals(columns.get(0).getValue().longValue(), 3, "duyhai has 3 tweets today");
 	}
 
-	@Test(dependsOnMethods = "init")
+	@Test(dependsOnMethods = "initStatsRepositoryTest")
 	public void testAddTweetToWeek()
 	{
 		for (int i = 0; i < 5; i++)
@@ -135,7 +135,7 @@ public class StatsRepositoryTest extends AbstractCassandraTatamiTest
 		assertEquals(columns.get(0).getValue().longValue(), 3, "duyhai has 3 tweets this week");
 	}
 
-	@Test(dependsOnMethods = "init")
+	@Test(dependsOnMethods = "initStatsRepositoryTest")
 	public void testAddTweetToMonth()
 	{
 		for (int i = 0; i < 5; i++)
@@ -180,7 +180,7 @@ public class StatsRepositoryTest extends AbstractCassandraTatamiTest
 		assertEquals(columns.get(0).getValue().longValue(), 3, "duyhai has 3 tweets this month");
 	}
 
-	@Test(dependsOnMethods = "init")
+	@Test(dependsOnMethods = "initStatsRepositoryTest")
 	public void testAddTweetToYear()
 	{
 		for (int i = 0; i < 5; i++)

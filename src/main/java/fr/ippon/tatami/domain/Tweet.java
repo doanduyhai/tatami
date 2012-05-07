@@ -2,8 +2,6 @@ package fr.ippon.tatami.domain;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,11 +58,8 @@ public class Tweet
 	@Column(name = "tweetDate")
 	private Date tweetDate;
 
-	@me.prettyprint.hom.annotations.Column(name = "likers")
-	private Set<String> likers = new HashSet<String>();
-
-	@Column(name = "likersCount")
-	private long likersCount;
+	@Column(name = "notification")
+	private boolean notification = false;
 
 	@JsonView(TweetView.Full.class)
 	private String firstName;
@@ -146,6 +141,16 @@ public class Tweet
 		this.tweetDate = tweetDate;
 	}
 
+	public boolean isNotification()
+	{
+		return notification;
+	}
+
+	public void setNotification(boolean notification)
+	{
+		this.notification = notification;
+	}
+
 	public String getFirstName()
 	{
 		return firstName;
@@ -174,26 +179,6 @@ public class Tweet
 	public void setGravatar(String gravatar)
 	{
 		this.gravatar = gravatar;
-	}
-
-	public Set<String> getLikers()
-	{
-		return likers;
-	}
-
-	public void setLikers(Set<String> likers)
-	{
-		this.likers = likers;
-	}
-
-	public long getLikersCount()
-	{
-		return likersCount;
-	}
-
-	public void setLikersCount(long likersCount)
-	{
-		this.likersCount = likersCount;
 	}
 
 	public boolean isAddToFavorite()

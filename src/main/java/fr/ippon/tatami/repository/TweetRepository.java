@@ -10,7 +10,7 @@ import fr.ippon.tatami.domain.Tweet;
 public interface TweetRepository
 {
 
-	Tweet createTweet(String login, String content);
+	Tweet createTweet(String login, String content, boolean notification);
 
 	void saveTweet(Tweet tweet);
 

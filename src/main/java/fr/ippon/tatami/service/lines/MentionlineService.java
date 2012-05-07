@@ -14,6 +14,7 @@ import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
 import fr.ippon.tatami.repository.TimeLineRepository;
 import fr.ippon.tatami.service.pipeline.TweetHandler;
+import fr.ippon.tatami.service.user.ContactsService;
 import fr.ippon.tatami.service.util.TatamiConstants;
 
 public class MentionlineService extends AbstractlineService implements TweetHandler
@@ -23,6 +24,8 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 	private static final Pattern USER_PATTERN = Pattern.compile(TatamiConstants.USER_REGEXP);
 
 	private TimeLineRepository timeLineRepository;
+
+	private ContactsService contactsService;
 
 	@Override
 	public void onTweetPost(Tweet tweet) throws FunctionalException
@@ -35,17 +38,15 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 		Set<String> quotedUsers = new HashSet<String>();
 		while (usermatcher.find())
 		{
-			String user = usermatcher.group(1).toLowerCase();
-			assert user != null;
-			User quotedUser = this.userService.getUserByLogin(user);
-			if (quotedUser != null && !quotedUsers.contains(quotedUser.getLogin()))
+			String quotedUser = usermatcher.group(1).toLowerCase();
+			if (!quotedUsers.contains(quotedUser))
 			{
-				quotedUsers.add(quotedUser.getLogin());
+				quotedUsers.add(quotedUser);
 
-				Collection<String> userFollowers = this.userService.getFollowersForUser(currentUser.getLogin());
-				if (!userFollowers.contains(user))
+				Collection<String> userFollowers = this.contactsService.getFollowersForUser(currentUser.getLogin());
+				if (!userFollowers.contains(quotedUser))
 				{
-					log.debug("Add tweet to quoted user " + user + " timeline");
+					log.debug("Add tweet to quoted user " + quotedUser + " timeline");
 					this.timeLineRepository.addTweetToTimeline(quotedUser, tweet.getTweetId());
 				}
 			}
@@ -53,9 +54,36 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 		}
 	}
 
+	@Override
+	public void onTweetRemove(Tweet tweet) throws FunctionalException
+	{
+		if (!tweet.isNotification())
+		{
+			Matcher usermatcher = USER_PATTERN.matcher(tweet.getContent());
+			// Set to eliminate multiple quotes for same user in same tweet
+			Set<String> quotedUsers = new HashSet<String>();
+			while (usermatcher.find())
+			{
+				String quotedUser = usermatcher.group(1).toLowerCase();
+				if (!quotedUsers.contains(quotedUser))
+				{
+					quotedUsers.add(quotedUser);
+					log.debug("Remove tweet from quoted user " + quotedUser + " timeline");
+					this.timeLineRepository.removeTweetFromTimeline(quotedUser, tweet.getTweetId());
+				}
+			}
+		}
+
+	}
+
 	public void setTimeLineRepository(TimeLineRepository timeLineRepository)
 	{
 		this.timeLineRepository = timeLineRepository;
+	}
+
+	public void setContactsService(ContactsService contactsService)
+	{
+		this.contactsService = contactsService;
 	}
 
 }

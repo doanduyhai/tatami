@@ -40,6 +40,16 @@ public class UserlineService extends AbstractlineService implements TweetHandler
 		userLineRepository.addTweetToUserline(currentUser, tweet.getTweetId());
 	}
 
+	@Override
+	public void onTweetRemove(Tweet tweet) throws FunctionalException
+	{
+		if (!tweet.isNotification())
+		{
+			User currentUser = userService.getCurrentUser();
+			this.userLineRepository.removeTweetFromUserline(currentUser, tweet.getTweetId());
+		}
+	}
+
 	public void setUserLineRepository(UserLineRepository userLineRepository)
 	{
 		this.userLineRepository = userLineRepository;

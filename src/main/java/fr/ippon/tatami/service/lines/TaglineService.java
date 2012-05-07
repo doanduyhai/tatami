@@ -69,6 +69,27 @@ public class TaglineService extends AbstractlineService implements TweetHandler
 
 	}
 
+	@Override
+	public void onTweetRemove(Tweet tweet) throws FunctionalException
+	{
+		if (!tweet.isNotification())
+		{
+			Matcher m = HASHTAG_PATTERN.matcher(tweet.getContent());
+			Set<String> tagSet = new HashSet<String>();
+			while (m.find())
+			{
+				String tag = m.group(1);
+				assert tag != null && !tag.isEmpty() && !tag.contains(HASHTAG);
+				if (!tagSet.contains(tag))
+				{
+					tagSet.add(tag);
+					log.debug("tag list reduced : " + tag);
+					tagLineRepository.removeTweet(tag, tweet.getTweetId());
+				}
+			}
+		}
+	}
+
 	public void setTagLineRepository(TagLineRepository tagLineRepository)
 	{
 		this.tagLineRepository = tagLineRepository;

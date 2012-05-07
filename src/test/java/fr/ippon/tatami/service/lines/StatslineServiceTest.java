@@ -24,7 +24,7 @@ public class StatslineServiceTest extends AbstractCassandraTatamiTest
 	private Tweet t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, tweet;
 
 	@Test
-	public void init()
+	public void initForStatslineServiceTest()
 	{
 		jdubois = new User();
 		jdubois.setLogin("jdubois");
@@ -90,7 +90,7 @@ public class StatslineServiceTest extends AbstractCassandraTatamiTest
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
 	}
 
-	@Test(dependsOnMethods = "init")
+	@Test(dependsOnMethods = "initForStatslineServiceTest")
 	public void testGetDaylineFromDate()
 	{
 		Calendar cal = Calendar.getInstance();
@@ -116,7 +116,7 @@ public class StatslineServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "testGetDaylineFromString")
-	public void testOnTweetPost()
+	public void testOnTweetPostForStatsLine()
 	{
 
 		tweet = this.tweetService.createTransientTweet("Test today tweet");
@@ -130,4 +130,12 @@ public class StatslineServiceTest extends AbstractCassandraTatamiTest
 
 	}
 
+	@Test(dependsOnMethods = "testOnTweetPostForStatsLine")
+	public void testOnTweetRemoveForStatsLine()
+	{
+		this.statslineService.onTweetRemove(tweet);
+		List<UserTweetStat> tweetStats = new ArrayList<UserTweetStat>(this.statslineService.getDayline(new Date()));
+
+		assertEquals(tweetStats.size(), 0, "0 UserTweetStat for today");
+	}
 }

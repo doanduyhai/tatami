@@ -14,6 +14,9 @@ public class ColumnFamilyKeys
 
 	public final static String FOLLOWERS_CF = "UserFollowers";
 
+	// Column family to keep track of all tweets in timeline coming from a followed user
+	public final static String FOLLOWED_TWEET_INDEX_CF = "FollowedTweetIndex";
+
 	public final static String TWEET_CF = "Tweet";
 
 	public final static String DAYLINE_CF = "DayLine";
@@ -24,7 +27,9 @@ public class ColumnFamilyKeys
 
 	public final static String YEARLINE_CF = "YearLine";
 
-	public final static String FAVLINE_CF = "FavoriteLine";
+	public final static String FAVORITELINE_CF = "FavoriteLine";
+
+	public final static String FAVORITE_INDEX_CF = "FavoriteIndex";
 
 	public final static String TAGLINE_CF = "TagLine";
 

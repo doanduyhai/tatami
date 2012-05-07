@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Tatami-Service_Tweet-TestSuite" parallel="false" verbose="1" >  
+  <test name="tweetServiceTests">
+    <classes>
+   	  <class name="fr.ippon.tatami.service.tweet.TweetServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.tweet.XssEncodingServiceTest"/>
+    </classes>
+  </test>        
+</suite> 

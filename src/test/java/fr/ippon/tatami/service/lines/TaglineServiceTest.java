@@ -50,11 +50,11 @@ public class TaglineServiceTest extends AbstractCassandraTatamiTest
 		this.tweetRepository.saveTweet(t5);
 
 		// #Cassandra
-		t6 = this.tweetService.createTransientTweet("tweet6 #Cassandra");
+		t6 = this.tweetService.createTransientTweet("tweet6 &#x23;Cassandra");
 		this.tweetRepository.saveTweet(t6);
-		t7 = this.tweetService.createTransientTweet("tweet7 #Cassandra");
+		t7 = this.tweetService.createTransientTweet("tweet7 &#x23;Cassandra");
 		this.tweetRepository.saveTweet(t7);
-		t8 = this.tweetService.createTransientTweet("tweet8 #Cassandra");
+		t8 = this.tweetService.createTransientTweet("tweet8 &#x23;Cassandra");
 		this.tweetRepository.saveTweet(t8);
 
 		// #Spring
@@ -121,5 +121,14 @@ public class TaglineServiceTest extends AbstractCassandraTatamiTest
 		Collection<Tweet> tweets = this.taglineService.getTaglineRange("Tatami", null, 10);
 
 		assertEquals(tweets.size(), 1, "1 tweets with #Tatami tag");
+	}
+
+	@Test(dependsOnMethods = "testOnTweetPostNoActionForTagLine")
+	public void testOnTweetRemoveForTagLine() throws FunctionalException
+	{
+		this.taglineService.onTweetRemove(t6);
+		Collection<Tweet> tweets = this.taglineService.getTaglineRange("Cassandra", null, 10);
+
+		assertEquals(tweets.size(), 2, "2 tweets with #Cassandra tag");
 	}
 }

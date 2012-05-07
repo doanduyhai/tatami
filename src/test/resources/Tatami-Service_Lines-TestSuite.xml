@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Tatami-Service_Lines-TestSuite" parallel="false" verbose="1" >
+  <test name="linesServiceTests">
+    <classes>
+   	  <class name="fr.ippon.tatami.service.lines.FavoritelineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.MentionlineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.StatslineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.TaglineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.TimelineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.UserlineServiceTest"/>
+    </classes>
+  </test>         
+</suite> 

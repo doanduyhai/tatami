@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Tatami-Repository-TestSuite" parallel="false" verbose="1" >
+  <test name="repositoryTests" >
+    <classes>
+      <class name="fr.ippon.tatami.repository.UserRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.TweetRepositoryTest"/>   
+      <class name="fr.ippon.tatami.repository.FriendRepositoryTest"/>      
+      <class name="fr.ippon.tatami.repository.FollowerRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.FollowedTweetIndexRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.FavoriteRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.FavoriteIndexRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.TagLineRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.UserLineRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.TimeLineRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.StatsRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.UserIndexRepositoryTest"/>
+    </classes>
+  </test>
+</suite> 

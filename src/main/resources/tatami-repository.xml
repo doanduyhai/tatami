@@ -31,4 +31,6 @@
 	<bean id="userIndexRepository" class="fr.ippon.tatami.repository.cassandra.CassandraUserIndexRepository" parent="abstractRepository"/>
 	<bean id="userLineRepository" class="fr.ippon.tatami.repository.cassandra.CassandraUserLineRepository" parent="abstractRepository"/>
 	<bean id="userRepository" class="fr.ippon.tatami.repository.cassandra.CassandraUserRepository" parent="abstractRepository"/>
+	<bean id="followedTweetIndexRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFollowedTweetIndexRepository" parent="abstractRepository"/>
+	<bean id="favoriteIndexRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFavoriteIndexRepository" parent="abstractRepository"/>
 </beans>

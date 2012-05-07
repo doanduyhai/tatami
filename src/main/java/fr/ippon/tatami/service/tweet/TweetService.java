@@ -5,6 +5,7 @@ import java.util.Calendar;
 import me.prettyprint.cassandra.utils.TimeUUIDUtils;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
+import fr.ippon.tatami.exception.FunctionalException;
 import fr.ippon.tatami.repository.TweetRepository;
 import fr.ippon.tatami.service.pipeline.TweetHandler;
 import fr.ippon.tatami.service.security.AuthenticationService;
@@ -32,10 +33,27 @@ public class TweetService implements TweetHandler
 		return tweet;
 	}
 
+	public Tweet findTweetById(String tweetId) throws FunctionalException
+	{
+		Tweet tweet = this.tweetRepository.findTweetById(tweetId);
+		if (tweet == null)
+		{
+			throw new FunctionalException("Cannot find tweet with id '" + tweetId + "'");
+		}
+
+		return tweet;
+	}
+
 	@Override
 	public void onTweetPost(Tweet tweet)
 	{
 		this.tweetRepository.saveTweet(tweet);
+	}
+
+	@Override
+	public void onTweetRemove(Tweet tweet)
+	{
+		this.tweetRepository.removeTweet(tweet);
 	}
 
 	public void setTweetRepository(TweetRepository tweetRepository)
