@@ -23,8 +23,7 @@
 	</div>
 	
 	<footer class="row-fluid" 
-		data-tweetFetch-url="rest/tweetFetch/favoriteline" 
-		th:attr="data-tweetFetch-key=${sec.principal.username}"
+		th:attr="data-tweetFetch-url=${FAVORITELINE_REST},data-tweetFetch-key=${sec.principal.username}"
 		data-tweetFetch-type="favoriteline">
 		<div class="span9 fullHeight middle">
 			<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
@@ -32,9 +31,9 @@
 		<div class="span3 right">
 			<em>#</em>&nbsp;
 			<select class="pageSelector">
-				<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
-				<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
-				<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+				<option>1</option>
+				<option>2</option>
+				<option>3</option>
 			</select>
 		</div>
 	</footer>

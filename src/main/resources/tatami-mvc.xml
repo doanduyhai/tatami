@@ -105,7 +105,7 @@
 		<property name="userService" ref="userService"/>
 	</bean>
 	
-	<bean id="abstractRestController" class="fr.ippon.tatami.web.rest.AbstractRESTController" abstract="true">
+	<bean id="abstractRestController" class="fr.ippon.tatami.web.rest.AbstractRestController" abstract="true">
 		<property name="jacksonConverter" ref="customJacksonViewAwareMessageConverter"/>
 	</bean>
 	
@@ -125,7 +125,6 @@
 	</bean>
 	
 	<bean id="contactsController" class="fr.ippon.tatami.web.rest.ContactsController" parent="abstractRestController">
-		<property name="statslineService" ref="statslineService"/>
 		<property name="contactsService" ref="contactsService"/>
 		<property name="userPipelineManager" ref="userPipelineManager"/>	
 	</bean>	

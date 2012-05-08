@@ -15,6 +15,7 @@
     <http pattern="/login" security="none"/>
     <http pattern="/about" security="none"/>
     <http pattern="/assets/**" security="none"/>
+    
 	
 	<beans:bean id="ajaxTimeoutRedirectFilter" class="fr.ippon.tatami.security.AjaxTimeoutRedirectFilter">
 		<beans:property name="customSessionExpiredErrorCode" value="${ajax.session.timeout.http.code}"/>

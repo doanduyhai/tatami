@@ -1,5 +1,11 @@
 package fr.ippon.tatami.web.rest;
 
+import static fr.ippon.tatami.web.view.RestAPIConstants.USER_PREVIEW_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.USER_SEARCH_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.USER_SHOW_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.USER_STATS_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.USER_UPDATE_REST;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -24,52 +30,48 @@ import fr.ippon.tatami.web.json.view.UserView;
  * @author DuyHai DOAN
  */
 @Controller
-public class UserController extends AbstractRESTController
+public class UserController extends AbstractRestController
 {
 
 	private final Logger log = LoggerFactory.getLogger(UserController.class);
 
 	private UserService userService;
 
-	@RequestMapping(value = "/rest/users/{login}", method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public User getUser(@PathVariable("login") String login) throws FunctionalException
-	{
-		log.debug("REST request to get Profile : {}", login);
-		return userService.getUserByLogin(login);
-	}
-
-	@RequestMapping(value = "/rest/usersStats/{login}", method = RequestMethod.GET, produces = "application/json")
-	public void getUserStats(@PathVariable("login") String login, HttpServletResponse response) throws FunctionalException
+	// /rest/usersStats/{login}
+	@RequestMapping(value = USER_STATS_REST, method = RequestMethod.GET, produces = "application/json")
+	public void getUserStats(@PathVariable("id") String login, HttpServletResponse response) throws FunctionalException
 	{
 		log.debug("REST request to get Profile : {}", login);
 		this.writeWithView(userService.getUserByLogin(login), response, UserView.Stats.class);
 	}
 
-	@RequestMapping(value = "/rest/usersDetails/{login}", method = RequestMethod.GET, produces = "application/json")
-	public void getUserDetails(@PathVariable("login") String login, HttpServletResponse response) throws FunctionalException
+	// /rest/usersDetails/{login}
+	@RequestMapping(value = USER_PREVIEW_REST, method = RequestMethod.GET, produces = "application/json")
+	public void getUserPreview(@PathVariable("id") String login, HttpServletResponse response) throws FunctionalException
 	{
 		log.debug("REST request to get Details : {}", login);
 		this.writeWithView(userService.getUserByLogin(login), response, UserView.Details.class);
 	}
 
-	@RequestMapping(value = "/rest/usersProfile/{login}", method = RequestMethod.GET, produces = "application/json")
-	public void getUserProfile(@PathVariable("login") String login, HttpServletResponse response) throws FunctionalException
+	// /rest/usersProfile/{login}
+	@RequestMapping(value = USER_SHOW_REST, method = RequestMethod.GET, produces = "application/json")
+	public void getUserShow(@PathVariable("id") String login, HttpServletResponse response) throws FunctionalException
 	{
-		log.debug("REST request to get Profile : {}", login);
+		log.debug("REST request to get profile of : {}", login);
 		this.writeWithView(userService.getUserByLogin(login), response, UserView.Full.class);
 	}
 
-	@RequestMapping(value = "/rest/users/{login}", method = RequestMethod.POST, consumes = "application/json")
+	// /rest/users/{login}
+	@RequestMapping(value = USER_UPDATE_REST, method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
-	public void updateUser(@PathVariable("login") String login, @Valid @RequestBody User user)
+	public void updateUser(@Valid @RequestBody User user)
 	{
-		log.debug("REST request to update user : {}", login);
-		user.setLogin(login);
+		log.debug("REST request to update user : {}", user.getLogin());
 		userService.updateUser(user);
 	}
 
-	@RequestMapping(value = "/rest/usersSearch", method = RequestMethod.POST, consumes = "application/json")
+	// /rest/usersSearch
+	@RequestMapping(value = USER_SEARCH_REST, method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public void searchUser(@Valid @RequestBody UserSearch userSearch, HttpServletResponse response)
 	{

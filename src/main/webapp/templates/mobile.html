@@ -80,7 +80,7 @@
             	<a href="http://doanduyhai.wordpress.com">doanduyhai blog</a> |
             	<a href="https://twitter.com/#!/doanduyhai">Follow @doanduyhai on Twitter</a>
        		</div>
-   		<script type="text/javascript" src="assets/js/jquery-min.js" th:src="@{/assets/js/jquery-min.js}"></script>
+   		<script type="text/javascript" src="assets/js/jquery-min.js" th:src="@{/assets/js/jquery.js}"></script>
 		<script type="text/javascript" src="assets/js/bootstrap.min.js" th:src="@{/assets/js/bootstrap.min.js}"></script>
 		<script type="text/javascript" src="assets/js/less-1.3.0.min.js" th:src="@{/assets/js/less-1.3.0.min.js}"></script>        		
 	</footer>
@@ -90,35 +90,11 @@
 			
        		var login =  /*[[${sec.principal.username}]]*/ "jdubois";
            	
-			// Retrieve the default Nb Tweets value from the server				           
-			var DEFAULT_TWEET_LIST_SIZE = /*[[${DEFAULT_TWEET_LIST_SIZE}]]*/ 10;
-			
-			// Retrieve the default Nb Favorite value from the server				           
-			var DEFAULT_FAVORITE_LIST_SIZE = /*[[${DEFAULT_FAVORITE_LIST_SIZE}]]*/ 10;
-			
-			// Retrieve the default Nb Tag value from the server				           
-			var DEFAULT_TAG_LIST_SIZE = /*[[${DEFAULT_TAG_LIST_SIZE}]]*/ 10;
-
-			// Retrieve the default tweet first fetch size value from the server				           
-			var FIRST_FETCH_SIZE = /*[[${FIRST_FETCH_SIZE}]]*/ 5;
-			
-			// Retrieve the default tweet second fetch size value from the server				           
-			var SECOND_FETCH_SIZE = /*[[${SECOND_FETCH_SIZE}]]*/ 10;
-			
-			// Retrieve the default tweet third fetch size value from the server				           
-			var THIRD_FETCH_SIZE = /*[[${THIRD_FETCH_SIZE}]]*/ 20;			
-			
-			var HTTP_GET = 'GET';
-			
-			var HTTP_POST = 'POST';
-			
-			var JSON_DATA = 'json';
-			
-			var JSON_CONTENT = 'application/json; charset=UTF-8';
            	/*]]>*/
        	</script>
 
 <!-- 		<script src="/assets/js/tatami/mobile/tatami-mobile.js" th:src="@{/assets/js/tatami/mobile/tatami-mobile.js}"></script>        	  -->
+		<script src="/js/constants.js" th:src="@{/js/constants.js}"></script>
 		<script src="/assets/js/tatami/mobile/common.js" th:src="@{/assets/js/tatami/mobile/common.js}"></script>        	
         <script src="/assets/js/tatami/mobile/user.js" th:src="@{/assets/js/tatami/mobile/user.js}"></script>				
 		<script src="/assets/js/tatami/mobile/lines.js" th:src="@{/assets/js/tatami/mobile/lines.js}"></script>

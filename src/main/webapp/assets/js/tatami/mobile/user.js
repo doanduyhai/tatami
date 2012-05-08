@@ -7,10 +7,8 @@ function followUser(loginToFollow) {
 	$('#followErrorPanel').hide();
 	
 	$.ajax({
-		type: HTTP_POST,
-		url: "rest/users/" + login + "/followUser",
-		contentType: JSON_CONTENT,
-		data: loginToFollow,
+		type: HTTP_GET,
+		url: replaceIdInURL(FRIEND_ADD_REST,loginToFollow),
 		dataType: JSON_DATA,
         success: function(data) {
 
@@ -29,15 +27,13 @@ function followUser(loginToFollow) {
 	return false;
 }
 
-function removeFriend(friend) {
+function removeFriend(loginToRemove) {
 	
 	$('#followErrorPanel').hide();
 	
 	$.ajax({
-		type: HTTP_POST,
-		url: "rest/users/" + login + "/removeFriend",
-		contentType: "application/json;  charset=UTF-8",
-		data: friend,
+		type: HTTP_GET,
+		url: replaceIdInURL(FRIEND_REMOVE_REST,loginToRemove),
 		dataType: JSON_DATA,
         success: function(data) {
 
@@ -59,7 +55,7 @@ function updateProfile() {
 	
 	$.ajax({
 		type: HTTP_POST,
-		url: "rest/users/" + login,
+		url: USER_UPDATE_REST,
 		contentType: JSON_CONTENT,
 		data: JSON.stringify($("#updateUserForm").serializeObject()),
 		dataType: JSON_DATA,
@@ -81,9 +77,9 @@ function tweet() {
 	$('#tweetErrorPanel').hide();
 	$.ajax({
         type: HTTP_POST,
-        url: "rest/tweets",
+        url: TWEET_POST_REST,
         async: false,
-        contentType: "application/json;  charset=UTF-8",
+        contentType: JSON_CONTENT,
         data:  JSON.stringify({content: $.trim($("#tweetContent").val())}),
         dataType: JSON_DATA,
         success: function(data) {
@@ -105,7 +101,7 @@ function updateUserCounters()
 {
 	$.ajax({
 		type: HTTP_GET,
-		url: "rest/usersStats/" + login,
+		url: replaceIdInURL(USER_STATS_REST,login),
 		dataType: JSON_DATA,
 		success: function(data) {
 			$("#tweetCount").text(data.tweetCount);
@@ -120,7 +116,7 @@ function showUserProfile(login)
 {
 	$.ajax({
 		type: HTTP_GET,
-		url: "rest/usersProfile/" + login,
+		url: replaceIdInURL(USER_SHOW_REST,login),
 		dataType: JSON_DATA,
 		success: function(data) {
 			
@@ -217,7 +213,7 @@ function refreshUserSuggestions()
 {
 	$.ajax({
 		type: HTTP_GET,
-		url: 'rest/users/suggestions',
+		url: USER_SUGGESTIONS_REST,
 		dataType: JSON_DATA,
         success: function(data)
         {
@@ -244,7 +240,7 @@ function refreshHome()
 {
 	$.ajax({
 		type: HTTP_GET,
-		url: "rest/usersProfile/" + login,
+		url: replaceIdInURL(USER_SHOW_REST,login),
 		dataType: JSON_DATA,
 		success: function(user) {
 			$('#homePanel').find('#picture').attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=64').end()
@@ -405,8 +401,8 @@ function registerUserSearchListener()
 		$('#searchErrorPanel').hide();
 		$.ajax({
 			type: HTTP_POST,
-			url: "rest/usersSearch",
-	        contentType: "application/json;  charset=UTF-8",
+			url: USER_SEARCH_REST,
+	        contentType: JSON_CONTENT,
 	        data:  JSON.stringify({searchString: $.trim($("#followUserInput").val())}),			
 			dataType: JSON_DATA,
 			success: function(data) {
@@ -436,6 +432,11 @@ function registerUserSearchListener()
 
 function registerFetchUserHandlers()
 {
+	$('.pageSelector')
+	.find('option:eq(0)').html(FIRST_FETCH_SIZE).end()
+	.find('option:eq(1)').html(SECOND_FETCH_SIZE).end()
+	.find('option:eq(2)').html(THIRD_FETCH_SIZE);
+	
 	$('.userPagingButton').click(function(event)
 	{
 		var $target = $(event.target);

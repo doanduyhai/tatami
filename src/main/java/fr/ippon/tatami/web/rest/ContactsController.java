@@ -1,5 +1,11 @@
 package fr.ippon.tatami.web.rest;
 
+import static fr.ippon.tatami.web.view.RestAPIConstants.FOLLOWERSLINE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.FRIENDSLINE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.FRIEND_ADD_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.FRIEND_REMOVE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.USER_SUGGESTIONS_REST;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -14,26 +20,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import fr.ippon.tatami.domain.json.UserFetchRange;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.service.lines.StatslineService;
 import fr.ippon.tatami.service.pipeline.UserPipelineManager;
 import fr.ippon.tatami.service.user.ContactsService;
 import fr.ippon.tatami.web.json.view.UserView;
 
 @Controller
-public class ContactsController extends AbstractRESTController
+public class ContactsController extends AbstractRestController
 {
 
 	private ContactsService contactsService;
-
-	private StatslineService statslineService;
 
 	private UserPipelineManager userPipelineManager;
 
 	private final Logger log = LoggerFactory.getLogger(ContactsController.class);
 
-	@RequestMapping(value = "/rest/users/{login}/followUser", method = RequestMethod.POST, consumes = "application/json")
+	// /rest/users/{login}/followUser
+	@RequestMapping(value = FRIEND_ADD_REST, method = RequestMethod.GET, consumes = "application/json")
 	@ResponseBody
-	public void followUser(@PathVariable("login") String login, @RequestBody String loginToFollow) throws FunctionalException
+	public void followUser(@PathVariable("id") String loginToFollow) throws FunctionalException
 	{
 		log.debug("REST request to follow user login : {} ", loginToFollow);
 
@@ -41,21 +45,24 @@ public class ContactsController extends AbstractRESTController
 
 	}
 
-	@RequestMapping(value = "/rest/users/{login}/removeFriend", method = RequestMethod.POST, consumes = "application/json")
+	// /rest/users/{login}/removeFriend
+	@RequestMapping(value = FRIEND_REMOVE_REST, method = RequestMethod.GET, consumes = "application/json")
 	@ResponseBody
-	public void removeFriend(@PathVariable("login") String login, @RequestBody String friend) throws FunctionalException
+	public void removeFriend(@PathVariable("id") String loginToRemove) throws FunctionalException
 	{
-		log.debug("REST request to remove friendLogin : {}", friend);
-		this.userPipelineManager.onForget(friend);
+		log.debug("REST request to remove friendLogin : {}", loginToRemove);
+		this.userPipelineManager.onForget(loginToRemove);
 	}
 
-	@RequestMapping(value = "/rest/users/suggestions", method = RequestMethod.GET, produces = "application/json")
+	// /rest/users/suggestions
+	@RequestMapping(value = USER_SUGGESTIONS_REST, method = RequestMethod.GET, produces = "application/json")
 	public void getSuggestions(HttpServletResponse response) throws FunctionalException
 	{
 		this.writeWithView((Object) this.contactsService.getUserSuggestions(), response, UserView.Minimum.class);
 	}
 
-	@RequestMapping(value = "/rest/userFetch/followers", method = RequestMethod.POST, consumes = "application/json")
+	// /rest/userFetch/followers
+	@RequestMapping(value = FOLLOWERSLINE_REST, method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public void searchFollowers(@Valid @RequestBody UserFetchRange fetchRange, HttpServletResponse response) throws FunctionalException
 	{
@@ -65,7 +72,8 @@ public class ContactsController extends AbstractRESTController
 				response, UserView.Minimum.class);
 	}
 
-	@RequestMapping(value = "/rest/userFetch/friends", method = RequestMethod.POST, consumes = "application/json")
+	// /rest/userFetch/friends
+	@RequestMapping(value = FRIENDSLINE_REST, method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public void searchFriends(@Valid @RequestBody UserFetchRange fetchRange, HttpServletResponse response) throws FunctionalException
 	{
@@ -73,11 +81,6 @@ public class ContactsController extends AbstractRESTController
 				+ fetchRange.getCount());
 		this.writeWithView(contactsService.getFriendsForUser(fetchRange.getFunctionalKey(), fetchRange.getStartUser(), fetchRange.getCount()),
 				response, UserView.Minimum.class);
-	}
-
-	public void setStatslineService(StatslineService statslineService)
-	{
-		this.statslineService = statslineService;
 	}
 
 	public void setContactsService(ContactsService contactsService)

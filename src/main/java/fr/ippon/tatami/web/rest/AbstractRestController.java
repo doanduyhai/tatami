@@ -22,9 +22,9 @@ import fr.ippon.tatami.web.json.view.JacksonView;
  * @author DuyHai DOAN
  */
 @Controller
-public abstract class AbstractRESTController
+public abstract class AbstractRestController
 {
-	private final Logger log = LoggerFactory.getLogger(AbstractRESTController.class);
+	private final Logger log = LoggerFactory.getLogger(AbstractRestController.class);
 
 	protected JacksonViewAwareHttpMessageConverter jacksonConverter;
 

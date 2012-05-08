@@ -151,6 +151,11 @@ function registerLoginRedirectListener()
 	});
 }
 
+var idRegExp = new RegExp("\{id\}", "g");
 
-
-
+function replaceIdInURL(url,id)
+{
+	var newUrl = url.replace(idRegExp,id);
+	
+	return newUrl;
+}

@@ -1,11 +1,11 @@
 /*
  * Tweet actions 
  */
-function addFavoriteTweet(tweet) {
+function addFavoriteTweet(tweetId) {
 	
 	$.ajax({
 		type: HTTP_GET,
-		url: "rest/likeTweet/" + tweet,
+		url: replaceIdInURL(FAVORITE_ADD_REST,tweetId),
 		dataType: JSON_DATA,
         success: function()
         {
@@ -22,10 +22,10 @@ function addFavoriteTweet(tweet) {
 }
 
 
-function removeFavoriteTweet(tweet) {
+function removeFavoriteTweet(tweetId) {
 	$.ajax({
 		type: HTTP_GET,
-		url: "rest/unlikeTweet/" + tweet,
+		url: replaceIdInURL(FAVORITE_REMOVE_REST,tweetId),
 		dataType: JSON_DATA,
         success: function()
         {
@@ -41,11 +41,11 @@ function removeFavoriteTweet(tweet) {
 	return false;
 }
 
-function removeTweet(target)
+function removeTweet(tweetId)
 {
 	$.ajax({
 		type: HTTP_GET,
-		url: "rest/removeTweet/" + target,
+		url: replaceIdInURL(TWEET_REMOVE_REST,tweetId),
 		dataType: JSON_DATA,
         success: function()
         {
@@ -226,6 +226,11 @@ function registerRefreshLineListeners($target)
 
 function registerFetchTweetHandlers($target)
 {
+	$target
+	.find('.pageSelector option:eq(0)').html(FIRST_FETCH_SIZE).end()
+	.find('.pageSelector option:eq(1)').html(SECOND_FETCH_SIZE).end()
+	.find('.pageSelector option:eq(2)').html(THIRD_FETCH_SIZE);
+	
 	$target.find('.tweetPagingButton').click(function(event)
 	{
 		var $target = $(event.target);

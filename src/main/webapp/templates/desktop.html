@@ -100,33 +100,9 @@
 				
         		var login =  /*[[${sec.principal.username}]]*/ "jdubois";
             	
-				// Retrieve the default Nb Tweets value from the server				           
-				var DEFAULT_TWEET_LIST_SIZE = /*[[${DEFAULT_TWEET_LIST_SIZE}]]*/ 10;
-				
-				// Retrieve the default Nb Favorite value from the server				           
-				var DEFAULT_FAVORITE_LIST_SIZE = /*[[${DEFAULT_FAVORITE_LIST_SIZE}]]*/ 10;
-				
-				// Retrieve the default Nb Tag value from the server				           
-				var DEFAULT_TAG_LIST_SIZE = /*[[${DEFAULT_TAG_LIST_SIZE}]]*/ 10;
-
-				// Retrieve the default tweet first fetch size value from the server				           
-				var FIRST_FETCH_SIZE = /*[[${FIRST_FETCH_SIZE}]]*/ 5;
-				
-				// Retrieve the default tweet second fetch size value from the server				           
-				var SECOND_FETCH_SIZE = /*[[${SECOND_FETCH_SIZE}]]*/ 10;
-				
-				// Retrieve the default tweet third fetch size value from the server				           
-				var THIRD_FETCH_SIZE = /*[[${THIRD_FETCH_SIZE}]]*/ 20;
-				
-				var HTTP_GET = 'GET';
-				
-				var HTTP_POST = 'POST';
-				
-				var JSON_DATA = 'json';
-				
-				var JSON_CONTENT = 'application/json; charset=UTF-8';
             	/*]]>*/
         	</script>
+        	<script src="/js/constants.js" th:src="@{/js/constants.js}"></script>
         	<script src="/assets/js/google-jsapi.min.js" th:src="@{/assets/js/google-jsapi.min.js}"></script>
         	<script src="/assets/js/tatami/chart.js" th:src="@{/assets/js/tatami/chart.js}"></script>
         	<script src="/assets/js/tatami/raphael-min.js" th:src="@{/assets/js/tatami/raphael-min.js}"></script>

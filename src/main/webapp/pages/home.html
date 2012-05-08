@@ -57,8 +57,7 @@
 								</table>
 							</div>															
 							<footer class="row-fluid noMargin" 
-								data-userFetch-url="rest/userFetch/friends"
-								th:attr="data-userFetch-key=${sec.principal.username}"
+								th:attr="data-userFetch-url=${FRIENDSLINE_REST},data-userFetch-key=${sec.principal.username}"
 								data-userFetch-type="friends">
 								
 								<div class="span9 noMargin middle center">
@@ -67,9 +66,9 @@
 								<div class="span3 noMargin right">
 									<em>#</em>
 									<select class="pageSelector">
-										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
 									</select>
 								</div>
 							</footer>											
@@ -93,8 +92,7 @@
 								</table>
 							</div>															
 							<footer class="row-fluid noMargin" 
-								data-userFetch-url="rest/userFetch/followers"
-								th:attr="data-userFetch-key=${sec.principal.username}"
+								th:attr="data-userFetch-url=${FOLLOWERSLINE_REST},data-userFetch-key=${sec.principal.username}"
 								data-userFetch-type="followers">
 								
 								<div class="span9 noMargin middle center">
@@ -103,9 +101,9 @@
 								<div class="span3 noMargin right">
 									<em>#</em>
 									<select class="pageSelector">
-										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
 									</select>
 								</div>
 							</footer>														
@@ -191,8 +189,7 @@
 							</div>
 							
 							<footer class="row-fluid noMargin" 
-								data-tweetFetch-url="rest/tweetFetch/timeline"
-								th:attr="data-tweetFetch-key=${sec.principal.username}"
+								th:attr="data-tweetFetch-url=${TIMELINE_REST},data-tweetFetch-key=${sec.principal.username}"
 								data-tweetFetch-type="timeline">
 								<div class="span10 noMargin middle center">
 									<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
@@ -200,9 +197,9 @@
 								<div class="span2 noMargin right">
 									<em>#</em>
 									<select class="pageSelector">
-										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
 									</select>
 								</div>
 							</footer>
@@ -229,9 +226,8 @@
 								</table>
 							</div>
 																				
-							<footer class="row-fluid"
-								data-tweetFetch-url="rest/tweetFetch/favoriteline" 
-								th:attr="data-tweetFetch-key=${sec.principal.username}"
+							<footer class="row-fluid" 
+								th:attr="data-tweetFetch-url=${FAVORITELINE_REST},data-tweetFetch-key=${sec.principal.username}"
 								data-tweetFetch-type="favoriteline">
 								<div class="span10 noMargin middle center">
 									<button class="tweetPagingButton row-fluid btn btn-primary" type="button">Click to get more ...</button>
@@ -239,9 +235,9 @@
 								<div class="span2 noMargin right">
 									<em>#</em>
 									<select class="pageSelector">
-										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
 									</select>
 								</div>
 							</footer>												
@@ -270,7 +266,7 @@
 							</div>
 												
 							<footer class="row-fluid"
-								data-tweetFetch-url="rest/tweetFetch/userline"
+								th:attr="data-tweetFetch-url=${USERLINE_REST}"
 								data-tweetFetch-key=""  
 								data-tweetFetch-type="userline">
 								<div class="span10 noMargin middle center">
@@ -279,9 +275,9 @@
 								<div class="span2 noMargin right">
 									<em>#</em>
 									<select class="pageSelector">
-										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
 									</select>
 								</div>
 							</footer>												
@@ -309,7 +305,7 @@
 							</div>
 													
 							<footer class="row-fluid" 
-								data-tweetFetch-url="rest/tweetFetch/tagline"
+								th:attr="data-tweetFetch-url=${TAGLINE_REST}"
 								data-tweetFetch-key="" 
 								data-tweetFetch-type="tagline">
 								<div class="span10 noMargin middle center">
@@ -318,9 +314,9 @@
 								<div class="span2 noMargin right">
 									<em>#</em>
 									<select class="pageSelector">
-										<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
-										<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
 									</select>
 								</div>
 							</footer>	

@@ -23,7 +23,7 @@
 	</div>
 	
 	<footer class="row-fluid" 
-		data-tweetFetch-url="rest/tweetFetch/userline"
+		th:attr="data-tweetFetch-url=${USERLINE_REST}"
 		data-tweetFetch-key=""  
 		data-tweetFetch-type="userline">
 		<div class="span9 fullHeight middle">
@@ -32,9 +32,9 @@
 		<div class="span3 right">
 			<em>#</em>&nbsp;
 			<select class="pageSelector">
-				<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
-				<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
-				<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+				<option>1</option>
+				<option>2</option>
+				<option>3</option>
 			</select>
 		</div>
 	</footer>

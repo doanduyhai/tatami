@@ -36,8 +36,7 @@
 					</table>
 				</div>															
 				<footer class="row-fluid noMargin" 
-					data-userFetch-url="rest/userFetch/friends"
-					th:attr="data-userFetch-key=${sec.principal.username}"
+					th:attr="data-userFetch-url=${FRIENDSLINE_REST},data-userFetch-key=${sec.principal.username}"
 					data-userFetch-type="friends">
 					
 					<div class="span9 fullHeight middle">
@@ -46,9 +45,9 @@
 					<div class="span3 right">
 						<em>#</em>
 						<select class="pageSelector">
-							<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
-							<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
-							<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+							<option>1</option>
+							<option>2</option>
+							<option>3</option>
 						</select>
 					</div>
 				</footer>								
@@ -72,8 +71,7 @@
 					</table>
 				</div>															
 				<footer class="row-fluid noMargin" 
-					data-userFetch-url="rest/userFetch/followers"
-					th:attr="data-userFetch-key=${sec.principal.username}"
+					th:attr="data-userFetch-url=${FOLLOWERSLINE_REST},data-userFetch-key=${sec.principal.username}"
 					data-userFetch-type="followers">
 					
 					<div class="span9 fullHeight middle">
@@ -82,9 +80,9 @@
 					<div class="span3 right">
 						<em>#</em>
 						<select class="pageSelector">
-							<option th:inline="text">[[${FIRST_FETCH_SIZE}]]</option>
-							<option th:inline="text">[[${SECOND_FETCH_SIZE}]]</option>
-							<option th:inline="text">[[${THIRD_FETCH_SIZE}]]</option>
+							<option>1</option>
+							<option>2</option>
+							<option>3</option>
 						</select>
 					</div>
 				</footer>					

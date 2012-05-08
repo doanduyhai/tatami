@@ -1,12 +1,18 @@
 package fr.ippon.tatami.web;
 
+import static fr.ippon.tatami.web.view.RestAPIConstants.FAVORITELINE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.FOLLOWERSLINE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.FRIENDSLINE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.TAGLINE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.TIMELINE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.USERLINE_REST;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import fr.ippon.tatami.service.user.UserService;
-import fr.ippon.tatami.service.util.TatamiConstants;
 import fr.ippon.tatami.web.view.ViewConstants;
 
 /**
@@ -21,15 +27,12 @@ public class MobileFragmentController
 	@ModelAttribute
 	public void defaultFetchSize(Model model)
 	{
-
-		// Set the default tweet first fetch to be defined as Javascript constant
-		model.addAttribute("FIRST_FETCH_SIZE", TatamiConstants.FIRST_FETCH_SIZE);
-
-		// Set the default tweet second fetch to be defined as Javascript constant
-		model.addAttribute("SECOND_FETCH_SIZE", TatamiConstants.SECOND_FETCH_SIZE);
-
-		// Set the default tweet third fetch to be defined as Javascript constant
-		model.addAttribute("THIRD_FETCH_SIZE", TatamiConstants.THIRD_FETCH_SIZE);
+		model.addAttribute("FRIENDSLINE_REST", FRIENDSLINE_REST);
+		model.addAttribute("FOLLOWERSLINE_REST", FOLLOWERSLINE_REST);
+		model.addAttribute("TIMELINE_REST", TIMELINE_REST);
+		model.addAttribute("FAVORITELINE_REST", FAVORITELINE_REST);
+		model.addAttribute("USERLINE_REST", USERLINE_REST);
+		model.addAttribute("TAGLINE_REST", TAGLINE_REST);
 	}
 
 	@RequestMapping(ViewConstants.URL_MOBILE_FRAGMENT_PROFILE)

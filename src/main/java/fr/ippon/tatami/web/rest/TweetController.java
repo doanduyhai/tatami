@@ -1,5 +1,16 @@
 package fr.ippon.tatami.web.rest;
 
+import static fr.ippon.tatami.web.view.RestAPIConstants.DAY_STATS_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.FAVORITELINE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.FAVORITE_ADD_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.FAVORITE_REMOVE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.TAGLINE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.TIMELINE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.TWEET_POST_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.TWEET_REMOVE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.USERLINE_REST;
+import static fr.ippon.tatami.web.view.RestAPIConstants.WEEK_STATS_REST;
+
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -40,7 +51,7 @@ import fr.ippon.tatami.web.json.view.TweetView;
  * @author DuyHai DOAN
  */
 @Controller
-public class TweetController extends AbstractRESTController
+public class TweetController extends AbstractRestController
 {
 	private final Logger log = LoggerFactory.getLogger(TweetController.class);
 
@@ -58,7 +69,8 @@ public class TweetController extends AbstractRESTController
 
 	private FavoritePipelineManager favoritePipelineManager;
 
-	@RequestMapping(value = "/rest/tweetStats/day", method = RequestMethod.GET, produces = "application/json")
+	// /rest/tweetStats/day
+	@RequestMapping(value = DAY_STATS_REST, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public Collection<UserTweetStat> listDayTweetStats()
 	{
@@ -67,7 +79,8 @@ public class TweetController extends AbstractRESTController
 		return statslineService.getDayline(new Date());
 	}
 
-	@RequestMapping(value = "/rest/tweetStats/week", method = RequestMethod.GET, produces = "application/json")
+	// /rest/tweetStats/week
+	@RequestMapping(value = WEEK_STATS_REST, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public Collection<DayTweetStat> listWeekTweetStats()
 	{
@@ -106,7 +119,8 @@ public class TweetController extends AbstractRESTController
 		}
 	}
 
-	@RequestMapping(value = "/rest/tweets", method = RequestMethod.POST)
+	// /rest/tweets
+	@RequestMapping(value = TWEET_POST_REST, method = RequestMethod.POST)
 	@ResponseBody
 	public Tweet postTweet(@Valid @RequestBody Tweet tweet) throws FunctionalException
 	{
@@ -114,9 +128,10 @@ public class TweetController extends AbstractRESTController
 		return tweetPipelineManager.onPost(tweet.getContent());
 	}
 
-	@RequestMapping(value = "/rest/removeTweet/{tweet}", method = RequestMethod.GET)
+	// /rest/removeTweet/{tweet}
+	@RequestMapping(value = TWEET_REMOVE_REST, method = RequestMethod.GET)
 	@ResponseBody
-	public boolean removeTweet(@PathVariable("tweet") String tweetId) throws FunctionalException
+	public boolean removeTweet(@PathVariable("id") String tweetId) throws FunctionalException
 	{
 		log.debug("REST request to remove tweet : {}", tweetId);
 		tweetPipelineManager.onRemove(tweetId);
@@ -124,29 +139,32 @@ public class TweetController extends AbstractRESTController
 		return true;
 	}
 
-	@RequestMapping(value = "/rest/likeTweet/{tweet}", method = RequestMethod.GET)
+	// /rest/likeTweet/{tweet}
+	@RequestMapping(value = FAVORITE_ADD_REST, method = RequestMethod.GET)
 	@ResponseBody
-	public boolean likeTweet(@PathVariable("tweet") String tweet) throws FunctionalException
+	public boolean likeTweet(@PathVariable("id") String tweetId) throws FunctionalException
 	{
-		log.debug("REST request to like tweet : {} ", tweet);
+		log.debug("REST request to like tweet : {} ", tweetId);
 
-		this.favoritePipelineManager.onAddToFavorite(tweet);
+		this.favoritePipelineManager.onAddToFavorite(tweetId);
 
 		return true;
 	}
 
-	@RequestMapping(value = "/rest/unlikeTweet/{tweet}", method = RequestMethod.GET)
+	// /rest/unlikeTweet/{tweet}
+	@RequestMapping(value = FAVORITE_REMOVE_REST, method = RequestMethod.GET)
 	@ResponseBody
-	public boolean unlikeTweet(@PathVariable("tweet") String tweet) throws FunctionalException
+	public boolean unlikeTweet(@PathVariable("id") String tweetId) throws FunctionalException
 	{
-		log.debug("REST request to unlike tweet : {} ", tweet);
+		log.debug("REST request to unlike tweet : {} ", tweetId);
 
-		this.favoritePipelineManager.onRemoveFromFavorite(tweet);
+		this.favoritePipelineManager.onRemoveFromFavorite(tweetId);
 
 		return true;
 	}
 
-	@RequestMapping(value = "/rest/tweetFetch/timeline", method = RequestMethod.POST, consumes = "application/json")
+	// /rest/tweetFetch/timeline
+	@RequestMapping(value = TIMELINE_REST, method = RequestMethod.POST, consumes = "application/json")
 	public void timelineTweetFetch(@Valid @RequestBody TweetFetchRange fetchRange, HttpServletResponse response) throws FunctionalException
 	{
 
@@ -160,7 +178,8 @@ public class TweetController extends AbstractRESTController
 				TweetView.Full.class);
 	}
 
-	@RequestMapping(value = "/rest/tweetFetch/userline", method = RequestMethod.POST, consumes = "application/json")
+	// /rest/tweetFetch/userline
+	@RequestMapping(value = USERLINE_REST, method = RequestMethod.POST, consumes = "application/json")
 	public void userlineTweetFetch(@Valid @RequestBody TweetFetchRange fetchRange, HttpServletResponse response) throws FunctionalException
 	{
 
@@ -176,7 +195,8 @@ public class TweetController extends AbstractRESTController
 				response, TweetView.Full.class);
 	}
 
-	@RequestMapping(value = "/rest/tweetFetch/favoriteline", method = RequestMethod.POST, consumes = "application/json")
+	// /rest/tweetFetch/favoriteline
+	@RequestMapping(value = FAVORITELINE_REST, method = RequestMethod.POST, consumes = "application/json")
 	public void favoriteTweetFetch(@Valid @RequestBody TweetFetchRange fetchRange, HttpServletResponse response) throws FunctionalException
 	{
 
@@ -190,7 +210,8 @@ public class TweetController extends AbstractRESTController
 				TweetView.Full.class);
 	}
 
-	@RequestMapping(value = "/rest/tweetFetch/tagline", method = RequestMethod.POST, consumes = "application/json")
+	// /rest/tweetFetch/tagline
+	@RequestMapping(value = TAGLINE_REST, method = RequestMethod.POST, consumes = "application/json")
 	public void taglineTweetFetch(@Valid @RequestBody TweetFetchRange fetchRange, HttpServletResponse response) throws FunctionalException
 	{
 
