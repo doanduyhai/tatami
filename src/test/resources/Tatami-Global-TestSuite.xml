@@ -49,7 +49,14 @@
    	  	<class name="fr.ippon.tatami.service.pipeline.TweetPipelineManagerTest"/>
    	  	<class name="fr.ippon.tatami.service.pipeline.FavoritePipelineManagerTest"/>
     </classes>
-  </test>         
+  </test>
+  
+  <test name="utilTests">
+    <classes>
+    	<class name="fr.ippon.tatami.service.util.JavascriptConstantsBuilderTest"/>
+    </classes>
+  </test>  	  
+           
 </suite>
 
 

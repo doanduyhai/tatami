@@ -47,7 +47,8 @@ var directContatTabClick = true;
 
     // auto-refresh
     $('a[data-toggle="tab"]').on('shown', function(e) {
-    	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' || e.target.hash == '#taglinePanel') {
+    	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' 
+    		|| e.target.hash == '#taglinePanel' || e.target.hash == '#favlinePanel') {
     		refreshCurrentLine();
     	}
     	else if (e.target.hash == '#piechartPanel') {
@@ -61,7 +62,6 @@ var directContatTabClick = true;
     // browser's refresh shortcut override
 	shortcut.add("Ctrl+R", function() {
 		refreshCurrentLine();
-		refreshCurrentUserLine();
 	});
 	
 	$(function() {

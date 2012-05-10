@@ -11,9 +11,9 @@ function addFavoriteTweet(tweetId) {
         {
 			setTimeout(function()
 			{
-	        	$('#favoriteTab').tab('show');
+	        	//$('#favoriteTab').tab('show');
 	        	refreshCurrentLine();
-			},300);	
+			},100);	
 
         }
     });
@@ -31,9 +31,9 @@ function removeFavoriteTweet(tweetId) {
         {
 			setTimeout(function()
 			{
-	        	$('#favoriteTab').tab('show');
+	        	//$('#favoriteTab').tab('show');
 	        	refreshCurrentLine();
-			},300);	        	
+			},100);	        	
 
         }
     });
@@ -246,13 +246,13 @@ function registerFetchTweetHandlers($target)
 /*
  *  Tweet template handling
  */
-function fillTweetTemplate(tweet,data_line_type)
+function fillTweetTemplate(tweet,data_tweetFetch_type)
 {
 	$newTweetLine = $('#tweetTemplate').clone().attr('id','');
 	
 	$newTweetLine.find('.tweetGravatar').attr('data-user',tweet.login).attr('src','http://www.gravatar.com/avatar/'+tweet.gravatar+'?s=32');
 	
-	if(data_line_type != 'userline')
+	if(data_tweetFetch_type != 'userline')
 	{
 		if(login != tweet.login)
 		{
@@ -273,16 +273,20 @@ function fillTweetTemplate(tweet,data_line_type)
 	}
 	
 	// Conditional rendering for like icon
-	if(data_line_type != 'favoriteline' && tweet.addToFavorite)
+	if(tweet.addToFavorite)
 	{
-		$newTweetLine.find('.tweetAction').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="frame icon-star"></i></a>&nbsp;&nbsp;');
+		$newTweetLine.find('.tweetAction').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="icon-star"></i>&nbsp;</a>');
 	}
-
-	// Conditional rendering for unlike icon
-	if(data_line_type == 'favoriteline' && !tweet.addToFavorite)
+	else
 	{
-		$newTweetLine.find('.tweetAction').append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="frame icon-star-empty"></i></a>&nbsp;&nbsp;');
-	}	
+		$newTweetLine.find('.tweetAction')
+		.append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="icon-star-empty"></i>&nbsp;</a>');
+		
+		if(data_tweetFetch_type != 'favoriteline')
+		{
+			$newTweetLine.find('tr').addClass('favoriteTweet');
+		}	
+	}		
 	
 	// Set tweetId
 	$newTweetLine.find('article').attr('data-tweetId',tweet.tweetId);

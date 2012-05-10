@@ -11,9 +11,9 @@ function addFavoriteTweet(tweetId) {
         {
 			setTimeout(function()
 			{
-	        	$('#favTab').tab('show');
+	        	//$('#favTab').tab('show');
 	        	refreshCurrentLine();
-			},300);	
+			},100);	
 
         }
     });
@@ -31,9 +31,9 @@ function removeFavoriteTweet(tweetId) {
         {
 			setTimeout(function()
 			{
-	        	$('#favTab').tab('show');
+	        	//$('#favTab').tab('show');
 	        	refreshCurrentLine();
-			},300);	        	
+			},100);	        	
 
         }
     });
@@ -228,18 +228,23 @@ function fillTweetTemplate(tweet,data_tweetFetch_type)
 	if(tweet.deletable)
 	{
 		$newTweetLine.find('.tweetAction').append('<a href="#" title="Remove" data-remove="'+tweet.tweetId+'"><i class="icon-remove"></i>&nbsp;</a>');
+		
 	}	
 	
 	// Conditional rendering for like icon
-	if(data_tweetFetch_type != 'favoriteline' && tweet.addToFavorite)
+	if(tweet.addToFavorite)
 	{
 		$newTweetLine.find('.tweetAction').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="icon-star"></i>&nbsp;</a>');
 	}
-
-	// Conditional rendering for unlike icon
-	if(data_tweetFetch_type == 'favoriteline' && !tweet.addToFavorite)
+	else
 	{
-		$newTweetLine.find('.tweetAction').append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="icon-star-empty"></i>&nbsp;</a>');
+		$newTweetLine.find('.tweetAction')
+		.append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="icon-star-empty"></i>&nbsp;</a>');
+		
+		if(data_tweetFetch_type != 'favoriteline')
+		{
+			$newTweetLine.find('tr').addClass('favoriteTweet');
+		}	
 	}	
 	
 	// Set tweetId

@@ -10,7 +10,8 @@ var directContatTabClick = true;
 	
     // Tweet lines refresh
     $('a[data-toggle="tab"]').on('shown', function(e) {
-    	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' || e.target.hash == '#taglinePanel') {
+    	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' 
+    		|| e.target.hash == '#taglinePanel' || e.target.hash == '#favlinePanel') {
     		if(!clickFromLink)
     		{	
     			refreshCurrentLine();

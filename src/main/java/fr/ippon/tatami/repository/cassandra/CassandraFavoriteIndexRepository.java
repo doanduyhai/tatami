@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import me.prettyprint.cassandra.model.CqlQuery;
 import me.prettyprint.cassandra.model.thrift.ThriftCounterColumnQuery;
+import me.prettyprint.hector.api.beans.HCounterColumn;
 import me.prettyprint.hector.api.factory.HFactory;
 import me.prettyprint.hector.api.mutation.Mutator;
 import me.prettyprint.hector.api.query.CounterQuery;
@@ -73,8 +74,17 @@ public class CassandraFavoriteIndexRepository extends CassandraAbstractRepositor
 		CounterQuery<String, String> counter = new ThriftCounterColumnQuery<String, String>(keyspaceOperator, se, se);
 
 		counter.setColumnFamily(COUNTER_CF).setKey(FAVORITE_TWEET_INDEX_COUNTER).setName(tweetId);
-		return counter.execute().get().getValue();
+
+		HCounterColumn<String> counterColumn = counter.execute().get();
+
+		if (counterColumn == null)
+		{
+			return 0;
+		}
+		else
+		{
+			return counter.execute().get().getValue();
+		}
 
 	}
-
 }
