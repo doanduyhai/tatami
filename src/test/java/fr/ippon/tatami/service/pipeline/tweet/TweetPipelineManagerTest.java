@@ -1,4 +1,4 @@
-package fr.ippon.tatami.service.pipeline;
+package fr.ippon.tatami.service.pipeline.tweet;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -19,6 +19,8 @@ import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.domain.UserTweetStat;
 import fr.ippon.tatami.exception.FunctionalException;
+import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
+import fr.ippon.tatami.service.pipeline.tweet.TweetPipelineManager;
 import fr.ippon.tatami.service.security.AuthenticationService;
 import fr.ippon.tatami.service.tweet.TweetService;
 

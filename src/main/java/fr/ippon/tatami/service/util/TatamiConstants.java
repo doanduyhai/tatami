@@ -34,18 +34,26 @@ public class TatamiConstants
 
 	public static final int THIRD_FETCH_SIZE = 20;
 
-	// &#x23; is the HTML encoded version of the # character
-	public static final String HASHTAG_REGEXP = "&#x23;(\\w+)";
+	public static final String HASHTAG_REGEXP = "#(\\w+)";
 
-	public static final String HASHTAG = "&#x23;";
+	public static final String HTML_ENCODED_HASHTAG_REGEXP = "&#x23;(\\w+)";
+
+	public static final String HASHTAG = "#";
 
 	public static final String TAG_LINK_PATTERN = "<a href='#' data-tag='$1' title='Show $1 related tweets'><em>#$1</em></a>";
 
-	// &#x40; is the HTML encoded version of the @ character
-	public static final String USER_REGEXP = "&#x40;(\\w+)";
+	public static final String USER_REGEXP = "@(\\w+)";
 
-	public static final String USERTAG = "&#x40;";
+	public static final String HTML_ENCODED_USER_REGEXP = "&#x40;(\\w+)";
+
+	public static final String USERTAG = "@";
 
 	public static final String USER_LINK_PATTERN = "<a href='#' data-user='$1' title='Show $1 tweets'><em>@$1</em></a>";
+
+	public static final String LINK_REGEXP = "((?:(?:https?|ftp|file)://|www)[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])";
+
+	public static final String LINK_PATTERN = "<a href='_URL_' title='_URL_' target='_blank'>_SHORT-URL_</a>";
+
+	public static final String LINK_PROTOCOL_PREFIX = "(https?|ftp|file)://";
 
 }

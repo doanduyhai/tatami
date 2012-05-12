@@ -41,8 +41,8 @@ import fr.ippon.tatami.service.lines.StatslineService;
 import fr.ippon.tatami.service.lines.TaglineService;
 import fr.ippon.tatami.service.lines.TimelineService;
 import fr.ippon.tatami.service.lines.UserlineService;
-import fr.ippon.tatami.service.pipeline.FavoritePipelineManager;
-import fr.ippon.tatami.service.pipeline.TweetPipelineManager;
+import fr.ippon.tatami.service.pipeline.tweet.FavoritePipelineManager;
+import fr.ippon.tatami.service.pipeline.tweet.TweetPipelineManager;
 import fr.ippon.tatami.web.json.view.TweetView;
 
 /**

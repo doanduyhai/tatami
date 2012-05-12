@@ -13,7 +13,7 @@ import org.joda.time.DateTime;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.UserTweetStat;
 import fr.ippon.tatami.repository.StatsRepository;
-import fr.ippon.tatami.service.pipeline.TweetHandler;
+import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
 
 public class StatslineService extends AbstractlineService implements TweetHandler
 {

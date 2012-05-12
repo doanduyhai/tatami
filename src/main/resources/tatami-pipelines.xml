@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="userPipelineManager" class="fr.ippon.tatami.service.pipeline.user.UserPipelineManager">
+		<property name="userHandlers">
+			<list>
+				<ref bean="timelineService"/>
+				<ref bean="contactsService"/>
+			</list>
+		</property>	
+	</bean>
+	
+	<bean id="tweetPipelineManager" class="fr.ippon.tatami.service.pipeline.tweet.TweetPipelineManager" >
+		<property name="tweetService" ref="tweetService"/>
+		<property name="userService"  ref="userService"/>
+		<property name="tweetHandlers">
+			<list>
+<!-- 				<ref bean="urlShortenerService"/> -->
+				<ref bean="userlineService"/>
+				<ref bean="timelineService"/>
+				<ref bean="taglineService"/>
+				<ref bean="mentionlineService"/>
+				<ref bean="statslineService"/>
+				<ref bean="favoritelineService"/>
+				<ref bean="xssEncodingService"/>
+				<ref bean="contactsService"/>
+				<ref bean="tweetService"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="favoritePipelineManager" class="fr.ippon.tatami.service.pipeline.tweet.FavoritePipelineManager">
+		<property name="tweetService" ref="tweetService"/>
+		<property name="favoriteHandlers">
+			<list>
+				<ref bean="favoritelineService"/>
+				<ref bean="timelineService"/>
+			</list>
+		</property>	
+	</bean>
+	
+	<bean id="userRenderingPipelineManager" class="fr.ippon.tatami.service.pipeline.user.rendering.UserRenderingPipelineManager">
+		<property name="userRenderingHandlers">
+			<list>
+				<ref bean="contactsUserRenderer"/>
+			</list>		
+		</property>
+	</bean>
+
+	<bean id="tweetRenderingPipelineManager" class="fr.ippon.tatami.service.pipeline.tweet.rendering.TweetRenderingPipelineManager">
+		<property name="tweetRenderingHandlers">
+			<list>
+				<ref bean="favoriteTweetRenderer"/>
+				<ref bean="deleteTweetRenderer"/>
+				<ref bean="contentTweetRenderer"/>
+			</list>		
+		</property>
+	</bean>								
+</beans>

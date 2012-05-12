@@ -73,7 +73,7 @@ public class UserController extends AbstractRestController
 	// /rest/usersSearch
 	@RequestMapping(value = USER_SEARCH_REST, method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
-	public void searchUser(@Valid @RequestBody UserSearch userSearch, HttpServletResponse response)
+	public void searchUser(@Valid @RequestBody UserSearch userSearch, HttpServletResponse response) throws FunctionalException
 	{
 		log.debug("REST request to search for user with input {}", userSearch);
 		this.writeWithView(userService.findUser(userSearch.getSearchString()), response, UserView.Minimum.class);

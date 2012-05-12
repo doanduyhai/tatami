@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="abstractlineService" class="fr.ippon.tatami.service.lines.AbstractlineService" abstract="true">
+		<property name="favoriteLineRepository" ref="favoriteRepository"/>
+		<property name="tweetRepository" ref="tweetRepository"/>
+		<property name="userService" ref="userService"/>
+		<property name="tweetRenderingPipelineManager" ref="tweetRenderingPipelineManager"/>
+
+	</bean>
+	
+	<bean id="timelineService" class="fr.ippon.tatami.service.lines.TimelineService" parent="abstractlineService">
+		<property name="timeLineRepository" ref="timeLineRepository"/>
+		<property name="friendRepository" ref="friendRepository"/>
+		<property name="followedTweetIndexRepository" ref="followedTweetIndexRepository"/>
+	</bean>	
+	
+	<bean id="favoritelineService" class="fr.ippon.tatami.service.lines.FavoritelineService" parent="abstractlineService">
+		<property name="favoriteIndexRepository" ref="favoriteIndexRepository"/>
+	</bean>
+	
+	<bean id="mentionlineService" class="fr.ippon.tatami.service.lines.MentionlineService" parent="abstractlineService">
+		<property name="timeLineRepository" ref="timeLineRepository"/>
+		<property name="contactsService" ref="contactsService"/>
+	</bean>
+	
+	<bean id="statslineService" class="fr.ippon.tatami.service.lines.StatslineService" parent="abstractlineService">
+		<property name="statsRepository" ref="statsRepository"/>
+	</bean>	
+
+	<bean id="taglineService" class="fr.ippon.tatami.service.lines.TaglineService" parent="abstractlineService">
+		<property name="tagLineRepository" ref="tagLineRepository"/>
+		<property name="hashtagDefault" value="${hashtag.default}"/>
+	</bean>
+	
+	<bean id="userlineService" class="fr.ippon.tatami.service.lines.UserlineService" parent="abstractlineService">
+		<property name="userLineRepository" ref="userLineRepository"/>
+	</bean>	
+	
+</beans>

@@ -1,4 +1,4 @@
-package fr.ippon.tatami.service.pipeline;
+package fr.ippon.tatami.service.pipeline.user;
 
 import java.util.List;
 

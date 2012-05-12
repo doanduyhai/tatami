@@ -106,12 +106,12 @@ public class UserService extends AbstractUserService
 
 	}
 
-	public List<User> findUser(String searchString)
+	public List<User> findUser(String searchString) throws FunctionalException
 	{
 		return this.findUser(searchString, 1, USER_SEARCH_LIMIT);
 	}
 
-	public List<User> findUser(String searchString, int start, int end)
+	public List<User> findUser(String searchString, int start, int end) throws FunctionalException
 	{
 		assert end > start : "User search end index should be greater than start index";
 		assert start > 0 : "User search start index should be greater than 1";

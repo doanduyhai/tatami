@@ -9,8 +9,8 @@ import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
 import fr.ippon.tatami.repository.FavoriteIndexRepository;
-import fr.ippon.tatami.service.pipeline.FavoriteHandler;
-import fr.ippon.tatami.service.pipeline.TweetHandler;
+import fr.ippon.tatami.service.pipeline.tweet.FavoriteHandler;
+import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
 import fr.ippon.tatami.service.util.TatamiConstants;
 
 public class FavoritelineService extends AbstractlineService implements FavoriteHandler, TweetHandler

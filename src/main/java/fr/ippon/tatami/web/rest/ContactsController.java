@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import fr.ippon.tatami.domain.json.UserFetchRange;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.service.pipeline.UserPipelineManager;
+import fr.ippon.tatami.service.pipeline.user.UserPipelineManager;
 import fr.ippon.tatami.service.user.ContactsService;
 import fr.ippon.tatami.web.json.view.UserView;
 

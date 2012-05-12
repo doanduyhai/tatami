@@ -57,9 +57,15 @@ import fr.ippon.tatami.service.lines.StatslineService;
 import fr.ippon.tatami.service.lines.TaglineService;
 import fr.ippon.tatami.service.lines.TimelineService;
 import fr.ippon.tatami.service.lines.UserlineService;
-import fr.ippon.tatami.service.pipeline.FavoritePipelineManager;
-import fr.ippon.tatami.service.pipeline.TweetPipelineManager;
-import fr.ippon.tatami.service.pipeline.UserPipelineManager;
+import fr.ippon.tatami.service.pipeline.tweet.FavoritePipelineManager;
+import fr.ippon.tatami.service.pipeline.tweet.TweetPipelineManager;
+import fr.ippon.tatami.service.pipeline.tweet.rendering.TweetRenderingPipelineManager;
+import fr.ippon.tatami.service.pipeline.user.UserPipelineManager;
+import fr.ippon.tatami.service.pipeline.user.rendering.UserRenderingPipelineManager;
+import fr.ippon.tatami.service.renderer.tweet.ContentTweetRenderer;
+import fr.ippon.tatami.service.renderer.tweet.DeleteTweetRenderer;
+import fr.ippon.tatami.service.renderer.tweet.FavoriteTweetRenderer;
+import fr.ippon.tatami.service.renderer.user.ContactsUserRenderer;
 import fr.ippon.tatami.service.security.AuthenticationService;
 import fr.ippon.tatami.service.tweet.TweetService;
 import fr.ippon.tatami.service.tweet.XssEncodingService;
@@ -70,7 +76,10 @@ import fr.ippon.tatami.service.user.UserService;
 {
 		"classpath:tatami-test-properties.xml",
 		"classpath:tatami-repository.xml",
-		"classpath:tatami-service.xml"
+		"classpath:tatami-user-service.xml",
+		"classpath:tatami-tweet-service.xml",
+		"classpath:tatami-lines-service.xml",
+		"classpath:tatami-pipelines.xml"
 })
 public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringContextTests
 {
@@ -153,10 +162,28 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 	protected FavoritePipelineManager favoritePipelineManager;
 
 	@Inject
+	protected UserRenderingPipelineManager userRenderingPipelineManager;
+
+	@Inject
+	protected TweetRenderingPipelineManager tweetRenderingPipelineManager;
+
+	@Inject
 	protected TweetService tweetService;
 
 	@Inject
 	protected XssEncodingService xssEncodingService;
+
+	@Inject
+	protected ContactsUserRenderer contactsUserRenderer;
+
+	@Inject
+	protected FavoriteTweetRenderer favoriteTweetRenderer;
+
+	@Inject
+	protected DeleteTweetRenderer deleteTweetRenderer;
+
+	@Inject
+	protected ContentTweetRenderer contentTweetRenderer;
 
 	protected static final Serializer<String> se = StringSerializer.get();
 

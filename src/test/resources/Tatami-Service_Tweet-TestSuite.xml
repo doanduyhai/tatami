@@ -4,6 +4,9 @@
     <classes>
    	  <class name="fr.ippon.tatami.service.tweet.TweetServiceTest"/>
    	  <class name="fr.ippon.tatami.service.tweet.XssEncodingServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.renderer.tweet.FavoriteTweetRendererTest"/>
+   	  <class name="fr.ippon.tatami.service.renderer.tweet.DeleteTweetRendererTest"/>
+   	  <class name="fr.ippon.tatami.service.renderer.tweet.ContentTweetRendererTest"/>
     </classes>
   </test>        
 </suite> 

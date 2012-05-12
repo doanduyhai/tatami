@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="authenticationService" class="fr.ippon.tatami.service.security.AuthenticationService">
+		<property name="userRepository" ref="userRepository"/>
+	</bean>
+
+	<bean id="abstractUserService" class="fr.ippon.tatami.service.user.AbstractUserService" abstract="true">
+		<property name="friendRepository" ref="friendRepository"/>
+		<property name="userRepository" ref="userRepository"/>
+		<property name="userRenderingPipelineManager"  ref="userRenderingPipelineManager"/>
+	</bean>
+	
+	<bean id="userService" class="fr.ippon.tatami.service.user.UserService" parent="abstractUserService">
+		<property name="authenticationService" ref="authenticationService"/>
+		<property name="tweetRepository" ref="tweetRepository"/>
+		<property name="userIndexRepository" ref="userIndexRepository"/>
+
+	</bean>
+		
+	<bean id="contactsService" class="fr.ippon.tatami.service.user.ContactsService" parent="abstractUserService">
+		<property name="followerRepository" ref="followerRepository"/>
+		<property name="timeLineRepository" ref="timeLineRepository"/>
+		<property name="followedTweetIndexRepository" ref="followedTweetIndexRepository"/>
+		<property name="userService" ref="userService"/>
+		<property name="statslineService" ref="statslineService"/>
+	</bean>
+	
+	<bean id="contactsUserRenderer" class="fr.ippon.tatami.service.renderer.user.ContactsUserRenderer">
+		<property name="friendRepository" ref="friendRepository"/>
+	</bean>
+	
+</beans>

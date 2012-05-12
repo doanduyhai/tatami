@@ -7,7 +7,7 @@ import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
 import fr.ippon.tatami.repository.TweetRepository;
-import fr.ippon.tatami.service.pipeline.TweetHandler;
+import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
 import fr.ippon.tatami.service.security.AuthenticationService;
 import fr.ippon.tatami.service.util.TimeUUIdReorder;
 

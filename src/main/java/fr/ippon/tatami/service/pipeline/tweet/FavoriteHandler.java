@@ -1,4 +1,4 @@
-package fr.ippon.tatami.service.pipeline;
+package fr.ippon.tatami.service.pipeline.tweet;
 
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.exception.FunctionalException;

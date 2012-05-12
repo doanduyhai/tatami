@@ -1,5 +1,7 @@
 package fr.ippon.tatami.domain;
 
+import static fr.ippon.tatami.service.util.TatamiConstants.LINK_REGEXP;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -80,7 +82,7 @@ public class User
 	private String location;
 
 	@JsonView(UserView.Full.class)
-	@Pattern(regexp = "^((https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])?", message = "The website URL is not valid")
+	@Pattern(regexp = "^" + LINK_REGEXP + "?", message = "The website URL is not valid")
 	@Column(name = "website")
 	private String website;
 

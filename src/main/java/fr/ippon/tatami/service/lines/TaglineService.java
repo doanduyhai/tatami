@@ -15,7 +15,7 @@ import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
 import fr.ippon.tatami.repository.TagLineRepository;
-import fr.ippon.tatami.service.pipeline.TweetHandler;
+import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
 import fr.ippon.tatami.service.util.TatamiConstants;
 
 public class TaglineService extends AbstractlineService implements TweetHandler

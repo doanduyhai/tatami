@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.List;
 
 import fr.ippon.tatami.domain.User;
+import fr.ippon.tatami.exception.FunctionalException;
 import fr.ippon.tatami.repository.FriendRepository;
 import fr.ippon.tatami.repository.UserRepository;
+import fr.ippon.tatami.service.pipeline.user.rendering.UserRenderingPipelineManager;
 
 public abstract class AbstractUserService
 {
@@ -14,28 +16,26 @@ public abstract class AbstractUserService
 
 	protected UserRepository userRepository;
 
-	public List<User> buildUserList(User currentUser, Collection<String> logins)
+	protected UserRenderingPipelineManager userRenderingPipelineManager;
+
+	public List<User> buildUserList(User currentUser, Collection<String> logins) throws FunctionalException
 	{
 		List<User> results = new ArrayList<User>();
-
-		Collection<String> userFriends = this.friendRepository.findFriendsForUser(currentUser);
 
 		User foundUser = null;
 		for (String login : logins)
 		{
 			foundUser = this.userRepository.findUserByLogin(login);
-			if (foundUser != null)
+			if (foundUser == null)
 			{
-				if (userFriends.contains(login))
-				{
-					foundUser.setFollow(false);
-				}
-				else
-				{
-					foundUser.setFollow(true);
-				}
-				results.add(foundUser);
+				throw new FunctionalException("No user found for login '" + login + "'");
 			}
+			else
+			{
+				this.userRenderingPipelineManager.onUserRender(foundUser, currentUser);
+			}
+			results.add(foundUser);
+
 		}
 
 		return results;
@@ -49,6 +49,11 @@ public abstract class AbstractUserService
 	public void setUserRepository(UserRepository userRepository)
 	{
 		this.userRepository = userRepository;
+	}
+
+	public void setUserRenderingPipelineManager(UserRenderingPipelineManager userRenderingPipelineManager)
+	{
+		this.userRenderingPipelineManager = userRenderingPipelineManager;
 	}
 
 }

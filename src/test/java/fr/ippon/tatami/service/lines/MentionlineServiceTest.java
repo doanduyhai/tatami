@@ -51,13 +51,13 @@ public class MentionlineServiceTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "initForMentionlineServiceTest")
 	public void testOnTweetPostSpreadTweetForMentionLine() throws FunctionalException
 	{
-		tweet = this.tweetService.createTransientTweet("Hello &#x40;duyhai, how are you ?");
+		tweet = this.tweetService.createTransientTweet("Hello @duyhai, how are you ?");
 		this.mentionlineService.onTweetPost(tweet);
 
 		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
 
 		assertEquals(duyhaiTimeline.size(), 1, "duyhai' timeline has 1 tweet");
-		assertTrue(duyhaiTimeline.contains(tweet.getTweetId()), "duyhaiTimeline contains 'Hello &#x40;duyhai, how are you ?'");
+		assertTrue(duyhaiTimeline.contains(tweet.getTweetId()), "duyhaiTimeline contains 'Hello @duyhai, how are you ?'");
 	}
 
 	@Test(dependsOnMethods = "testOnTweetPostSpreadTweetForMentionLine")
@@ -81,13 +81,13 @@ public class MentionlineServiceTest extends AbstractCassandraTatamiTest
 
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
 
-		tweet2 = this.tweetService.createTransientTweet("Hello &#x40;duyhai, how are you second time?");
+		tweet2 = this.tweetService.createTransientTweet("Hello @duyhai, how are you second time?");
 		this.mentionlineService.onTweetPost(tweet2);
 
 		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
 
 		assertEquals(duyhaiTimeline.size(), 1, "duyhai' timeline has 1 tweet");
-		assertFalse(duyhaiTimeline.contains(tweet2.getTweetId()), "duyhaiTimeline does not contain 'Hello &#x40;duyhai, how are you second time?'");
+		assertFalse(duyhaiTimeline.contains(tweet2.getTweetId()), "duyhaiTimeline does not contain 'Hello @duyhai, how are you second time?'");
 
 	}
 

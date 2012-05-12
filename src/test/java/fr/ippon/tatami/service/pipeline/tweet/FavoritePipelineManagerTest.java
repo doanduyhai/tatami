@@ -1,4 +1,4 @@
-package fr.ippon.tatami.service.pipeline;
+package fr.ippon.tatami.service.pipeline.tweet;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -16,6 +16,8 @@ import fr.ippon.tatami.AbstractCassandraTatamiTest;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
+import fr.ippon.tatami.service.pipeline.tweet.FavoriteHandler;
+import fr.ippon.tatami.service.pipeline.tweet.FavoritePipelineManager;
 import fr.ippon.tatami.service.security.AuthenticationService;
 
 public class FavoritePipelineManagerTest extends AbstractCassandraTatamiTest

@@ -285,7 +285,7 @@
 	            			<version>2.12</version>
 							<configuration>
 			          			<suiteXmlFiles>
-			            			<suiteXmlFile>src/test/resources/TatamiTestSuite.xml</suiteXmlFile>
+			            			<suiteXmlFile>src/test/resources/Tatami-Global-TestSuite.xml</suiteXmlFile>
 			          			</suiteXmlFiles>
 			        		</configuration>	            			
 	          			</plugin>
@@ -309,7 +309,7 @@
         		<version>2.12</version>
         		<configuration>
           			<suiteXmlFiles>
-            			<suiteXmlFile>src/test/resources/TatamiTestSuite.xml</suiteXmlFile>
+            			<suiteXmlFile>src/test/resources/Tatami-Global-TestSuite.xml</suiteXmlFile>
           			</suiteXmlFiles>
         		</configuration>
       		</plugin>               

@@ -19,8 +19,8 @@ import fr.ippon.tatami.repository.FollowedTweetIndexRepository;
 import fr.ippon.tatami.repository.FollowerRepository;
 import fr.ippon.tatami.repository.TimeLineRepository;
 import fr.ippon.tatami.service.lines.StatslineService;
-import fr.ippon.tatami.service.pipeline.TweetHandler;
-import fr.ippon.tatami.service.pipeline.UserHandler;
+import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
+import fr.ippon.tatami.service.pipeline.user.UserHandler;
 import fr.ippon.tatami.service.util.TatamiConstants;
 
 public class ContactsService extends AbstractUserService implements TweetHandler, UserHandler

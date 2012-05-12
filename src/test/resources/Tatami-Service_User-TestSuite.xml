@@ -4,6 +4,7 @@
     <classes>
    	  <class name="fr.ippon.tatami.service.user.UserServiceTest"/>
    	  <class name="fr.ippon.tatami.service.user.ContactsServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.renderer.user.ContactsUserRendererTest"/>
     </classes>
   </test>         
 </suite> 

@@ -4,7 +4,7 @@ import org.owasp.esapi.reference.DefaultEncoder;
 
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.service.pipeline.TweetHandler;
+import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
 
 public class XssEncodingService implements TweetHandler
 {

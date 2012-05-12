@@ -240,7 +240,7 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "testFindManyUsersByFirstName")
-	public void testFindManyUsersByLastName()
+	public void testFindManyUsersByLastName() throws FunctionalException
 	{
 		List<User> foundUsers = this.userService.findUser("DUPON");
 		assertThat(foundUsers.size(), is(3));
@@ -250,7 +250,7 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "testFindManyUsersByLastName")
-	public void testFindManyUsersByRange()
+	public void testFindManyUsersByRange() throws FunctionalException
 	{
 		user6 = new User();
 		user6.setLogin("user6");
@@ -277,7 +277,7 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "testFindManyUsersByRange")
-	public void testFindManyUsersByOutOfLimitRange()
+	public void testFindManyUsersByOutOfLimitRange() throws FunctionalException
 	{
 		// user3, user6 & user7
 		List<User> foundUsers = this.userService.findUser("Thomas", 3, 10);
@@ -288,7 +288,7 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "testFindManyUsersByOutOfLimitRange")
-	public void testFindManyUsersByOutOfLimitRangeNoResult()
+	public void testFindManyUsersByOutOfLimitRangeNoResult() throws FunctionalException
 	{
 		List<User> foundUsers = this.userService.findUser("Thomas", 7, 10);
 		assertThat(foundUsers.size(), is(0));

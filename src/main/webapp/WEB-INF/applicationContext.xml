@@ -5,7 +5,9 @@
 
 	<import resource="classpath:tatami-properties.xml"/>
 	<import resource="classpath:tatami-repository.xml"/>
-	<import resource="classpath:tatami-service.xml"/>
-	<import resource="classpath:tatami-security.xml"/>
-	
+	<import resource="classpath:tatami-user-service.xml"/>
+	<import resource="classpath:tatami-tweet-service.xml"/>
+	<import resource="classpath:tatami-lines-service.xml"/>
+	<import resource="classpath:tatami-pipelines.xml"/>
+	<import resource="classpath:tatami-security.xml"/>	
 </beans>
