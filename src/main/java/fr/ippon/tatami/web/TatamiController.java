@@ -4,6 +4,9 @@ import static fr.ippon.tatami.service.util.TatamiConstants.DEFAULT_FAVORITE_LIST
 import static fr.ippon.tatami.service.util.TatamiConstants.DEFAULT_TAG_LIST_SIZE;
 import static fr.ippon.tatami.service.util.TatamiConstants.DEFAULT_TWEET_LIST_SIZE;
 import static fr.ippon.tatami.service.util.TatamiConstants.FIRST_FETCH_SIZE;
+import static fr.ippon.tatami.service.util.TatamiConstants.LINK_REGEXP;
+import static fr.ippon.tatami.service.util.TatamiConstants.LINK_SHORT_LENGTH;
+import static fr.ippon.tatami.service.util.TatamiConstants.MAX_CHARACTERS_PER_TWEET;
 import static fr.ippon.tatami.service.util.TatamiConstants.SECOND_FETCH_SIZE;
 import static fr.ippon.tatami.service.util.TatamiConstants.THIRD_FETCH_SIZE;
 import static fr.ippon.tatami.web.view.RestAPIConstants.FAVORITELINE_REST;
@@ -119,6 +122,9 @@ public class TatamiController
 		constantsMap.put("FIRST_FETCH_SIZE", FIRST_FETCH_SIZE);
 		constantsMap.put("SECOND_FETCH_SIZE", SECOND_FETCH_SIZE);
 		constantsMap.put("THIRD_FETCH_SIZE", THIRD_FETCH_SIZE);
+		constantsMap.put("LINK_SHORT_LENGTH", LINK_SHORT_LENGTH);
+		constantsMap.put("LINK_REGEXP", LINK_REGEXP);
+		constantsMap.put("MAX_CHARACTERS_PER_TWEET", MAX_CHARACTERS_PER_TWEET);
 		constantsMap.put("HTTP_GET", "GET");
 		constantsMap.put("HTTP_POST", "POST");
 		constantsMap.put("JSON_DATA", "json");

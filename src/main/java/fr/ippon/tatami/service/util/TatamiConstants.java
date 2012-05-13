@@ -34,6 +34,8 @@ public class TatamiConstants
 
 	public static final int THIRD_FETCH_SIZE = 20;
 
+	public static final int MAX_CHARACTERS_PER_TWEET = 140;
+
 	public static final String HASHTAG_REGEXP = "#(\\w+)";
 
 	public static final String HTML_ENCODED_HASHTAG_REGEXP = "&#x23;(\\w+)";
@@ -52,8 +54,12 @@ public class TatamiConstants
 
 	public static final String LINK_REGEXP = "((?:(?:https?|ftp|file)://|www)[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])";
 
+	public static final String LINK_REGEXP_JAVASCRIPT = "((?:(?:https?|ftp|file):\\/\\/|www)[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])";
+
 	public static final String LINK_PATTERN = "<a href='_URL_' title='_URL_' target='_blank'>_SHORT-URL_</a>";
 
 	public static final String LINK_PROTOCOL_PREFIX = "(https?|ftp|file)://";
+
+	public static final int LINK_SHORT_LENGTH = 13;
 
 }

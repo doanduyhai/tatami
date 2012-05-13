@@ -90,7 +90,11 @@ var directContatTabClick = true;
 		registerUserProfileModalListeners();
 		registerLoginRedirectListener();
 		
+		// Tweet character counter
+		registerTweetCounter();
 		
+		// Typing 'Enter' will post tweet
+		registerEnterKeypress();
 		
 		$('#picture').click(function()
 		{

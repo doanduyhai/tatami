@@ -128,3 +128,21 @@ function replaceIdInURL(url,id)
 	
 	return newUrl;
 }
+
+function registerTweetCounter()
+{
+	$('#tweetContent').jqEasyCounter({
+	    maxChars: MAX_CHARACTERS_PER_TWEET,
+	    maxCharsWarning: MAX_CHARACTERS_PER_TWEET-10,
+	    msgFontSize: '12px',
+	    msgFontColor: '#000',
+	    msgFontFamily: 'Arial',
+	    msgTextAlign: 'left',
+		msgWarningClass: 'badge-warning',
+		msgErrorClass: 'badge-error',
+		msgShortUrl: true,
+		msgShortUrlLength: LINK_SHORT_LENGTH,
+		msgUrlPattern : LINK_REGEXP,		    
+	    msgAppendMethod: 'insertAfter'              
+	});
+}

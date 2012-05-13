@@ -5,6 +5,7 @@ import static fr.ippon.tatami.service.util.TatamiConstants.HTML_ENCODED_USER_REG
 import static fr.ippon.tatami.service.util.TatamiConstants.LINK_PATTERN;
 import static fr.ippon.tatami.service.util.TatamiConstants.LINK_PROTOCOL_PREFIX;
 import static fr.ippon.tatami.service.util.TatamiConstants.LINK_REGEXP;
+import static fr.ippon.tatami.service.util.TatamiConstants.LINK_SHORT_LENGTH;
 import static fr.ippon.tatami.service.util.TatamiConstants.TAG_LINK_PATTERN;
 import static fr.ippon.tatami.service.util.TatamiConstants.USER_LINK_PATTERN;
 
@@ -41,7 +42,7 @@ public class ContentTweetRenderer implements TweetRenderingHandler
 			url = DefaultEncoder.getInstance().encodeForHTML(decodedUrl);
 
 			newUrl = LINK_PATTERN.replaceAll("_URL_", decodedUrl).replaceAll("_SHORT-URL_",
-					StringUtils.abbreviate(decodedUrl.replaceAll(LINK_PROTOCOL_PREFIX, ""), 13));
+					StringUtils.abbreviate(decodedUrl.replaceAll(LINK_PROTOCOL_PREFIX, ""), LINK_SHORT_LENGTH));
 
 			content = content.replaceAll(url, newUrl);
 		}

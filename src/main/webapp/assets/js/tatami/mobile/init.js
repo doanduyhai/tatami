@@ -41,6 +41,9 @@ var directContatTabClick = true;
 		//Load user lines
 		loadEmptyUserLines();
 		
+		// Tweet character counter
+		registerTweetCounter();
+		
 		$('#picture').click(function()
 		{
 			var user = $('#picture').attr('data-user');
