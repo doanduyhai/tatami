@@ -26,7 +26,7 @@ public abstract class AbstractlineService
 		Collection<Tweet> tweets = new ArrayList<Tweet>(tweetIds.size());
 		for (String tweedId : tweetIds)
 		{
-			Tweet tweet = tweetRepository.findTweetById(tweedId);
+			Tweet tweet = tweetRepository.findTweetById(tweedId).duplicate();
 			User tweetUser = userService.getUserByLogin(tweet.getLogin());
 			tweet.setFirstName(tweetUser.getFirstName());
 			tweet.setLastName(tweetUser.getLastName());

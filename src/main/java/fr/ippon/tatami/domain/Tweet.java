@@ -101,6 +101,23 @@ public class Tweet
 		}
 	}
 
+	public Tweet duplicate()
+	{
+		Tweet clone = new Tweet();
+		clone.setAddToFavorite(this.addToFavorite);
+		clone.setContent(this.content);
+		clone.setDeletable(this.deletable);
+		clone.setFirstName(this.firstName);
+		clone.setGravatar(this.gravatar);
+		clone.setLastName(this.lastName);
+		clone.setLogin(this.login);
+		clone.setNotification(this.notification);
+		clone.setTweetDate(this.tweetDate);
+		clone.setTweetId(this.tweetId);
+
+		return clone;
+	}
+
 	public String getTweetId()
 	{
 		return tweetId;

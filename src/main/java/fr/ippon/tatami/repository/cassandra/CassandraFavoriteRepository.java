@@ -4,6 +4,8 @@ import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVORITELINE_CF;
 
 import java.util.Collection;
 
+import org.springframework.cache.annotation.CacheEvict;
+
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.FavoriteRepository;
 
@@ -14,6 +16,7 @@ public class CassandraFavoriteRepository extends CassandraAbstractRepository imp
 {
 
 	@Override
+	@CacheEvict(value = "user-cache", key = "#user.login")
 	public void addFavorite(User user, String tweetId)
 	{
 		this.insertIntoCF(FAVORITELINE_CF, user.getLogin(), tweetId);
@@ -24,6 +27,7 @@ public class CassandraFavoriteRepository extends CassandraAbstractRepository imp
 	}
 
 	@Override
+	@CacheEvict(value = "user-cache", key = "#user.login")
 	public void removeFavorite(User user, String tweetId)
 	{
 		this.removeFromCF(FAVORITELINE_CF, user.getLogin(), tweetId);

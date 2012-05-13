@@ -125,6 +125,26 @@ public class User
 	})
 	private boolean follow = false;
 
+	public User duplicate()
+	{
+		User clone = new User();
+		clone.setBiography(this.biography);
+		clone.setEmail(this.email);
+		clone.setFavoritesCount(this.favoritesCount);
+		clone.setFirstName(this.firstName);
+		clone.setFollow(this.follow);
+		clone.setFollowersCount(this.followersCount);
+		clone.setFriendsCount(this.friendsCount);
+		clone.setGravatar(this.gravatar);
+		clone.setLastName(this.lastName);
+		clone.setLocation(this.location);
+		clone.setLogin(this.login);
+		clone.setTweetCount(this.tweetCount);
+		clone.setWebsite(this.website);
+
+		return clone;
+	}
+
 	public void incrementTweetCount()
 	{
 		this.tweetCount++;

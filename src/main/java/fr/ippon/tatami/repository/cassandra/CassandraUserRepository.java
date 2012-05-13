@@ -2,6 +2,8 @@ package fr.ippon.tatami.repository.cassandra;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.UserRepository;
@@ -23,6 +25,7 @@ public class CassandraUserRepository extends CassandraAbstractRepository impleme
 	}
 
 	@Override
+	@CacheEvict(value = "user-cache", key = "#user.login")
 	public void updateUser(User user)
 	{
 		log.debug("Updating user {}", user);
@@ -30,6 +33,7 @@ public class CassandraUserRepository extends CassandraAbstractRepository impleme
 	}
 
 	@Override
+	@Cacheable(value = "user-cache", key = "#login")
 	public User findUserByLogin(String login)
 	{
 		try

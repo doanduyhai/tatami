@@ -48,7 +48,7 @@ public class CassandraTweetRepository extends CassandraAbstractRepository implem
 	}
 
 	@Override
-	@Cacheable("tweet-cache")
+	@Cacheable(value = "tweet-cache", key = "#tweetId")
 	public Tweet findTweetById(String tweetId)
 	{
 		log.debug("Finding tweet : " + tweetId);
