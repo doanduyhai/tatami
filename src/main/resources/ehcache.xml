@@ -17,6 +17,13 @@
            overflowToDisk="false">
     </cache>
 
+    <cache name="favorite-cache"
+           maxElementsInMemory="100000"
+           eternal="false"
+           timeToLiveSeconds="3600"
+           overflowToDisk="false">
+    </cache>
+    
     <cache name="user-cache"
            maxElementsInMemory="10000"
            eternal="false"
@@ -24,5 +31,19 @@
            overflowToDisk="false">
     </cache>
 
+    <cache name="follower-cache"
+           maxElementsInMemory="1000"
+           eternal="false"
+           timeToLiveSeconds="3600"
+           overflowToDisk="false">
+    </cache>
+
+    <cache name="friend-cache"
+           maxElementsInMemory="1000"
+           eternal="false"
+           timeToLiveSeconds="3600"
+           overflowToDisk="false">
+    </cache>    
+        
 </ehcache>
 

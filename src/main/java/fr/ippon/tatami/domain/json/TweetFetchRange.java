@@ -3,8 +3,6 @@ package fr.ippon.tatami.domain.json;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 public class TweetFetchRange
 {
 	// UUID pattern
@@ -14,7 +12,6 @@ public class TweetFetchRange
 	@Min(value = 0, message = "Count value for tweet paging cannot be negative")
 	private int count;
 
-	@NotBlank(message = "Functional key for tweet paging should not be blank")
 	private String functionalKey;
 
 	public String getStartTweetId()

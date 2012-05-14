@@ -35,7 +35,7 @@ function removeFriend(loginToForget) {
 			setTimeout(function()
 			{
 	        	updateUserCounters();
-	        	followMessage(friend,false);	
+	        	followMessage(loginToForget,false);	
 	        	refreshUserSuggestions();
 	        	refreshFriendsline(login);
 			},300);
@@ -107,11 +107,11 @@ function updateUserCounters()
 	});
 }
 
-function showUserProfile(login)
+function showUserProfile(userLogin)
 {
 	$.ajax({
 		type: HTTP_GET,
-		url: replaceIdInURL(USER_SHOW_REST,login),
+		url: replaceIdInURL(USER_SHOW_REST,userLogin),
 		dataType: JSON_DATA,
 		success: function(data) {
 			
@@ -121,18 +121,35 @@ function showUserProfile(login)
 	});
 }
 
-function updateUserProfileModal(data)
+function quoteUser(userToQuote)
+{
+	$('#defaultTab').tab('show');
+	$('#tweetContent').empty().trigger('focus').html('@'+userToQuote);
+}
+
+function updateUserProfileModal(user)
 {
 	$('#userProfileModal')
-	.find('#userProfileLogin').html('@'+data.login).end()
-	.find('#userProfileGravatar .tweetGravatar').attr('src','http://www.gravatar.com/avatar/'+data.gravatar+'?s=128').end()
-	.find('#userProfileName').html(data.firstName+'&nbsp;'+data.lastName).end()
-	.find('#userProfileLocation span:nth-child(2)').html(data.location).end()
-	.find('#userProfileWebsite a').html(data.website).attr('href',data.website).end()
-	.find('#userProfileBio').html(data.biography).end()
-	.find('#userProfileTweetsCount').attr('data-user',data.login).html(data.tweetCount).end()
-	.find('#userProfileFriendsCount').attr('data-friends',data.login).html(data.friendsCount).end()
-	.find('#userProfileFollowersCount').attr('data-followers',data.login).html(data.followersCount);
+	.find('#userProfileLogin').html('@'+user.login).end()
+	.find('#userProfileGravatar .tweetGravatar').attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=128').end()
+	.find('#userProfileName').html(user.firstName+'&nbsp;'+user.lastName).end()
+	.find('#userProfileLocation span:nth-child(2)').html(user.location).end()
+	.find('#userProfileWebsite a').html(user.website).attr('href',user.website).end()
+	.find('#userProfileBio').html(user.biography).end()
+	.find('#userProfileTweetsCount').attr('data-user',user.login).html(user.tweetCount).end()
+	.find('#userProfileFriendsCount').attr('data-friends',user.login).html(user.friendsCount).end()
+	.find('#userProfileFollowersCount').attr('data-followers',user.login).html(user.followersCount).end()
+	.find('.btn').hide();
+	
+	if(user.login != login)
+	{
+		$('#userProfileModal')
+		.find('#userProfileDoQuote').attr('data-quote',user.login).show().end()
+		.find(user.directMessage ? '#userProfileDoWrite':'#userProfileDoQuote').attr('data-direct-message',user.login).show().end()
+		.find(user.follow ? '#userProfileDoFollow':'#userProfileDoForget').attr(user.follow ? 'data-follow':'data-unfollow',user.login).show().end()
+		.find('#userProfileDoBlock').attr('data-block',user.login).show();
+		
+	}
 }
 
 /*
@@ -171,7 +188,7 @@ function refreshUserSuggestions()
         {
     		var $tableBody = $('#userSuggestions');
     		$tableBody.empty();
-        	if(data.length>0)
+    		if((data || []).length>0)
     		{
 	        	$.each(data,function(index, user)
 	        	{        		
@@ -268,7 +285,7 @@ function refreshUserLine(targetLine,startUser,count,clearAll)
 		dataType: JSON_DATA,
         success: function(data)
         {
-        	if(data.length>0)
+        	if((data || []).length>0)
     		{
         		if(clearAll)
         		{
@@ -318,7 +335,8 @@ function registerRefreshUserLineListeners()
 
 function registerUserProfileModalListeners()
 {
-	bindListeners($('#userProfileFooter'));
+	bindListeners($('#userProfileStats'));
+	bindListeners($('#userProfileAction'));
 };
 
 function registerFetchUserHandlers()
@@ -356,7 +374,7 @@ function registerUserSearchListener()
 				
 				var $tableBody = $('#userSearchList');
 	    		$tableBody.empty();
-	        	if(data.length>0)
+	    		if((data || []).length>0)
 	    		{
 		        	$.each(data,function(index, user)
 		        	{        		

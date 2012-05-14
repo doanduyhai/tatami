@@ -10,7 +10,6 @@ function initFavoritesline()
 
 google.load("visualization", "1", {packages:["corechart"]});
 
-var clickFromLink = false;
 var directContatTabClick = true;
 
 !function ( $ ) {

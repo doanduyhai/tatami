@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.domain.json.UserSearch;
 import fr.ippon.tatami.exception.FunctionalException;
+import fr.ippon.tatami.service.pipeline.user.rendering.UserRenderingPipelineManager;
 import fr.ippon.tatami.service.user.UserService;
 import fr.ippon.tatami.web.json.view.UserView;
 
@@ -37,31 +38,44 @@ public class UserController extends AbstractRestController
 
 	private UserService userService;
 
-	// /rest/usersStats/{login}
+	private UserRenderingPipelineManager userRenderingPipelineManager;
+
 	@RequestMapping(value = USER_STATS_REST, method = RequestMethod.GET, produces = "application/json")
 	public void getUserStats(@PathVariable("id") String login, HttpServletResponse response) throws FunctionalException
 	{
 		log.debug("REST request to get Profile : {}", login);
-		this.writeWithView(userService.getUserByLogin(login), response, UserView.Stats.class);
+
+		User currentUser = this.userService.getCurrentUser();
+		User user = this.userService.getUserByLogin(login);
+		this.userRenderingPipelineManager.onUserRender(user, currentUser);
+
+		this.writeWithView(user, response, UserView.Stats.class);
 	}
 
-	// /rest/usersDetails/{login}
 	@RequestMapping(value = USER_PREVIEW_REST, method = RequestMethod.GET, produces = "application/json")
 	public void getUserPreview(@PathVariable("id") String login, HttpServletResponse response) throws FunctionalException
 	{
 		log.debug("REST request to get Details : {}", login);
-		this.writeWithView(userService.getUserByLogin(login), response, UserView.Details.class);
+
+		User currentUser = this.userService.getCurrentUser();
+		User user = this.userService.getUserByLogin(login);
+		this.userRenderingPipelineManager.onUserRender(user, currentUser);
+
+		this.writeWithView(user, response, UserView.Details.class);
 	}
 
-	// /rest/usersProfile/{login}
 	@RequestMapping(value = USER_SHOW_REST, method = RequestMethod.GET, produces = "application/json")
 	public void getUserShow(@PathVariable("id") String login, HttpServletResponse response) throws FunctionalException
 	{
 		log.debug("REST request to get profile of : {}", login);
-		this.writeWithView(userService.getUserByLogin(login), response, UserView.Full.class);
+
+		User currentUser = this.userService.getCurrentUser();
+		User user = this.userService.getUserByLogin(login);
+		this.userRenderingPipelineManager.onUserRender(user, currentUser);
+
+		this.writeWithView(user, response, UserView.Full.class);
 	}
 
-	// /rest/users/{login}
 	@RequestMapping(value = USER_UPDATE_REST, method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public void updateUser(@Valid @RequestBody User user)
@@ -70,7 +84,6 @@ public class UserController extends AbstractRestController
 		userService.updateUser(user);
 	}
 
-	// /rest/usersSearch
 	@RequestMapping(value = USER_SEARCH_REST, method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public void searchUser(@Valid @RequestBody UserSearch userSearch, HttpServletResponse response) throws FunctionalException
@@ -83,4 +96,10 @@ public class UserController extends AbstractRestController
 	{
 		this.userService = userService;
 	}
+
+	public void setUserRenderingPipelineManager(UserRenderingPipelineManager userRenderingPipelineManager)
+	{
+		this.userRenderingPipelineManager = userRenderingPipelineManager;
+	}
+
 }

@@ -118,7 +118,7 @@ body {
 
 .strong
 {
-	folt-weight: bold;	
+	font-weight: bold;	
 }
 .red
 {
@@ -153,6 +153,10 @@ body {
 }
 
 
+.normalFont
+{
+	color: black;
+}
 
 .topbar
 {
@@ -292,7 +296,7 @@ body {
 	}
 }
 
-#followPanel
+#suggestionsPanel
 {
 	padding-top: 2% !important;
 	padding-bottom: 2% !important;
@@ -340,15 +344,23 @@ body {
 	{
 		@media screen and (min-width: 25em)
 		{
-			font-size: 1.4em !important;
+			font-size: 1.6em !important;
 		}
 	}
 }
 
-.normalFont
+#friendsLine, #followersLine
 {
-	color: black;
+	.userLineContent
+	{
+		
+		@media screen and (min-width: 25em)
+		{
+			font-size: 1.6em !important;
+		}
+	}
 }
+
 #timelinePanel, #favlinePanel, #userlinePanel, #taglinePanel {
   	tr
   	{
@@ -530,9 +542,10 @@ body {
 		padding-right: 0px !important;
 		padding-top: 0px !important;
 		padding-bottom: 0px !important;
+		font-size: 0.8em;
 		@media screen and (min-width: 25em)
 		{
-			margin-left: -7% !important;
+
 			font-size: 1.2em;
 		}			
 	}
@@ -570,7 +583,7 @@ body {
 		}
 	}
 	
-	#userProfileFooter
+	#userProfileStats
 	{
 		padding-top: 5px !important;
 		padding-bottom: 5px !important;

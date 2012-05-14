@@ -179,7 +179,7 @@ function refreshLine(targetLine,startTweetId,count,clearAll)
 		dataType: JSON_DATA,
         success: function(data)
         {
-        	if(data.length>0)
+        	if((data || []).length>0)
     		{
         		if(clearAll)
         		{
@@ -269,18 +269,18 @@ function fillTweetTemplate(tweet,data_tweetFetch_type)
 	
 	if(tweet.deletable)
 	{
-		$newTweetLine.find('.tweetAction').append('<a href="#" title="Remove" data-remove="'+tweet.tweetId+'"><i class="icon-remove"></i>&nbsp;</a>');
+		$newTweetLine.find('.tweetAction').append('<a href="#" title="Remove" data-remove="'+tweet.tweetId+'"><i class="frame icon-remove"></i>&nbsp;</a>');
 	}
 	
 	// Conditional rendering for like icon
 	if(tweet.addToFavorite)
 	{
-		$newTweetLine.find('.tweetAction').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="icon-star"></i>&nbsp;</a>');
+		$newTweetLine.find('.tweetAction').append('<a href="#" title="Like" data-like="'+tweet.tweetId+'"><i class="frame icon-star"></i>&nbsp;</a>');
 	}
 	else
 	{
 		$newTweetLine.find('.tweetAction')
-		.append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="icon-star-empty"></i>&nbsp;</a>');
+		.append('<a href="#" title="Stop liking" data-unlike="'+tweet.tweetId+'"><i class="frame icon-star-empty"></i>&nbsp;</a>');
 		
 		if(data_tweetFetch_type != 'favoriteline')
 		{

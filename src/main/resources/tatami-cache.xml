@@ -16,5 +16,18 @@
 	<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
 		<property name="configLocation" value="classpath:ehcache.xml"/>
 	</bean>
-	
+
+	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+	    <property name="locateExistingServerIfPossible" value="true" />
+	</bean>
+
+	<bean class="net.sf.ehcache.management.ManagementService" init-method="init">
+    	<constructor-arg ref="ehcache" index="0"/>
+    	<constructor-arg ref="mbeanServer" index="1"/>
+    	<constructor-arg value="true" index="2"/>
+    	<constructor-arg value="true" index="3"/>
+    	<constructor-arg value="true" index="4"/>
+    	<constructor-arg value="true" index="5"/>
+    	<constructor-arg value="true" index="6"/>
+  	</bean>	
 </beans>

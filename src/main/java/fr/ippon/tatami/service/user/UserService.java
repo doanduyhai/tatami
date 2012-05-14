@@ -41,7 +41,7 @@ public class UserService extends AbstractUserService
 	{
 		log.debug("Looking for user with login : {} ", login);
 
-		User user = userRepository.findUserByLogin(login);
+		User user = userRepository.findUserByLogin(login).duplicate();
 		if (user == null)
 		{
 			throw new FunctionalException("No user found for login '" + login + "'");

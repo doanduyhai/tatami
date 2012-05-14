@@ -1,4 +1,3 @@
-var clickFromLink = false;
 var directContatTabClick = true;
 
 !function ( $ ) {
@@ -6,18 +5,20 @@ var directContatTabClick = true;
 	// left panel
 	loadProfile();
 	loadSuggestions();
-	
-	
+
     // Tweet lines refresh
     $('a[data-toggle="tab"]').on('shown', function(e) {
     	if (e.target.hash == '#timelinePanel' || e.target.hash == '#userlinePanel' 
     		|| e.target.hash == '#taglinePanel' || e.target.hash == '#favlinePanel') {
-    		if(!clickFromLink)
+    		if(!directContatTabClick)
     		{	
     			refreshCurrentLine();
     		}	
     	}
-    	
+    	else if (e.target.hash == '#contactsPanel')
+    	{
+    		refreshFriendsline(login);
+    	}	
     });
     
     

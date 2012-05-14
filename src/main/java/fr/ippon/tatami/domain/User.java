@@ -125,6 +125,9 @@ public class User
 	})
 	private boolean follow = false;
 
+	@JsonView(value = UserView.Full.class)
+	private boolean directMessage = false;
+
 	public User duplicate()
 	{
 		User clone = new User();
@@ -322,4 +325,15 @@ public class User
 	{
 		this.follow = follow;
 	}
+
+	public boolean isDirectMessage()
+	{
+		return directMessage;
+	}
+
+	public void setDirectMessage(boolean directMessage)
+	{
+		this.directMessage = directMessage;
+	}
+
 }

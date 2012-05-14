@@ -45,6 +45,13 @@ function bindListeners($target)
 		return false;
 	});
 
+	$target.find('a[data-quote]').click(function(e)
+	{
+		var target = $(e.currentTarget).attr('data-quote');
+		quoteUser(target);
+		return false;
+	});
+	
 	$target.find('a[data-remove]').click(function(e)
 	{
 		var target = $(e.currentTarget).attr('data-remove');

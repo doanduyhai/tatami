@@ -34,34 +34,34 @@ public class ContactsController extends AbstractRestController
 
 	private final Logger log = LoggerFactory.getLogger(ContactsController.class);
 
-	// /rest/users/{login}/followUser
-	@RequestMapping(value = FRIEND_ADD_REST, method = RequestMethod.GET, consumes = "application/json")
+	@RequestMapping(value = FRIEND_ADD_REST, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public void followUser(@PathVariable("id") String loginToFollow) throws FunctionalException
+	public Boolean followUser(@PathVariable("id") String loginToFollow) throws FunctionalException
 	{
 		log.debug("REST request to follow user login : {} ", loginToFollow);
 
 		this.userPipelineManager.onFollow(loginToFollow);
 
+		return true;
+
 	}
 
-	// /rest/users/{login}/removeFriend
-	@RequestMapping(value = FRIEND_REMOVE_REST, method = RequestMethod.GET, consumes = "application/json")
+	@RequestMapping(value = FRIEND_REMOVE_REST, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public void removeFriend(@PathVariable("id") String loginToRemove) throws FunctionalException
+	public Boolean removeFriend(@PathVariable("id") String loginToRemove) throws FunctionalException
 	{
 		log.debug("REST request to remove friendLogin : {}", loginToRemove);
 		this.userPipelineManager.onForget(loginToRemove);
+
+		return true;
 	}
 
-	// /rest/users/suggestions
 	@RequestMapping(value = USER_SUGGESTIONS_REST, method = RequestMethod.GET, produces = "application/json")
 	public void getSuggestions(HttpServletResponse response) throws FunctionalException
 	{
 		this.writeWithView((Object) this.contactsService.getUserSuggestions(), response, UserView.Minimum.class);
 	}
 
-	// /rest/userFetch/followers
 	@RequestMapping(value = FOLLOWERSLINE_REST, method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public void searchFollowers(@Valid @RequestBody UserFetchRange fetchRange, HttpServletResponse response) throws FunctionalException
@@ -72,7 +72,6 @@ public class ContactsController extends AbstractRestController
 				response, UserView.Minimum.class);
 	}
 
-	// /rest/userFetch/friends
 	@RequestMapping(value = FRIENDSLINE_REST, method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public void searchFriends(@Valid @RequestBody UserFetchRange fetchRange, HttpServletResponse response) throws FunctionalException

@@ -130,7 +130,7 @@ public class ContactsService extends AbstractUserService implements TweetHandler
 
 		User user = this.userService.getUserByLogin(login);
 
-		return friendRepository.findFriendsForUser(user);
+		return new ArrayList<String>(friendRepository.findFriendsForUser(user));
 	}
 
 	public Collection<User> getFriendsForUser(String login, String startUser, int count) throws FunctionalException

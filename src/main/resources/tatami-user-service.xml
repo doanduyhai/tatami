@@ -30,6 +30,7 @@
 	
 	<bean id="contactsUserRenderer" class="fr.ippon.tatami.service.renderer.user.ContactsUserRenderer">
 		<property name="friendRepository" ref="friendRepository"/>
+		<property name="followerRepository" ref="followerRepository"/>
 	</bean>
 	
 </beans>

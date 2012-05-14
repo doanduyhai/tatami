@@ -121,7 +121,8 @@
 	</bean>
 
 	<bean id="userController" class="fr.ippon.tatami.web.rest.UserController" parent="abstractRestController">
-		<property name="userService" ref="userService"/>		
+		<property name="userService" ref="userService"/>
+		<property name="userRenderingPipelineManager" ref="userRenderingPipelineManager"/>		
 	</bean>
 	
 	<bean id="contactsController" class="fr.ippon.tatami.web.rest.ContactsController" parent="abstractRestController">

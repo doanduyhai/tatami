@@ -112,11 +112,11 @@ function updateUserCounters()
 	});
 }
 
-function showUserProfile(login)
+function showUserProfile(userLogin)
 {
 	$.ajax({
 		type: HTTP_GET,
-		url: replaceIdInURL(USER_SHOW_REST,login),
+		url: replaceIdInURL(USER_SHOW_REST,userLogin),
 		dataType: JSON_DATA,
 		success: function(data) {
 			
@@ -127,25 +127,39 @@ function showUserProfile(login)
 	
 }
 
-
-function updateUserProfileModal(data)
+function quoteUser(userToQuote)
 {
-	var currentWidth = $(window).width();
-	var currentHeight = $(window).height();
+	$('#defaultTab').tab('show');
+	$('#tweetContent').empty().trigger('focus').html('@'+userToQuote);
+}
+
+function updateUserProfileModal(user)
+{
 	
-	console.log('currentWidth = '+currentWidth);
-	console.log('currentHeight = '+currentHeight);
+	var avartarSize = $(window).width() * 2/12;
 	
 	$('#userProfileModal')
-	.find('#userProfileLogin').html('@'+data.login).end()
-	.find('#userProfileGravatar .tweetGravatar').attr('src','http://www.gravatar.com/avatar/'+data.gravatar+'?s=64').end()
-	.find('#userProfileName').html(data.firstName+'&nbsp;'+data.lastName).end()
-	.find('#userProfileLocation span:nth-child(2)').html(data.location).end()
-	.find('#userProfileWebsite a').html(data.website).attr('href',data.website).end()
-	.find('#userProfileBio').html(data.biography).end()
-	.find('#userProfileTweetsCount').attr('data-user',data.login).html(data.tweetCount).end()
-	.find('#userProfileFriendsCount').attr('data-friends',data.login).html(data.friendsCount).end()
-	.find('#userProfileFollowersCount').attr('data-followers',data.login).html(data.followersCount);
+	.find('#userProfileLogin').html('@'+user.login).end()
+	.find('#userProfileGravatar .tweetGravatar').attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s='+avartarSize).end()
+	.find('#userProfileName').html(user.firstName+'&nbsp;'+user.lastName).end()
+	.find('#userProfileLocation span:nth-child(2)').html(user.location).end()
+	.find('#userProfileWebsite a').html(user.website).attr('href',user.website).end()
+	.find('#userProfileBio').html(user.biography).end()
+	.find('#userProfileTweetsCount').attr('data-user',user.login).html(user.tweetCount).end()
+	.find('#userProfileFriendsCount').attr('data-friends',user.login).html(user.friendsCount).end()
+	.find('#userProfileFollowersCount').attr('data-followers',user.login).html(user.followersCount).end()
+	.find('.btn').hide();
+	
+	if(user.login != login)
+	{
+		$('#userProfileModal')
+		.find('#userProfileDoQuote').attr('data-quote',user.login).show().end()
+		.find(user.directMessage ? '#userProfileDoWrite':'#userProfileDoQuote').attr('data-direct-message',user.login).show().end()
+		.find(user.follow ? '#userProfileDoFollow':'#userProfileDoForget').attr(user.follow ? 'data-follow':'data-unfollow',user.login).show().end()
+		.find('#userProfileDoBlock').attr('data-block',user.login).show();
+		
+	}
+
 }
 
 /*
@@ -219,7 +233,7 @@ function refreshUserSuggestions()
         {
     		var $tableBody = $('#userSuggestions');
     		$tableBody.empty();
-        	if(data.length>0)
+    		if((data || []).length>0)
     		{
 	        	$.each(data,function(index, user)
 	        	{        		
@@ -243,7 +257,10 @@ function refreshHome()
 		url: replaceIdInURL(USER_SHOW_REST,login),
 		dataType: JSON_DATA,
 		success: function(user) {
-			$('#homePanel').find('#picture').attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s=64').end()
+			
+			var avartarSize = $(window).width() * 2/12;
+			
+			$('#homePanel').find('#picture').attr('src','http://www.gravatar.com/avatar/'+user.gravatar+'?s='+avartarSize).end()
 			.find('#firstName').html(user.firstName).end()
 			.find('#latName').html(user.lastName).end()
 			.find('#tweetCount').html(user.tweetCount).end()
@@ -336,7 +353,7 @@ function refreshUserLine(targetLine,startUser,count,clearAll)
 		dataType: JSON_DATA,
         success: function(data)
         {
-        	if(data.length>0)
+        	if((data || []).length>0)
     		{
         		if(clearAll)
         		{
@@ -381,7 +398,8 @@ function buildUserFetchRange(startUser,count,functionalKey)
 
 function registerUserProfileModalListeners()
 {
-	bindListeners($('#userProfileFooter'));
+	bindListeners($('#userProfileStats'));
+	bindListeners($('#userProfileAction'));
 };
 
 function registerHomePanelListeners()
@@ -409,7 +427,7 @@ function registerUserSearchListener()
 				
 				var $tableBody = $('#userSearchList');
 	    		$tableBody.empty();
-	        	if(data.length>0)
+	    		if((data || []).length>0)
 	    		{
 		        	$.each(data,function(index, user)
 		        	{        		
@@ -467,7 +485,7 @@ function fillUserTemplate(user,data_userFetch_type)
 	{
 			$newUserLine.find('.userAction a').attr('data-follow',user.login)
 			.attr('title','Follow '+user.login).attr('data-modal-hide','#userSearchModal')
-			.find('i').addClass('icon-eye-open');	
+			.find('i').addClass('icon-eye-open frame');	
 	}
 	else if(data_userFetch_type == "search" || data_userFetch_type == "followers")
 	{
@@ -478,13 +496,13 @@ function fillUserTemplate(user,data_userFetch_type)
 			{
 				$newUserLine.find('.userAction a').attr('data-follow',user.login)
 				.attr('title','Follow '+user.login).attr('data-modal-hide','.modal')
-				.find('i').addClass('icon-eye-open');
+				.find('i').addClass('icon-eye-open frame');
 			}
 			else
 			{
 				$newUserLine.find('.userAction a').attr('data-unfollow',user.login)
 				.attr('title','Stop following '+user.login).attr('data-modal-hide','.modal')
-				.find('i').addClass('icon-eye-close');
+				.find('i').addClass('icon-eye-close frame');
 			}	
 		}
 	}
@@ -495,7 +513,7 @@ function fillUserTemplate(user,data_userFetch_type)
 		{
 			$newUserLine.find('.userAction a').attr('data-unfollow',user.login)
 			.attr('title','Stop following '+user.login)
-			.find('i').addClass('icon-eye-close');
+			.find('i').addClass('icon-eye-close frame');
 		}	
 	}
 	

@@ -5,6 +5,7 @@ import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWERS_CF;
 import java.util.Collection;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.FollowerRepository;
@@ -17,7 +18,11 @@ public class CassandraFollowerRepository extends CassandraAbstractRepository imp
 {
 
 	@Override
-	@CacheEvict(value = "user-cache", key = "#user.login")
+	@CacheEvict(value =
+	{
+			"user-cache",
+			"follower-cache"
+	}, key = "#user.login")
 	public void addFollower(User user, User follower)
 	{
 		this.insertIntoCF(FOLLOWERS_CF, user.getLogin(), follower.getLogin());
@@ -28,7 +33,11 @@ public class CassandraFollowerRepository extends CassandraAbstractRepository imp
 	}
 
 	@Override
-	@CacheEvict(value = "user-cache", key = "#user.login")
+	@CacheEvict(value =
+	{
+			"user-cache",
+			"follower-cache"
+	}, key = "#user.login")
 	public void removeFollower(User user, User follower)
 	{
 
@@ -40,9 +49,9 @@ public class CassandraFollowerRepository extends CassandraAbstractRepository imp
 	}
 
 	@Override
+	@Cacheable(value = "follower-cache", key = "#user.login")
 	public Collection<String> findFollowersForUser(User user)
 	{
-
 		return this.findRangeFromCF(FOLLOWERS_CF, user.getLogin(), null, false, (int) user.getFollowersCount());
 	}
 

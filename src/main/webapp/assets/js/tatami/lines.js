@@ -135,7 +135,7 @@ function refreshLine(targetLine,startTweetId,count,clearAll)
 		dataType: JSON_DATA,
         success: function(data)
         {
-        	if(data.length>0)
+        	if((data || []).length>0)
     		{
         		if(clearAll)
         		{

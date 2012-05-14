@@ -11,7 +11,7 @@
 	</appender>
 	
 	<logger name="monitoring">
-		<level value="DEBUG" />
+		<level value="INFO" />
 	</logger>
 	 
 
@@ -27,6 +27,9 @@
 		<level value="INFO" />
 	</logger>	
 
+ 	<logger name="org.springframework.cache">
+		<level value="INFO" />
+	</logger>
 
 	<!-- ********************************************************* -->
 	<!-- Root Loggers                                              -->
