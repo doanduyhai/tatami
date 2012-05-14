@@ -196,5 +196,14 @@ function registerEnterKeypress()
 		}	
 		
 	});
-
+	
+	$('#userSearchInput').bind('keypress', function(e) 
+	{
+		// 13 is keycode for 'Enter'
+		if ((e.keyCode || e.which) == 13)
+		{
+			$('#userSearchButton').trigger('click');
+		}	
+		
+	});
 }

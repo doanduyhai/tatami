@@ -10,7 +10,7 @@ function followUser(loginToFollow) {
 
 			setTimeout(function()
 			{
-	            $("#followUserInput").val("");
+	            $("#userSearchInput").val("");
 	            updateUserCounters();
 	            followMessage(loginToFollow,true);
 	            refreshUserSuggestions();
@@ -368,7 +368,7 @@ function registerUserSearchListener()
 			type: HTTP_POST,
 			url: USER_SEARCH_REST,
 	        contentType: "application/json;  charset=UTF-8",
-	        data:  JSON.stringify({searchString: $.trim($("#followUserInput").val())}),			
+	        data:  JSON.stringify({searchString: $.trim($("#userSearchInput").val())}),			
 			dataType: JSON_DATA,
 			success: function(data) {
 				

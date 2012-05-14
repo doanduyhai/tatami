@@ -113,17 +113,17 @@
                 <div>
                     <div class="alert alert-info" id="followUserContent">
 					    <div>
-					        <i class="icon-zoom-in"></i><strong>Follow another user...</strong>
+					        <i class="icon-zoom-in"></i><strong>Search user login/name...</strong>
 					
-					        <form id="userSearchForm" class="form-search" >
+					        <div id="userSearchForm" class="form-search" >
 								<div id="searchErrorPanel" class="alert alert-error" style="display: none;">
 									<h4 class="alert-heading">Error!</h4>
 									<span class="errorMessage"></span>
 								</div>				        	
-					            <input id="followUserInput" name="searchString" type="text" class="input-large search-query"
+					            <input id="userSearchInput" name="searchString" type="text" class="input-large search-query"
 					                   placeholder="Type the login to follow..." required="required"/>
-					            <button type="button" class="btn btn-primary">Search User</button>
-					        </form>
+					            <button id="userSearchButton" type="button" class="btn btn-primary">Search</button>
+					        </div>
 					        <div class="alert alert-success alert-block" id="followSuccess" style="display: none;">
 					        </div>
 					        <div class="alert alert-error alert-block" id="followError" style="display: none;">

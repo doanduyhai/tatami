@@ -92,8 +92,10 @@ var directContatTabClick = true;
 		// Tweet character counter
 		registerTweetCounter();
 		
-		// Typing 'Enter' will post tweet
+		// Typing 'Enter' in tweet text area will post tweet
+		// Typing 'Enter' in user input trigger search
 		registerEnterKeypress();
+		
 		
 		$('#picture').click(function()
 		{

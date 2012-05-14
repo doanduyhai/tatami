@@ -4,14 +4,14 @@
 	xmlns:th="http://www.thymeleaf.org">
 <section id="suggestionsline">
     <div id="userSearch">
-        <i class="icon-zoom-in"></i><strong>Follow another user...</strong>
+        <i class="icon-zoom-in"></i><strong>Search user login/name...</strong>
 
         <form id="userSearchForm" class="form-search" >
 			<div id="searchErrorPanel" class="alert alert-error" style="display: none;">
 				<h4 class="alert-heading">Error!</h4>
 				<span class="errorMessage"></span>
 			</div>	             
-            <input id="followUserInput" name="searchString" type="text" class="search-query"
+            <input id="userSearchInput" name="searchString" type="text" class="search-query"
                    placeholder="Login, first or last name..." required="required"/>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
