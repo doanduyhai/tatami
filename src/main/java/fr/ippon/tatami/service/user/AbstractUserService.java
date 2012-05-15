@@ -25,14 +25,14 @@ public abstract class AbstractUserService
 		User foundUser = null;
 		for (String login : logins)
 		{
-			foundUser = this.userRepository.findUserByLogin(login).duplicate();
+			foundUser = this.userRepository.findUserByLogin(login);
 			if (foundUser == null)
 			{
 				throw new FunctionalException("No user found for login '" + login + "'");
 			}
 			else
 			{
-				this.userRenderingPipelineManager.onUserRender(foundUser, currentUser);
+				this.userRenderingPipelineManager.onUserRender(foundUser.duplicate(), currentUser);
 			}
 			results.add(foundUser);
 

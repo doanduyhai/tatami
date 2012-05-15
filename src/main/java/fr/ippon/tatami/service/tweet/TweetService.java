@@ -41,7 +41,7 @@ public class TweetService implements TweetHandler
 			throw new FunctionalException("Cannot find tweet with id '" + tweetId + "'");
 		}
 
-		return tweet;
+		return tweet.duplicate();
 	}
 
 	@Override

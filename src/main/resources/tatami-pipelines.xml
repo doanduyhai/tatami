@@ -17,7 +17,7 @@
 		<property name="userService"  ref="userService"/>
 		<property name="tweetHandlers">
 			<list>
-<!-- 				<ref bean="urlShortenerService"/> -->
+				<ref bean="tweetContentValidationService"/>
 				<ref bean="userlineService"/>
 				<ref bean="timelineService"/>
 				<ref bean="taglineService"/>

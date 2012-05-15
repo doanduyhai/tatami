@@ -1,6 +1,8 @@
 package fr.ippon.tatami.service.lines;
 
 import static fr.ippon.tatami.service.util.TatamiConstants.USERTAG;
+import static fr.ippon.tatami.service.util.TatamiConstants.USER_LINK_PATTERN;
+import static fr.ippon.tatami.service.util.TatamiConstants.USER_REGEXP;
 
 import java.util.Collection;
 
@@ -62,6 +64,7 @@ public class TimelineService extends AbstractlineService implements TweetHandler
 			{
 				// Tweet alert
 				String content = USERTAG + currentUser.getLogin() + " <strong>is now following you</strong>";
+				content = content.replaceAll(USER_REGEXP, USER_LINK_PATTERN);
 				Tweet alertTweet = tweetRepository.createTweet(userLoginToFollow, content, true);
 				timeLineRepository.addTweetToTimeline(userLoginToFollow, alertTweet.getTweetId());
 

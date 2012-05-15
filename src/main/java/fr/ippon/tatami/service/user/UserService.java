@@ -41,12 +41,12 @@ public class UserService extends AbstractUserService
 	{
 		log.debug("Looking for user with login : {} ", login);
 
-		User user = userRepository.findUserByLogin(login).duplicate();
+		User user = userRepository.findUserByLogin(login);
 		if (user == null)
 		{
 			throw new FunctionalException("No user found for login '" + login + "'");
 		}
-		return user;
+		return user.duplicate();
 	}
 
 	public void updateUser(User updatedUser)

@@ -8,6 +8,8 @@
 		<property name="tweetRepository" ref="tweetRepository"/>
 	</bean>	
 	
+	<bean id="tweetContentValidationService" class="fr.ippon.tatami.service.tweet.TweetContentValidationService" />
+	
 	<bean id="urlShortenerService" class="fr.ippon.tatami.service.tweet.UrlShortenerService" />
 
 	<bean id="xssEncodingService" class="fr.ippon.tatami.service.tweet.XssEncodingService" />

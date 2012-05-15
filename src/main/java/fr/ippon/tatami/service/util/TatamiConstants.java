@@ -54,8 +54,6 @@ public class TatamiConstants
 
 	public static final String LINK_REGEXP = "((?:(?:https?|ftp|file)://|www)[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])";
 
-	public static final String LINK_REGEXP_JAVASCRIPT = "((?:(?:https?|ftp|file):\\/\\/|www)[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])";
-
 	public static final String LINK_PATTERN = "<a href='_URL_' title='_URL_' target='_blank'>_SHORT-URL_</a>";
 
 	public static final String LINK_PROTOCOL_PREFIX = "(https?|ftp|file)://";

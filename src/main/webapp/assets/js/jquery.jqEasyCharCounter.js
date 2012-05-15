@@ -82,12 +82,11 @@ $.fn.extend({
 					jqEasyCounterMsg.find('.badge').removeClass(options.msgErrorClass).addClass(options.msgWarningClass);
 				}
 				else {
-					console.log('Reset classes');
 					jqEasyCounterMsg.find('.badge').removeClass(options.msgWarningClass+' '+options.msgErrorClass);
 				};
 				
-				jqEasyCounterMsg
-					.find('.badge').html(length + "/" + options.maxChars);
+				jqEasyCounterMsg.find('.badge').html(length + "/" + options.maxChars);
+				
 				if(options.msgShortUrl)
 				{
 					jqEasyCounterMsg.find('.shortUrl').html(' ShortUrl size: '+options.msgShortUrlLength+' characters');

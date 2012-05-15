@@ -36,6 +36,7 @@ public class ContactsUserRendererTest extends AbstractCassandraTatamiTest
 
 		contactsUserRenderer = new ContactsUserRenderer();
 		contactsUserRenderer.setFriendRepository(mockFriendRepository);
+		contactsUserRenderer.setFollowerRepository(this.followerRepository);
 	}
 
 	@Test(dependsOnMethods = "initContactsUserRendererTest")

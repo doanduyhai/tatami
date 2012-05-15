@@ -24,17 +24,27 @@ public abstract class AbstractlineService
 	protected Collection<Tweet> buildTweetsList(User currentUser, Collection<String> tweetIds) throws FunctionalException
 	{
 		Collection<Tweet> tweets = new ArrayList<Tweet>(tweetIds.size());
+
+		Tweet tweet;
+		User tweetUser;
 		for (String tweedId : tweetIds)
 		{
-			Tweet tweet = tweetRepository.findTweetById(tweedId).duplicate();
-			User tweetUser = userService.getUserByLogin(tweet.getLogin());
-			tweet.setFirstName(tweetUser.getFirstName());
-			tweet.setLastName(tweetUser.getLastName());
-			tweet.setGravatar(tweetUser.getGravatar());
+			tweet = tweetRepository.findTweetById(tweedId);
+			tweetUser = userService.getUserByLogin(tweet.getLogin());
 
-			this.tweetRenderingPipelineManager.onTweetRender(tweet);
+			if (tweet != null)
+			{
+				// Duplicate to avoid modifying the cache
+				tweet = tweet.duplicate();
+				tweet.setFirstName(tweetUser.getFirstName());
+				tweet.setLastName(tweetUser.getLastName());
+				tweet.setGravatar(tweetUser.getGravatar());
 
-			tweets.add(tweet);
+				this.tweetRenderingPipelineManager.onTweetRender(tweet);
+
+				tweets.add(tweet);
+			}
+
 		}
 		return tweets;
 	}

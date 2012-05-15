@@ -21,7 +21,13 @@ public class AuthenticationService
 		org.springframework.security.core.userdetails.User springSecurityUser = (org.springframework.security.core.userdetails.User) securityContext
 				.getAuthentication().getPrincipal();
 
-		return userRepository.findUserByLogin(springSecurityUser.getUsername()).duplicate();
+		User currentUser = userRepository.findUserByLogin(springSecurityUser.getUsername());
+
+		if (currentUser != null)
+		{
+			currentUser = currentUser.duplicate();
+		}
+		return currentUser;
 	}
 
 	public void setUserRepository(UserRepository userRepository)

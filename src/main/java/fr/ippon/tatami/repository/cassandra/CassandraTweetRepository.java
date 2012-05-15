@@ -52,9 +52,8 @@ public class CassandraTweetRepository extends CassandraAbstractRepository implem
 	public Tweet findTweetById(String tweetId)
 	{
 		log.debug("Finding tweet : " + tweetId);
-		Tweet tweet = em.find(Tweet.class, tweetId);
 
-		return tweet;
+		return em.find(Tweet.class, tweetId);
 	}
 
 	@Override

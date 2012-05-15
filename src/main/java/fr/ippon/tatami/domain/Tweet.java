@@ -1,7 +1,5 @@
 package fr.ippon.tatami.domain;
 
-import static fr.ippon.tatami.service.util.TatamiConstants.MAX_CHARACTERS_PER_TWEET;
-
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,7 +12,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import org.codehaus.jackson.map.annotate.JsonView;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.Duration;
 import org.joda.time.Period;
@@ -53,7 +50,6 @@ public class Tweet
 
 	@JsonView(TweetView.Full.class)
 	@NotEmpty(message = "The tweet content should not be empty")
-	@Length(max = MAX_CHARACTERS_PER_TWEET, message = "The tweet content should not exceed 140 characters")
 	@Column(name = "content")
 	private String content;
 

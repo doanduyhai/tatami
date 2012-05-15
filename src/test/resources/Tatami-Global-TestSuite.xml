@@ -21,6 +21,7 @@
   <test name="tweetServiceTests">
     <classes>
    	  <class name="fr.ippon.tatami.service.tweet.TweetServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.tweet.TweetContentValidationServiceTest"/>
    	  <class name="fr.ippon.tatami.service.tweet.XssEncodingServiceTest"/>
    	  <class name="fr.ippon.tatami.service.renderer.tweet.FavoriteTweetRendererTest"/>
    	  <class name="fr.ippon.tatami.service.renderer.tweet.DeleteTweetRendererTest"/>

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -14,7 +15,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import fr.ippon.tatami.exception.FunctionalException;
 import fr.ippon.tatami.web.converter.JacksonViewAwareHttpMessageConverter;
 import fr.ippon.tatami.web.json.view.JacksonView;
 
@@ -29,8 +32,9 @@ public abstract class AbstractRestController
 	protected JacksonViewAwareHttpMessageConverter jacksonConverter;
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	@ResponseBody
-	public String handleFunctionalException(MethodArgumentNotValidException ex, HttpServletResponse response) throws IOException
+	public String handleValidationException(MethodArgumentNotValidException ex, HttpServletResponse response) throws IOException
 	{
 		log.error(" Validation exception raised : " + ex.getMessage());
 		StringBuilder errorBuffer = new StringBuilder();
@@ -40,6 +44,16 @@ public abstract class AbstractRestController
 		}
 
 		return errorBuffer.toString();
+	}
+
+	@ExceptionHandler(FunctionalException.class)
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseBody
+	public String handleFunctionalException(FunctionalException ex, HttpServletResponse response) throws IOException
+	{
+		log.error(" Functional exception raised : " + ex.getMessage(), ex);
+
+		return ex.getMessage();
 	}
 
 	protected void writeWithView(Object object, HttpServletResponse response, Class<? extends JacksonView> view)
