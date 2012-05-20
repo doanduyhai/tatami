@@ -23,6 +23,8 @@
 	
 	<bean id="mentionlineService" class="fr.ippon.tatami.service.lines.MentionlineService" parent="abstractlineService">
 		<property name="timeLineRepository" ref="timeLineRepository"/>
+		<property name="mentionLineRepository" ref="mentionLineRepository"/>
+		<property name="mentionTweetIndexRepository" ref="mentionTweetIndexRepository"/>
 		<property name="contactsService" ref="contactsService"/>
 	</bean>
 	

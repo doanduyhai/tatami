@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
+import fr.ippon.tatami.repository.MentionLineRepository;
+import fr.ippon.tatami.repository.MentionTweetIndexRepository;
 import fr.ippon.tatami.repository.TimeLineRepository;
 import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
 import fr.ippon.tatami.service.user.ContactsService;
@@ -24,6 +26,10 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 	private static final Pattern USER_PATTERN = Pattern.compile(TatamiConstants.USER_REGEXP);
 
 	private TimeLineRepository timeLineRepository;
+
+	private MentionLineRepository mentionLineRepository;
+
+	private MentionTweetIndexRepository mentionTweetIndexRepository;
 
 	private ContactsService contactsService;
 
@@ -48,6 +54,8 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 				{
 					log.debug("Add tweet to quoted user " + quotedUser + " timeline");
 					this.timeLineRepository.addTweetToTimeline(quotedUser, tweet.getTweetId());
+					this.mentionLineRepository.addTweetToMentionline(quotedUser, tweet.getTweetId());
+					this.mentionTweetIndexRepository.addTweetToIndex(tweet.getLogin(), quotedUser, tweet.getTweetId());
 				}
 			}
 
@@ -70,6 +78,8 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 					quotedUsers.add(quotedUser);
 					log.debug("Remove tweet from quoted user " + quotedUser + " timeline");
 					this.timeLineRepository.removeTweetFromTimeline(quotedUser, tweet.getTweetId());
+					this.mentionLineRepository.removeTweetFromMentionline(quotedUser, tweet.getTweetId());
+					this.mentionTweetIndexRepository.removeTweetFromIndex(tweet.getLogin(), quotedUser, tweet.getTweetId());
 				}
 			}
 		}
@@ -84,6 +94,16 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 	public void setContactsService(ContactsService contactsService)
 	{
 		this.contactsService = contactsService;
+	}
+
+	public void setMentionLineRepository(MentionLineRepository mentionLineRepository)
+	{
+		this.mentionLineRepository = mentionLineRepository;
+	}
+
+	public void setMentionTweetIndexRepository(MentionTweetIndexRepository mentionTweetIndexRepository)
+	{
+		this.mentionTweetIndexRepository = mentionTweetIndexRepository;
 	}
 
 }
