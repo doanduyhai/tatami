@@ -2,7 +2,7 @@ package fr.ippon.tatami.repository;
 
 import java.util.Collection;
 
-public interface FollowedTweetIndexRepository
+public interface FollowerTweetIndexRepository
 {
 
 	void addTweetToIndex(String authorLogin, String followerLogin, String tweetId);

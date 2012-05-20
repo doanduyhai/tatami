@@ -60,4 +60,5 @@ public class TatamiConstants
 
 	public static final int LINK_SHORT_LENGTH = 13;
 
+	public static final Character LOGIN_SEPARATOR = ':';
 }

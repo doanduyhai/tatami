@@ -14,11 +14,11 @@
 	<bean id="timelineService" class="fr.ippon.tatami.service.lines.TimelineService" parent="abstractlineService">
 		<property name="timeLineRepository" ref="timeLineRepository"/>
 		<property name="friendRepository" ref="friendRepository"/>
-		<property name="followedTweetIndexRepository" ref="followedTweetIndexRepository"/>
+		<property name="followerTweetIndexRepository" ref="followerTweetIndexRepository"/>
 	</bean>	
 	
 	<bean id="favoritelineService" class="fr.ippon.tatami.service.lines.FavoritelineService" parent="abstractlineService">
-		<property name="favoriteIndexRepository" ref="favoriteIndexRepository"/>
+		<property name="favoriteTweetIndexRepository" ref="favoriteTweetIndexRepository"/>
 	</bean>
 	
 	<bean id="mentionlineService" class="fr.ippon.tatami.service.lines.MentionlineService" parent="abstractlineService">

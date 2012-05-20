@@ -2,19 +2,17 @@ package fr.ippon.tatami.repository;
 
 import java.util.Collection;
 
-import fr.ippon.tatami.domain.User;
-
 /**
  * 
  * @author DuyHai DOAN
  */
 public interface FavoriteRepository
 {
-	void addFavorite(User user, String tweetId);
+	void addFavorite(String userLogin, String tweetId);
 
-	void removeFavorite(User user, String tweetId);
+	void removeFavorite(String userLogin, String tweetId);
 
-	Collection<String> findFavoritesForUser(User user);
+	Collection<String> findFavoritesForUser(String userLogin);
 
-	Collection<String> findFavoritesRangeForUser(User user, String startTweetId, int count);
+	Collection<String> findFavoritesRangeForUser(String userLogin, String startTweetId, int count);
 }

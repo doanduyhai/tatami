@@ -37,7 +37,6 @@ public class UserServiceTest extends AbstractCassandraTatamiTest
 		assertThat(user.getTweetCount(), is(0L));
 		assertThat(user.getFollowersCount(), is(0L));
 		assertThat(user.getFriendsCount(), is(0L));
-		assertThat(user.getFavoritesCount(), is(0L));
 
 	}
 

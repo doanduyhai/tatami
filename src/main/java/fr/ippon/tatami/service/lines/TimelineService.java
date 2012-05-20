@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.repository.FollowedTweetIndexRepository;
+import fr.ippon.tatami.repository.FollowerTweetIndexRepository;
 import fr.ippon.tatami.repository.FriendRepository;
 import fr.ippon.tatami.repository.TimeLineRepository;
 import fr.ippon.tatami.service.pipeline.tweet.FavoriteHandler;
@@ -34,7 +34,7 @@ public class TimelineService extends AbstractlineService implements TweetHandler
 
 	private FriendRepository friendRepository;
 
-	private FollowedTweetIndexRepository followedTweetIndexRepository;
+	private FollowerTweetIndexRepository followerTweetIndexRepository;
 
 	@Override
 	public void onTweetPost(Tweet tweet)
@@ -86,14 +86,14 @@ public class TimelineService extends AbstractlineService implements TweetHandler
 		{
 			if (friends.contains(userLoginToForget))
 			{
-				Collection<String> indexedTweets = this.followedTweetIndexRepository.findTweetsForUserAndFollower(userLoginToForget,
+				Collection<String> indexedTweets = this.followerTweetIndexRepository.findTweetsForUserAndFollower(userLoginToForget,
 						currentUser.getLogin());
 
 				for (String tweetId : indexedTweets)
 				{
 					this.timeLineRepository.removeTweetFromTimeline(currentUser.getLogin(), tweetId);
 				}
-				this.followedTweetIndexRepository.removeIndex(userLoginToForget, currentUser.getLogin());
+				this.followerTweetIndexRepository.removeIndex(userLoginToForget, currentUser.getLogin());
 			}
 		}
 		else
@@ -160,9 +160,9 @@ public class TimelineService extends AbstractlineService implements TweetHandler
 		this.friendRepository = friendRepository;
 	}
 
-	public void setFollowedTweetIndexRepository(FollowedTweetIndexRepository followedTweetIndexRepository)
+	public void setFollowerTweetIndexRepository(FollowerTweetIndexRepository followerTweetIndexRepository)
 	{
-		this.followedTweetIndexRepository = followedTweetIndexRepository;
+		this.followerTweetIndexRepository = followerTweetIndexRepository;
 	}
 
 }

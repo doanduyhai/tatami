@@ -45,7 +45,7 @@ public class TweetRenderingPipelineManagerTest extends AbstractCassandraTatamiTe
 	public void testOnTweetRenderFavorite()
 	{
 		Tweet tweet = this.tweetService.createTransientTweet("tweet1");
-		when(mockFavoriteRepository.findFavoritesForUser(jdubois)).thenReturn(Arrays.asList("123"));
+		when(mockFavoriteRepository.findFavoritesForUser("jdubois")).thenReturn(Arrays.asList("123"));
 
 		this.tweetRenderingPipelineManager.onTweetRender(tweet);
 

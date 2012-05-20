@@ -24,6 +24,7 @@ public class TweetService implements TweetHandler
 		Tweet tweet = new Tweet();
 		tweet.setTweetId(TimeUUIdReorder.reorderTimeUUId(TimeUUIDUtils.getUniqueTimeUUIDinMillis().toString()));
 		tweet.setLogin(currentUser.getLogin());
+		tweet.setOriginalAuthorLogin(currentUser.getLogin());
 		tweet.setContent(content);
 		tweet.setTweetDate(Calendar.getInstance().getTime());
 		tweet.setFirstName(currentUser.getFirstName());

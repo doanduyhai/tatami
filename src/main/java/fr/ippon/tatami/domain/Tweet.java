@@ -59,6 +59,9 @@ public class Tweet
 	@Column(name = "notification")
 	private boolean notification = false;
 
+	@Column(name = "originalAuthorLogin")
+	private String originalAuthorLogin;
+
 	@JsonView(TweetView.Full.class)
 	private String firstName;
 
@@ -109,6 +112,7 @@ public class Tweet
 		clone.setGravatar(this.gravatar);
 		clone.setLastName(this.lastName);
 		clone.setLogin(this.login);
+		clone.setOriginalAuthorLogin(this.originalAuthorLogin);
 		clone.setNotification(this.notification);
 		clone.setTweetDate(this.tweetDate);
 		clone.setTweetId(this.tweetId);
@@ -164,6 +168,16 @@ public class Tweet
 	public void setNotification(boolean notification)
 	{
 		this.notification = notification;
+	}
+
+	public String getOriginalAuthorLogin()
+	{
+		return originalAuthorLogin;
+	}
+
+	public void setOriginalAuthorLogin(String originalAuthorLogin)
+	{
+		this.originalAuthorLogin = originalAuthorLogin;
 	}
 
 	public String getFirstName()

@@ -22,7 +22,11 @@
 	</bean>
 	
 	<bean id="favoriteRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFavoriteRepository" parent="abstractRepository"/>
+	<bean id="favoriteTweetIndexRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFavoriteTweetIndexRepository" parent="abstractRepository"/>
+	
 	<bean id="followerRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFollowerRepository" parent="abstractRepository"/>
+	<bean id="followerTweetIndexRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFollowerTweetIndexRepository" parent="abstractRepository"/>
+	
 	<bean id="friendRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFriendRepository" parent="abstractRepository"/>
 	<bean id="statsRepository" class="fr.ippon.tatami.repository.cassandra.CassandraStatsRepository" parent="abstractRepository"/>
 	<bean id="tagLineRepository" class="fr.ippon.tatami.repository.cassandra.CassandraTagLineRepository" parent="abstractRepository"/>
@@ -30,7 +34,12 @@
 	<bean id="tweetRepository" class="fr.ippon.tatami.repository.cassandra.CassandraTweetRepository" parent="abstractRepository"/>
 	<bean id="userIndexRepository" class="fr.ippon.tatami.repository.cassandra.CassandraUserIndexRepository" parent="abstractRepository"/>
 	<bean id="userLineRepository" class="fr.ippon.tatami.repository.cassandra.CassandraUserLineRepository" parent="abstractRepository"/>
+	
+	<bean id="mentionLineRepository" class="fr.ippon.tatami.repository.cassandra.CassandraMentionLineRepository" parent="abstractRepository"/>
+	<bean id="mentionTweetIndexRepository" class="fr.ippon.tatami.repository.cassandra.CassandraMentionTweetIndexRepository" parent="abstractRepository"/>
+	
+	<bean id="blockedUserRepository" class="fr.ippon.tatami.repository.cassandra.CassandraBlockedUserRepository" parent="abstractRepository"/>
+	<bean id="retweetRepository" class="fr.ippon.tatami.repository.cassandra.CassandraReTweetRepository" parent="abstractRepository"/>
+	
 	<bean id="userRepository" class="fr.ippon.tatami.repository.cassandra.CassandraUserRepository" parent="abstractRepository"/>
-	<bean id="followedTweetIndexRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFollowedTweetIndexRepository" parent="abstractRepository"/>
-	<bean id="favoriteIndexRepository" class="fr.ippon.tatami.repository.cassandra.CassandraFavoriteIndexRepository" parent="abstractRepository"/>
 </beans>

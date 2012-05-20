@@ -1,67 +1,76 @@
 package fr.ippon.tatami.repository;
 
-import static fr.ippon.tatami.config.ColumnFamilyKeys.COUNTER_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVORITE_INDEX_CF;
-import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVORITE_TWEET_USER_INDEX_CF;
+import static fr.ippon.tatami.config.CounterKeys.FAVORITE_TWEET_INDEX_COUNTER;
+import static fr.ippon.tatami.config.CounterKeys.FAVORITE_TWEET_USER_INDEX_COUNTER;
+import static fr.ippon.tatami.service.util.TatamiConstants.LOGIN_SEPARATOR;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
-import me.prettyprint.cassandra.model.thrift.ThriftCounterColumnQuery;
-import me.prettyprint.hector.api.beans.HColumn;
-import me.prettyprint.hector.api.query.CounterQuery;
+import java.util.Set;
 
 import org.testng.annotations.Test;
 
 import fr.ippon.tatami.AbstractCassandraTatamiTest;
 import fr.ippon.tatami.domain.Tweet;
-import fr.ippon.tatami.repository.cassandra.CassandraFavoriteIndexRepository;
 
 public class FavoriteIndexRepositoryTest extends AbstractCassandraTatamiTest
 {
-	private Tweet t1;
+	private Tweet t1, t2, t3;
 
+	@SuppressWarnings("unchecked")
 	@Test
-	public void testAddTweetToFavoriteIndex()
+	public void testAddTweetToIndexForFavorite()
 	{
 		t1 = this.tweetRepository.createTweet("jdubois", "tweet1", false);
+		t2 = this.tweetRepository.createTweet("jdubois", "tweet2", false);
+		t3 = this.tweetRepository.createTweet("jdubois", "tweet3", false);
 
-		this.favoriteIndexRepository.addTweetToFavoriteIndex("jdubois", t1.getTweetId());
-		this.favoriteIndexRepository.addTweetToFavoriteIndex("duyhai", t1.getTweetId());
-		this.favoriteIndexRepository.addTweetToFavoriteIndex("tescolan", t1.getTweetId());
-		this.favoriteIndexRepository.addTweetToFavoriteIndex("test", t1.getTweetId());
+		this.favoriteTweetIndexRepository.addTweetToFavoriteIndex("jdubois", t1.getLogin(), t1.getTweetId());
+		this.favoriteTweetIndexRepository.addTweetToFavoriteIndex("duyhai", t1.getLogin(), t1.getTweetId());
+		this.favoriteTweetIndexRepository.addTweetToFavoriteIndex("duyhai", t2.getLogin(), t2.getTweetId());
+		this.favoriteTweetIndexRepository.addTweetToFavoriteIndex("duyhai", t3.getLogin(), t3.getTweetId());
+		this.favoriteTweetIndexRepository.addTweetToFavoriteIndex("tescolan", t1.getLogin(), t1.getTweetId());
+		this.favoriteTweetIndexRepository.addTweetToFavoriteIndex("test", t1.getLogin(), t1.getTweetId());
 
-		CounterQuery<String, String> counter = new ThriftCounterColumnQuery<String, String>(keyspace, se, se);
+		long favoriteTweetCount = this.getCounterValue(FAVORITE_TWEET_INDEX_COUNTER, t1.getTweetId());
+		assertEquals(favoriteTweetCount, 4, "4 users for tweet1 in favorite tweet counter");
 
-		counter.setColumnFamily(COUNTER_CF).setKey(CassandraFavoriteIndexRepository.FAVORITE_TWEET_INDEX_COUNTER).setName(t1.getTweetId());
-		counter.execute().get().getValue();
-		assertEquals(counter.execute().get().getValue().longValue(), 4, "4 users for tweet1 in favorite tweet counter");
-
-		List<HColumn<String, Object>> columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(FAVORITE_INDEX_CF).setKey(t1.getTweetId())
-				.setRange(null, null, false, 10).execute().get().getColumns();
-
-		assertEquals(columns.size(), 4, "4 users for tweet1 in favorite tweet index");
-
-		List<String> userLogins = new ArrayList<String>();
-
-		for (HColumn<String, Object> column : columns)
-		{
-			userLogins.add(column.getName());
-		}
+		Collection<String> userLogins = this.findRangeFromCF(FAVORITE_INDEX_CF, t1.getTweetId(), null, false, 10);
 
 		assertTrue(userLogins.contains("jdubois"), "userLogins contains jdubois");
 		assertTrue(userLogins.contains("duyhai"), "userLogins contains duyhai");
 		assertTrue(userLogins.contains("tescolan"), "userLogins contains tescolan");
 		assertTrue(userLogins.contains("test"), "userLogins contains test");
+
+		Set<String> duyHaiJduboisFavorites = (Set<String>) this.getValueFromCF(FAVORITE_TWEET_USER_INDEX_CF, "duyhai", "jdubois");
+		assertTrue(duyHaiJduboisFavorites.contains(t1.getTweetId()), "duyhai:jdubois favorite set contains tweet1");
+		assertTrue(duyHaiJduboisFavorites.contains(t2.getTweetId()), "duyhai:jdubois favorite set contains tweet2");
+		assertTrue(duyHaiJduboisFavorites.contains(t3.getTweetId()), "duyhai:jdubois favorite set contains tweet3");
+
+		Set<String> tescolanJduboisFavorites = (Set<String>) this.getValueFromCF(FAVORITE_TWEET_USER_INDEX_CF, "tescolan", "jdubois");
+		assertTrue(tescolanJduboisFavorites.contains(t1.getTweetId()), "tescolan:jdubois favorite set contains tweet1");
+
+		Set<String> testJduboisFavorites = (Set<String>) this.getValueFromCF(FAVORITE_TWEET_USER_INDEX_CF, "test", "jdubois");
+		assertTrue(testJduboisFavorites.contains(t1.getTweetId()), "test:jdubois favorite set contains tweet1");
+
+		long duyhaiJduboisFavoriteCount = this.getCounterValue(FAVORITE_TWEET_USER_INDEX_COUNTER, "duyhai" + LOGIN_SEPARATOR + "jdubois");
+		assertEquals(duyhaiJduboisFavoriteCount, 3, "3 tweet for duyhai:jdubois favorite counter");
+
+		long tescolanJduboisFavoriteCount = this.getCounterValue(FAVORITE_TWEET_USER_INDEX_COUNTER, "tescolan" + LOGIN_SEPARATOR + "jdubois");
+		assertEquals(tescolanJduboisFavoriteCount, 1, "1 tweet for tescolan:jdubois favorite counter");
+
+		long testJduboisFavoriteCount = this.getCounterValue(FAVORITE_TWEET_USER_INDEX_COUNTER, "test" + LOGIN_SEPARATOR + "jdubois");
+		assertEquals(testJduboisFavoriteCount, 1, "1 tweet for test:jdubois favorite counter");
 	}
 
-	@Test(dependsOnMethods = "testAddTweetToFavoriteIndex")
-	public void testGetUsersForTweetFromIndex()
+	@Test(dependsOnMethods = "testAddTweetToIndexForFavorite")
+	public void testGetUsersForTweetFromIndexForFavorite()
 	{
-		Collection<String> userLogins = this.favoriteIndexRepository.getUsersForTweetFromIndex(t1.getTweetId());
+		Collection<String> userLogins = this.favoriteTweetIndexRepository.getUsersForTweetFromIndex(t1.getTweetId());
 
 		assertEquals(userLogins.size(), 4, "4 users for tweet1 in favorite tweet index");
 		assertTrue(userLogins.contains("jdubois"), "userLogins contains jdubois");
@@ -70,47 +79,58 @@ public class FavoriteIndexRepositoryTest extends AbstractCassandraTatamiTest
 		assertTrue(userLogins.contains("test"), "userLogins contains test");
 	}
 
-	@Test(dependsOnMethods = "testGetUsersForTweetFromIndex")
-	public void testRemoveTweetFromFavoriteIndex()
+	@Test(dependsOnMethods = "testGetUsersForTweetFromIndexForFavorite")
+	public void testGetTweetsForUserFromIndexForFavorite()
 	{
-		this.favoriteIndexRepository.removeTweetFromFavoriteIndex("duyhai", t1.getTweetId());
-		this.favoriteIndexRepository.removeTweetFromFavoriteIndex("tescolan", t1.getTweetId());
-
-		CounterQuery<String, String> counter = new ThriftCounterColumnQuery<String, String>(keyspace, se, se);
-
-		counter.setColumnFamily(COUNTER_CF).setKey(CassandraFavoriteIndexRepository.FAVORITE_TWEET_INDEX_COUNTER).setName(t1.getTweetId());
-		counter.execute().get().getValue();
-		assertEquals(counter.execute().get().getValue().longValue(), 2, "2 users for tweet1 in favorite tweet counter");
-
-		List<HColumn<String, Object>> columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(FAVORITE_INDEX_CF).setKey(t1.getTweetId())
-				.setRange(null, null, false, 10).execute().get().getColumns();
-
-		assertEquals(columns.size(), 2, "2 users for tweet1 in favorite tweet index");
-
-		List<String> userLogins = new ArrayList<String>();
-
-		for (HColumn<String, Object> column : columns)
-		{
-			userLogins.add(column.getName());
-		}
-
-		assertTrue(userLogins.contains("jdubois"), "userLogins contains jdubois");
-		assertTrue(userLogins.contains("test"), "userLogins contains test");
+		Collection<String> tweetsForDuyHai = this.favoriteTweetIndexRepository.getTweetsForUserFromIndex("duyhai", "jdubois");
+		assertEquals(tweetsForDuyHai.size(), 3, "duyhai:jdubois favorite set size == 3");
+		assertTrue(tweetsForDuyHai.contains(t1.getTweetId()), "duyhai:jdubois favorite set contains tweet1");
+		assertTrue(tweetsForDuyHai.contains(t2.getTweetId()), "duyhai:jdubois favorite set contains tweet2");
+		assertTrue(tweetsForDuyHai.contains(t3.getTweetId()), "duyhai:jdubois favorite set contains tweet3");
 	}
 
-	@Test(dependsOnMethods = "testRemoveTweetFromFavoriteIndex")
-	public void testRemoveIndexForTweet()
+	@SuppressWarnings("unchecked")
+	@Test(dependsOnMethods = "testGetTweetsForUserFromIndexForFavorite")
+	public void testRemoveTweetFromFavoriteIndexForFavorite()
 	{
-		this.favoriteIndexRepository.removeIndexForTweet(t1.getTweetId());
+		this.favoriteTweetIndexRepository.removeTweetFromFavoriteIndex("duyhai", t1.getLogin(), t1.getTweetId());
+		this.favoriteTweetIndexRepository.removeTweetFromFavoriteIndex("tescolan", t1.getLogin(), t1.getTweetId());
 
-		List<HColumn<String, Object>> columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(FAVORITE_INDEX_CF).setKey(t1.getTweetId())
-				.setRange(null, null, false, 10).execute().get().getColumns();
+		long tweet1FavoriteCount = this.getCounterValue(FAVORITE_TWEET_INDEX_COUNTER, t1.getTweetId());
+		assertEquals(tweet1FavoriteCount, 2, "2 users for tweet1 in favorite tweet counter");
 
-		assertEquals(columns.size(), 0, "0 users for tweet1 in favorite tweet index");
+		Collection<String> userLogins = this.findRangeFromCF(FAVORITE_INDEX_CF, t1.getTweetId(), null, false, 10);
 
-		columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(COUNTER_CF)
-				.setKey(CassandraFavoriteIndexRepository.FAVORITE_TWEET_INDEX_COUNTER).setRange(null, null, false, 10).execute().get().getColumns();
+		assertEquals(userLogins.size(), 2, "userLogins contains 2 users");
+		assertTrue(userLogins.contains("jdubois"), "userLogins contains jdubois");
+		assertTrue(userLogins.contains("test"), "userLogins contains test");
 
-		assertEquals(columns.size(), 0, "0 users for tweet1 in favorite tweet counter");
+		Set<String> duyHaiJduboisFavorites = (Set<String>) this.getValueFromCF(FAVORITE_TWEET_USER_INDEX_CF, "duyhai", "jdubois");
+		assertEquals(duyHaiJduboisFavorites.size(), 2, "duyhai:jdubois favorite set size is now == 2");
+		assertTrue(duyHaiJduboisFavorites.contains(t2.getTweetId()), "duyhai:jdubois favorite set contains tweet2");
+		assertTrue(duyHaiJduboisFavorites.contains(t3.getTweetId()), "duyhai:jdubois favorite set contains tweet3");
+
+		long duyHaiJduboisFavoritesCount = this.getCounterValue(FAVORITE_TWEET_USER_INDEX_COUNTER, "duyhai" + LOGIN_SEPARATOR + "jdubois");
+		assertEquals(duyHaiJduboisFavoritesCount, 2, "2 tweet for duyhai:jdubois favorite counter");
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test(dependsOnMethods = "testRemoveTweetFromFavoriteIndexForFavorite")
+	public void testRemoveIndexForTweetForFavorite()
+	{
+		this.favoriteTweetIndexRepository.removeIndexForTweet("test", "jdubois", t1.getTweetId());
+
+		Collection<String> userLogins = this.findRangeFromCF(FAVORITE_INDEX_CF, t1.getTweetId(), null, false, 10);
+		assertEquals(userLogins.size(), 0, "0 users for tweet1 in favorite tweet index");
+
+		long tweet1FavoriteCount = this.getCounterValue(FAVORITE_TWEET_INDEX_COUNTER, t1.getTweetId());
+		assertEquals(tweet1FavoriteCount, 0, "no more tweet index counter for tweet1");
+
+		Set<String> testJduboisFavorites = (Set<String>) this.getValueFromCF(FAVORITE_TWEET_USER_INDEX_CF, "test", "jdubois");
+		assertNull(testJduboisFavorites, "no more tweet user index for test:jdubois");
+
+		long testJduboisTweetCount = this.getCounterValue(FAVORITE_TWEET_USER_INDEX_COUNTER, "test" + LOGIN_SEPARATOR + "jdubois");
+		assertEquals(testJduboisTweetCount, 0, "no more tweet user index counter for test:jdubois");
 	}
 }

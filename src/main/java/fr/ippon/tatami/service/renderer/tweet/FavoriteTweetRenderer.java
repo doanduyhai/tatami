@@ -22,7 +22,7 @@ public class FavoriteTweetRenderer implements TweetRenderingHandler
 
 		if (currentUser != null)
 		{
-			Collection<String> favorites = this.favoriteLineRepository.findFavoritesForUser(currentUser);
+			Collection<String> favorites = this.favoriteLineRepository.findFavoritesForUser(currentUser.getLogin());
 
 			if (!favorites.contains(tweet.getTweetId()))
 			{

@@ -114,9 +114,6 @@ public class User
 	@Column(name = "followersCount")
 	private long followersCount = 0;
 
-	@Column(name = "favoritesCount")
-	private long favoritesCount = 0;
-
 	@JsonView(value =
 	{
 			UserView.Minimum.class,
@@ -133,7 +130,6 @@ public class User
 		User clone = new User();
 		clone.setBiography(this.biography);
 		clone.setEmail(this.email);
-		clone.setFavoritesCount(this.favoritesCount);
 		clone.setFirstName(this.firstName);
 		clone.setFollow(this.follow);
 		clone.setFollowersCount(this.followersCount);
@@ -182,18 +178,6 @@ public class User
 		this.followersCount--;
 		if (this.followersCount < 0)
 			this.followersCount = 0;
-	}
-
-	public void incrementFavoritesCount()
-	{
-		this.favoritesCount++;
-	}
-
-	public void decrementFavoritesCount()
-	{
-		this.favoritesCount--;
-		if (this.favoritesCount < 0)
-			this.favoritesCount = 0;
 	}
 
 	public String getLogin()
@@ -274,16 +258,6 @@ public class User
 	public void setFollowersCount(long followersCount)
 	{
 		this.followersCount = followersCount;
-	}
-
-	public long getFavoritesCount()
-	{
-		return favoritesCount;
-	}
-
-	public void setFavoritesCount(long favoritesCount)
-	{
-		this.favoritesCount = favoritesCount;
 	}
 
 	public String getBiography()

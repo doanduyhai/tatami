@@ -1,6 +1,8 @@
 package fr.ippon.tatami.repository;
 
+import static fr.ippon.tatami.config.ColumnFamilyKeys.COUNTER_CF;
 import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVORITELINE_CF;
+import static fr.ippon.tatami.config.CounterKeys.FAVORITE_TWEET_COUNTER;
 import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
 import static org.testng.Assert.assertTrue;
 
@@ -8,7 +10,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import me.prettyprint.cassandra.model.thrift.ThriftCounterColumnQuery;
 import me.prettyprint.hector.api.beans.HColumn;
+import me.prettyprint.hector.api.beans.HCounterColumn;
+import me.prettyprint.hector.api.query.CounterQuery;
 
 import org.testng.annotations.Test;
 
@@ -43,13 +48,13 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 		tweet4 = this.tweetRepository.createTweet("test", "tweet4", false);
 		tweet5 = this.tweetRepository.createTweet("test", "tweet5", false);
 
-		this.favoriteRepository.addFavorite(user, tweet1.getTweetId());
-		this.favoriteRepository.addFavorite(user, tweet2.getTweetId());
-		this.favoriteRepository.addFavorite(user, tweet3.getTweetId());
-		this.favoriteRepository.addFavorite(user, tweet4.getTweetId());
-		this.favoriteRepository.addFavorite(user, tweet5.getTweetId());
+		this.favoriteRepository.addFavorite("test", tweet1.getTweetId());
+		this.favoriteRepository.addFavorite("test", tweet2.getTweetId());
+		this.favoriteRepository.addFavorite("test", tweet3.getTweetId());
+		this.favoriteRepository.addFavorite("test", tweet4.getTweetId());
+		this.favoriteRepository.addFavorite("test", tweet5.getTweetId());
 
-		User refreshedUser = this.userRepository.findUserByLogin("test");
+		// User refreshedUser = this.userRepository.findUserByLogin("test");
 
 		List<String> userFavorites = new ArrayList<String>();
 
@@ -61,8 +66,24 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 			userFavorites.add(column.getName());
 		}
 
+		CounterQuery<String, String> counter = new ThriftCounterColumnQuery<String, String>(keyspace, se, se);
+
+		counter.setColumnFamily(COUNTER_CF).setKey(FAVORITE_TWEET_COUNTER).setName(user.getLogin());
+
+		HCounterColumn<String> counterColumn = counter.execute().get();
+
+		long count;
+		if (counterColumn == null)
+		{
+			count = 0;
+		}
+		else
+		{
+			count = counterColumn.getValue();
+		}
+
 		assertTrue(userFavorites.size() == 5, "userFavorites.size() == 5");
-		assertTrue(refreshedUser.getFavoritesCount() == 5, "refreshedUser.getFavoritesCount() == 5");
+		assertTrue(count == 5, "refreshedUser.getFavoritesCount() == 5");
 		assertTrue(userFavorites.contains(tweet1.getTweetId()), "refreshedUser has tweet1 as favorite");
 		assertTrue(userFavorites.contains(tweet2.getTweetId()), "refreshedUser has tweet2 as favorite");
 		assertTrue(userFavorites.contains(tweet3.getTweetId()), "refreshedUser has tweet3 as favorite");
@@ -73,7 +94,7 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testAddFavorite")
 	public void testFindFavoritesForUser()
 	{
-		Collection<String> userFavorites = this.favoriteRepository.findFavoritesForUser(user);
+		Collection<String> userFavorites = this.favoriteRepository.findFavoritesForUser("test");
 
 		assertTrue(userFavorites.size() == 5, "userFavorites.size() == 5");
 
@@ -87,7 +108,7 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testFindFavoritesForUser")
 	public void testFindFavoritesRangeForUser()
 	{
-		Collection<String> userFavorites = this.favoriteRepository.findFavoritesRangeForUser(user, tweet3.getTweetId(), 2);
+		Collection<String> userFavorites = this.favoriteRepository.findFavoritesRangeForUser("test", tweet3.getTweetId(), 2);
 
 		assertTrue(userFavorites.size() == 2, "userFavorites.size() == 2");
 		assertTrue(userFavorites.contains(tweet1.getTweetId()), "refreshedUser has tweet1 as favorite");
@@ -97,7 +118,7 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testFindFavoritesRangeForUser")
 	public void testFindFavoritesRangeOutOfBoundsForUser()
 	{
-		Collection<String> userFavorites = this.favoriteRepository.findFavoritesRangeForUser(user, tweet2.getTweetId(), 10);
+		Collection<String> userFavorites = this.favoriteRepository.findFavoritesRangeForUser("test", tweet2.getTweetId(), 10);
 
 		assertTrue(userFavorites.size() == 1, "userFavorites.size() == 1");
 		assertTrue(userFavorites.contains(tweet1.getTweetId()), "refreshedUser has tweet1 as favorite");
@@ -106,7 +127,7 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testFindFavoritesRangeOutOfBoundsForUser")
 	public void testFindFavoritesRangeBoundsLimitForUser()
 	{
-		Collection<String> userFavorites = this.favoriteRepository.findFavoritesRangeForUser(user, "000", 10);
+		Collection<String> userFavorites = this.favoriteRepository.findFavoritesRangeForUser("test", "000", 10);
 
 		assertTrue(userFavorites.size() == 0, "userFavorites.size() == 0");
 
@@ -115,17 +136,33 @@ public class FavoriteRepositoryTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testFindFavoritesRangeOutOfBoundsForUser")
 	public void testRemoveFavorite()
 	{
-		this.favoriteRepository.removeFavorite(user, tweet1.getTweetId());
-		this.favoriteRepository.removeFavorite(user, tweet2.getTweetId());
-		this.favoriteRepository.removeFavorite(user, tweet3.getTweetId());
-		this.favoriteRepository.removeFavorite(user, tweet4.getTweetId());
-		this.favoriteRepository.removeFavorite(user, tweet5.getTweetId());
+		this.favoriteRepository.removeFavorite("test", tweet1.getTweetId());
+		this.favoriteRepository.removeFavorite("test", tweet2.getTweetId());
+		this.favoriteRepository.removeFavorite("test", tweet3.getTweetId());
+		this.favoriteRepository.removeFavorite("test", tweet4.getTweetId());
+		this.favoriteRepository.removeFavorite("test", tweet5.getTweetId());
 
-		User refreshedUser = this.userRepository.findUserByLogin("test");
-		Collection<String> userFavorites = this.favoriteRepository.findFavoritesForUser(user);
+		// User refreshedUser = this.userRepository.findUserByLogin("test");
+		Collection<String> userFavorites = this.favoriteRepository.findFavoritesForUser("test");
+
+		CounterQuery<String, String> counter = new ThriftCounterColumnQuery<String, String>(keyspace, se, se);
+
+		counter.setColumnFamily(COUNTER_CF).setKey(FAVORITE_TWEET_COUNTER).setName(user.getLogin());
+
+		HCounterColumn<String> counterColumn = counter.execute().get();
+
+		long count;
+		if (counterColumn == null)
+		{
+			count = 0;
+		}
+		else
+		{
+			count = counterColumn.getValue();
+		}
 
 		assertTrue(userFavorites.size() == 0, "userFavorites.size()==0");
-		assertTrue(refreshedUser.getFavoritesCount() == 0, "refreshedUser.getFavoritesCount()==0");
+		assertTrue(count == 0, "refreshedUser.getFavoritesCount()==0");
 	}
 
 }

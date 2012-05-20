@@ -1,32 +1,32 @@
 package fr.ippon.tatami;
 
 import static fr.ippon.tatami.config.ColumnFamilyKeys.COUNTER_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.DAYLINE_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.FAVORITELINE_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWED_TWEET_INDEX_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.FOLLOWERS_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.FRIENDS_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.MONTHLINE_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.TAGLINE_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.TIMELINE_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.TWEET_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.USERLINE_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.USER_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.USER_INDEX_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.WEEKLINE_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.YEARLINE_CF;
+import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javassist.Modifier;
 
 import javax.inject.Inject;
 
 import me.prettyprint.cassandra.model.CqlQuery;
+import me.prettyprint.cassandra.model.thrift.ThriftCounterColumnQuery;
 import me.prettyprint.cassandra.serializers.LongSerializer;
 import me.prettyprint.cassandra.serializers.ObjectSerializer;
 import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.serializers.TimeUUIDSerializer;
 import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.Serializer;
+import me.prettyprint.hector.api.beans.HColumn;
+import me.prettyprint.hector.api.beans.HCounterColumn;
+import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.mutation.Mutator;
+import me.prettyprint.hector.api.query.CounterQuery;
 import me.prettyprint.hom.EntityManagerImpl;
 
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
@@ -38,12 +38,17 @@ import org.testng.annotations.BeforeSuite;
 
 import com.eaio.uuid.UUID;
 
+import fr.ippon.tatami.config.ColumnFamilyKeys;
 import fr.ippon.tatami.domain.User;
-import fr.ippon.tatami.repository.FavoriteIndexRepository;
+import fr.ippon.tatami.repository.BlockedUserRepository;
 import fr.ippon.tatami.repository.FavoriteRepository;
-import fr.ippon.tatami.repository.FollowedTweetIndexRepository;
+import fr.ippon.tatami.repository.FavoriteTweetIndexRepository;
 import fr.ippon.tatami.repository.FollowerRepository;
+import fr.ippon.tatami.repository.FollowerTweetIndexRepository;
 import fr.ippon.tatami.repository.FriendRepository;
+import fr.ippon.tatami.repository.MentionLineRepository;
+import fr.ippon.tatami.repository.MentionTweetIndexRepository;
+import fr.ippon.tatami.repository.ReTweetRepository;
 import fr.ippon.tatami.repository.StatsRepository;
 import fr.ippon.tatami.repository.TagLineRepository;
 import fr.ippon.tatami.repository.TimeLineRepository;
@@ -105,13 +110,13 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 	protected FollowerRepository followerRepository;
 
 	@Inject
-	protected FollowedTweetIndexRepository followedTweetIndexRepository;
+	protected FollowerTweetIndexRepository followerTweetIndexRepository;
 
 	@Inject
 	protected FavoriteRepository favoriteRepository;
 
 	@Inject
-	protected FavoriteIndexRepository favoriteIndexRepository;
+	protected FavoriteTweetIndexRepository favoriteTweetIndexRepository;
 
 	@Inject
 	protected TagLineRepository tagLineRepository;
@@ -127,6 +132,18 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 
 	@Inject
 	protected UserIndexRepository userIndexRepository;
+
+	@Inject
+	protected MentionLineRepository mentionLineRepository;
+
+	@Inject
+	protected MentionTweetIndexRepository mentionTweetIndexRepository;
+
+	@Inject
+	protected BlockedUserRepository blockedUserRepository;
+
+	@Inject
+	protected ReTweetRepository retweetRepository;
 
 	@Inject
 	protected UserService userService;
@@ -207,40 +224,19 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 
 	// @AfterSuite
 	@BeforeClass
-	public void cleanCF()
+	public void cleanCF() throws IllegalArgumentException, IllegalAccessException
 	{
 		CqlQuery<String, String, String> cqlQuery = new CqlQuery<String, String, String>(keyspace, se, se, se);
 
-		cqlQuery.setQuery(" truncate " + USER_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + FRIENDS_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + FOLLOWERS_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + FOLLOWED_TWEET_INDEX_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + TWEET_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + DAYLINE_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + WEEKLINE_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + MONTHLINE_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + YEARLINE_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + FAVORITELINE_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + TAGLINE_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + TIMELINE_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + USERLINE_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + USER_INDEX_CF);
-		cqlQuery.execute();
-		cqlQuery.setQuery(" truncate " + COUNTER_CF);
-		cqlQuery.execute();
+		for (Field field : ColumnFamilyKeys.class.getDeclaredFields())
+		{
+			if (Modifier.isPublic(field.getModifiers()) && Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers()))
+			{
+				cqlQuery.setQuery(" truncate " + field.get(null));
+				cqlQuery.execute();
+			}
+		}
+
 	}
 
 	protected void mockAuthenticatedUser(User targetUser)
@@ -248,6 +244,111 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 		AuthenticationService mockAuthenticationService = mock(AuthenticationService.class);
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(targetUser);
 		userService.setAuthenticationService(mockAuthenticationService);
+
+	}
+
+	protected void insertIntoCF(String CF, String key, String itemId)
+	{
+		Mutator<String> mutator = HFactory.createMutator(keyspace, se);
+		mutator.insert(key, CF, HFactory.createColumn(itemId, "", se, oe));
+	}
+
+	protected void insertIntoCFWithValue(String CF, String key, String itemId, Object value)
+	{
+		Mutator<String> mutator = HFactory.createMutator(keyspace, se);
+		mutator.insert(key, CF, HFactory.createColumn(itemId, value, se, oe));
+	}
+
+	protected Object getValueFromCF(String CF, String key, String itemId)
+	{
+		Object result = null;
+		HColumn<String, Object> column = HFactory.createColumnQuery(keyspace, se, se, oe).setColumnFamily(CF).setKey(key).setName(itemId).execute()
+				.get();
+		if (column != null)
+		{
+			result = column.getValue();
+		}
+		return result;
+	}
+
+	protected void removeFromCF(String CF, String key, String itemId)
+	{
+		Mutator<String> mutator = HFactory.createMutator(keyspace, se);
+		mutator.delete(key, CF, itemId, se);
+	}
+
+	protected Collection<String> findRangeFromCF(String CF, String key, String startItemId, boolean reverse, int count)
+	{
+		List<String> items = new ArrayList<String>();
+
+		List<HColumn<String, Object>> columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(CF).setKey(key)
+				.setRange(startItemId, null, reverse, count + 1).execute().get().getColumns();
+
+		for (HColumn<String, Object> column : columns)
+		{
+			items.add(column.getName());
+		}
+
+		if (items.size() > 0)
+		{
+			if (startItemId != null && items.contains(startItemId))
+			{
+				items.remove(startItemId);
+			}
+
+			if (items.size() > count)
+			{
+				items.remove(items.size() - 1);
+			}
+		}
+
+		return items;
+	}
+
+	protected void removeRowFromCF(String CF, String key)
+	{
+		CqlQuery<String, String, Object> cqlQuery = new CqlQuery<String, String, Object>(keyspace, se, se, oe);
+		cqlQuery.setQuery(" DELETE FROM " + CF + " WHERE KEY = '" + key + "';");
+		cqlQuery.execute();
+
+	}
+
+	protected void removeCounter(String counterKey, String counterColumn)
+	{
+		Mutator<String> mutator = HFactory.createMutator(keyspace, se);
+		mutator.delete(counterKey, COUNTER_CF, counterColumn, se);
+
+	}
+
+	protected void incrementCounter(String counterKey, String counterColumn)
+	{
+		Mutator<String> mutator = HFactory.createMutator(keyspace, se);
+		mutator.incrementCounter(counterKey, COUNTER_CF, counterColumn, 1);
+	}
+
+	protected void decrementCounter(String counterKey, String counterColumn)
+	{
+		Mutator<String> mutator = HFactory.createMutator(keyspace, se);
+		mutator.decrementCounter(counterKey, COUNTER_CF, counterColumn, 1);
+
+	}
+
+	protected long getCounterValue(String counterKey, String counterColumn)
+	{
+		CounterQuery<String, String> counter = new ThriftCounterColumnQuery<String, String>(keyspace, se, se);
+
+		counter.setColumnFamily(COUNTER_CF).setKey(counterKey).setName(counterColumn);
+
+		HCounterColumn<String> column = counter.execute().get();
+
+		if (column == null)
+		{
+			return 0;
+		}
+		else
+		{
+			return column.getValue();
+		}
 
 	}
 }

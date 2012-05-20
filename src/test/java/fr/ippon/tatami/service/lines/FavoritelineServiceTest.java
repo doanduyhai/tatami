@@ -1,11 +1,17 @@
 package fr.ippon.tatami.service.lines;
 
+import static fr.ippon.tatami.config.ColumnFamilyKeys.COUNTER_CF;
+import static fr.ippon.tatami.config.CounterKeys.FAVORITE_TWEET_COUNTER;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Collection;
+
+import me.prettyprint.cassandra.model.thrift.ThriftCounterColumnQuery;
+import me.prettyprint.hector.api.beans.HCounterColumn;
+import me.prettyprint.hector.api.query.CounterQuery;
 
 import org.testng.annotations.Test;
 
@@ -74,10 +80,25 @@ public class FavoritelineServiceTest extends AbstractCassandraTatamiTest
 		this.favoritelineService.onAddToFavorite(t9);
 		this.favoritelineService.onAddToFavorite(t10);
 
-		User refreshedJdubois = this.userService.getUserByLogin("jdubois");
-		assertTrue(refreshedJdubois.getFavoritesCount() == 10, "refreshedJdubois.getFavoritesCount() == 10");
+		CounterQuery<String, String> counter = new ThriftCounterColumnQuery<String, String>(keyspace, se, se);
 
-		Collection<String> favorites = this.favoriteRepository.findFavoritesForUser(jdubois);
+		counter.setColumnFamily(COUNTER_CF).setKey(FAVORITE_TWEET_COUNTER).setName(jdubois.getLogin());
+
+		HCounterColumn<String> counterColumn = counter.execute().get();
+
+		long count;
+		if (counterColumn == null)
+		{
+			count = 0;
+		}
+		else
+		{
+			count = counterColumn.getValue();
+		}
+
+		assertTrue(count == 10, "refreshedJdubois.getFavoritesCount() == 10");
+
+		Collection<String> favorites = this.favoriteRepository.findFavoritesForUser("jdubois");
 
 		assertTrue(favorites.contains(t1.getTweetId()), "favorites.contains('tweet1')");
 		assertTrue(favorites.contains(t2.getTweetId()), "favorites.contains('tweet2')");
@@ -136,7 +157,7 @@ public class FavoritelineServiceTest extends AbstractCassandraTatamiTest
 		this.favoritelineService.onRemoveFromFavorite(t8);
 		this.favoritelineService.onRemoveFromFavorite(t7);
 
-		Collection<String> favorites = this.favoriteRepository.findFavoritesRangeForUser(jdubois, t9.getTweetId(), 3);
+		Collection<String> favorites = this.favoriteRepository.findFavoritesRangeForUser("jdubois", t9.getTweetId(), 3);
 		assertEquals(favorites.size(), 3, "favorites.size() == 3");
 
 		assertTrue(favorites.contains(t6.getTweetId()), "favorites has 'tweet6'");

@@ -15,7 +15,7 @@ import fr.ippon.tatami.web.view.ViewConstants;
 @Controller
 public class FragmentController
 {
-	// @Inject
+
 	UserService userService;
 
 	@ModelAttribute(value = "currentUser")

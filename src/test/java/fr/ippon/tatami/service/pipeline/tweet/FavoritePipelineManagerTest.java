@@ -16,8 +16,6 @@ import fr.ippon.tatami.AbstractCassandraTatamiTest;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.service.pipeline.tweet.FavoriteHandler;
-import fr.ippon.tatami.service.pipeline.tweet.FavoritePipelineManager;
 import fr.ippon.tatami.service.security.AuthenticationService;
 
 public class FavoritePipelineManagerTest extends AbstractCassandraTatamiTest
@@ -88,7 +86,7 @@ public class FavoritePipelineManagerTest extends AbstractCassandraTatamiTest
 		this.favoritePipelineManager.onAddToFavorite(t3.getTweetId());
 		this.favoritePipelineManager.onAddToFavorite(t4.getTweetId());
 
-		Collection<String> favoriteTweets = this.favoriteRepository.findFavoritesForUser(jdubois);
+		Collection<String> favoriteTweets = this.favoriteRepository.findFavoritesForUser("jdubois");
 
 		assertEquals(favoriteTweets.size(), 4, "favoriteTweets.size() == 4");
 		assertTrue(favoriteTweets.contains(t1.getTweetId()), "favoriteTweets contains tweet1");
@@ -109,7 +107,7 @@ public class FavoritePipelineManagerTest extends AbstractCassandraTatamiTest
 		this.favoritePipelineManager.onRemoveFromFavorite(t2.getTweetId());
 		this.favoritePipelineManager.onRemoveFromFavorite(t3.getTweetId());
 
-		Collection<String> favoriteTweets = this.favoriteRepository.findFavoritesForUser(jdubois);
+		Collection<String> favoriteTweets = this.favoriteRepository.findFavoritesForUser("jdubois");
 
 		assertEquals(favoriteTweets.size(), 2, "favoriteTweets.size() == 2");
 		assertTrue(favoriteTweets.contains(t1.getTweetId()), "favoriteTweets contains tweet1");

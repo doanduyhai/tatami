@@ -16,23 +16,23 @@ import org.testng.annotations.Test;
 import fr.ippon.tatami.AbstractCassandraTatamiTest;
 import fr.ippon.tatami.domain.Tweet;
 
-public class FollowedTweetIndexRepositoryTest extends AbstractCassandraTatamiTest
+public class FollowerTweetIndexRepositoryTest extends AbstractCassandraTatamiTest
 {
 
 	private Tweet t1, t2, t3, t4;
 
 	@Test
-	public void testAddTweetToIndex()
+	public void testAddTweetToIndexForFollower()
 	{
 		t1 = this.tweetRepository.createTweet("duyhai", "tweet1", false);
 		t2 = this.tweetRepository.createTweet("duyhai", "tweet2", false);
 		t3 = this.tweetRepository.createTweet("duyhai", "tweet3", false);
 		t4 = this.tweetRepository.createTweet("duyhai", "tweet4", false);
 
-		this.followedTweetIndexRepository.addTweetToIndex("duyhai", "jdubois", t1.getTweetId());
-		this.followedTweetIndexRepository.addTweetToIndex("duyhai", "jdubois", t2.getTweetId());
-		this.followedTweetIndexRepository.addTweetToIndex("duyhai", "jdubois", t3.getTweetId());
-		this.followedTweetIndexRepository.addTweetToIndex("duyhai", "jdubois", t4.getTweetId());
+		this.followerTweetIndexRepository.addTweetToIndex("duyhai", "jdubois", t1.getTweetId());
+		this.followerTweetIndexRepository.addTweetToIndex("duyhai", "jdubois", t2.getTweetId());
+		this.followerTweetIndexRepository.addTweetToIndex("duyhai", "jdubois", t3.getTweetId());
+		this.followerTweetIndexRepository.addTweetToIndex("duyhai", "jdubois", t4.getTweetId());
 
 		List<String> followedTweets = new ArrayList<String>();
 		List<HColumn<String, Object>> columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(FOLLOWED_TWEET_INDEX_CF)
@@ -46,10 +46,10 @@ public class FollowedTweetIndexRepositoryTest extends AbstractCassandraTatamiTes
 		assertTrue(followedTweets.size() == 4, "followedTweets.size() == 4");
 	}
 
-	@Test(dependsOnMethods = "testAddTweetToIndex")
+	@Test(dependsOnMethods = "testAddTweetToIndexForFollower")
 	public void testFindTweetsForUserAndFollower()
 	{
-		Collection<String> followedTweets = this.followedTweetIndexRepository.findTweetsForUserAndFollower("duyhai", "jdubois");
+		Collection<String> followedTweets = this.followerTweetIndexRepository.findTweetsForUserAndFollower("duyhai", "jdubois");
 
 		assertEquals(followedTweets.size(), 4, "followedTweets.size() == 4");
 		assertTrue(followedTweets.contains(t1.getTweetId()), "followedTweets has tweet1");
@@ -59,10 +59,10 @@ public class FollowedTweetIndexRepositoryTest extends AbstractCassandraTatamiTes
 	}
 
 	@Test(dependsOnMethods = "testFindTweetsForUserAndFollower")
-	public void testRemoveTweetFromIndex()
+	public void testRemoveTweetFromIndexForFollower()
 	{
-		this.followedTweetIndexRepository.removeTweetFromIndex("duyhai", "jdubois", t2.getTweetId());
-		this.followedTweetIndexRepository.removeTweetFromIndex("duyhai", "jdubois", t3.getTweetId());
+		this.followerTweetIndexRepository.removeTweetFromIndex("duyhai", "jdubois", t2.getTweetId());
+		this.followerTweetIndexRepository.removeTweetFromIndex("duyhai", "jdubois", t3.getTweetId());
 
 		List<String> followedTweets = new ArrayList<String>();
 		List<HColumn<String, Object>> columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(FOLLOWED_TWEET_INDEX_CF)
@@ -78,10 +78,10 @@ public class FollowedTweetIndexRepositoryTest extends AbstractCassandraTatamiTes
 		assertEquals(followedTweets.get(1), t1.getTweetId(), "followedTweets.get(1) == tweet1");
 	}
 
-	@Test(dependsOnMethods = "testRemoveTweetFromIndex")
-	public void testRemoveIndex()
+	@Test(dependsOnMethods = "testRemoveTweetFromIndexForFollower")
+	public void testRemoveTweetIndexForFollower()
 	{
-		this.followedTweetIndexRepository.removeIndex("duyhai", "jdubois");
+		this.followerTweetIndexRepository.removeIndex("duyhai", "jdubois");
 		List<HColumn<String, Object>> columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(FOLLOWED_TWEET_INDEX_CF)
 				.setKey("duyhai:jdubois").setRange(null, null, true, 100).execute().get().getColumns();
 

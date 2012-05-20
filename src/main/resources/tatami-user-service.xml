@@ -23,7 +23,7 @@
 	<bean id="contactsService" class="fr.ippon.tatami.service.user.ContactsService" parent="abstractUserService">
 		<property name="followerRepository" ref="followerRepository"/>
 		<property name="timeLineRepository" ref="timeLineRepository"/>
-		<property name="followedTweetIndexRepository" ref="followedTweetIndexRepository"/>
+		<property name="followerTweetIndexRepository" ref="followerTweetIndexRepository"/>
 		<property name="userService" ref="userService"/>
 		<property name="statslineService" ref="statslineService"/>
 	</bean>

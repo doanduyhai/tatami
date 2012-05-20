@@ -15,8 +15,8 @@ import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.domain.UserTweetStat;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.repository.FollowedTweetIndexRepository;
 import fr.ippon.tatami.repository.FollowerRepository;
+import fr.ippon.tatami.repository.FollowerTweetIndexRepository;
 import fr.ippon.tatami.repository.TimeLineRepository;
 import fr.ippon.tatami.service.lines.StatslineService;
 import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
@@ -36,7 +36,7 @@ public class ContactsService extends AbstractUserService implements TweetHandler
 
 	private TimeLineRepository timeLineRepository;
 
-	private FollowedTweetIndexRepository followedTweetIndexRepository;
+	private FollowerTweetIndexRepository followerTweetIndexRepository;
 
 	@Override
 	public void onTweetPost(Tweet tweet) throws FunctionalException
@@ -47,7 +47,7 @@ public class ContactsService extends AbstractUserService implements TweetHandler
 		for (String followerLogin : followerRepository.findFollowersForUser(currentUser))
 		{
 			timeLineRepository.addTweetToTimeline(followerLogin, tweet.getTweetId());
-			followedTweetIndexRepository.addTweetToIndex(currentUser.getLogin(), followerLogin, tweet.getTweetId());
+			followerTweetIndexRepository.addTweetToIndex(currentUser.getLogin(), followerLogin, tweet.getTweetId());
 		}
 
 	}
@@ -63,7 +63,7 @@ public class ContactsService extends AbstractUserService implements TweetHandler
 			for (String followerLogin : this.getFollowersForUser(currentUser.getLogin()))
 			{
 				this.timeLineRepository.removeTweetFromTimeline(followerLogin, tweet.getTweetId());
-				followedTweetIndexRepository.removeTweetFromIndex(currentUser.getLogin(), followerLogin, tweet.getTweetId());
+				followerTweetIndexRepository.removeTweetFromIndex(currentUser.getLogin(), followerLogin, tweet.getTweetId());
 			}
 		}
 	}
@@ -218,9 +218,9 @@ public class ContactsService extends AbstractUserService implements TweetHandler
 		this.timeLineRepository = timeLineRepository;
 	}
 
-	public void setFollowedTweetIndexRepository(FollowedTweetIndexRepository followedTweetIndexRepository)
+	public void setFollowerTweetIndexRepository(FollowerTweetIndexRepository followerTweetIndexRepository)
 	{
-		this.followedTweetIndexRepository = followedTweetIndexRepository;
+		this.followerTweetIndexRepository = followerTweetIndexRepository;
 	}
 
 	public void setStatslineService(StatslineService statslineService)

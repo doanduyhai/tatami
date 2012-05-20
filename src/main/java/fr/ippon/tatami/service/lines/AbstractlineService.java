@@ -30,10 +30,11 @@ public abstract class AbstractlineService
 		for (String tweedId : tweetIds)
 		{
 			tweet = tweetRepository.findTweetById(tweedId);
-			tweetUser = userService.getUserByLogin(tweet.getLogin());
 
 			if (tweet != null)
 			{
+				tweetUser = userService.getUserByLogin(tweet.getLogin());
+
 				// Duplicate to avoid modifying the cache
 				tweet = tweet.duplicate();
 				tweet.setFirstName(tweetUser.getFirstName());

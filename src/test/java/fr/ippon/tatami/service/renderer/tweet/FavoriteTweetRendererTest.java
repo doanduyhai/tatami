@@ -51,7 +51,7 @@ public class FavoriteTweetRendererTest extends AbstractCassandraTatamiTest
 
 		Tweet tweet = this.tweetService.createTransientTweet("tweet1");
 
-		when(mockFavoriteRepository.findFavoritesForUser(jdubois)).thenReturn(Arrays.asList("123"));
+		when(mockFavoriteRepository.findFavoritesForUser("jdubois")).thenReturn(Arrays.asList("123"));
 
 		this.favoriteTweetRenderer.onRender(tweet);
 
@@ -65,7 +65,7 @@ public class FavoriteTweetRendererTest extends AbstractCassandraTatamiTest
 
 		Tweet tweet = this.tweetService.createTransientTweet("tweet2");
 
-		when(mockFavoriteRepository.findFavoritesForUser(jdubois)).thenReturn(Arrays.asList(tweet.getTweetId()));
+		when(mockFavoriteRepository.findFavoritesForUser("jdubois")).thenReturn(Arrays.asList(tweet.getTweetId()));
 
 		this.favoriteTweetRenderer.onRender(tweet);
 

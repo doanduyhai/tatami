@@ -7,7 +7,7 @@
       <class name="fr.ippon.tatami.repository.TweetRepositoryTest"/>   
       <class name="fr.ippon.tatami.repository.FriendRepositoryTest"/>      
       <class name="fr.ippon.tatami.repository.FollowerRepositoryTest"/>
-      <class name="fr.ippon.tatami.repository.FollowedTweetIndexRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.FollowerTweetIndexRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.FavoriteRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.FavoriteIndexRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.TagLineRepositoryTest"/>
@@ -15,6 +15,10 @@
       <class name="fr.ippon.tatami.repository.TimeLineRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.StatsRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.UserIndexRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.CassandraMentionLineRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.CassandraMentionTweetIndexRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.CassandraBlockedUserRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.CassandraReTweetRepositoryTest"/>      
     </classes>
   </test>
   
