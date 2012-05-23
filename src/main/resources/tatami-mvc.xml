@@ -117,7 +117,6 @@
 		<property name="taglineService" ref="taglineService"/>
 		<property name="userlineService" ref="userlineService"/>
 		<property name="tweetPipelineManager" ref="tweetPipelineManager"/>
-		<property name="favoritePipelineManager" ref="favoritePipelineManager"/>
 	</bean>
 
 	<bean id="userController" class="fr.ippon.tatami.web.rest.UserController" parent="abstractRestController">

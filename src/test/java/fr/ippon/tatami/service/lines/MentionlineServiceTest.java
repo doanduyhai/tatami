@@ -8,6 +8,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.owasp.esapi.reference.DefaultEncoder;
 import org.testng.annotations.Test;
 
 import fr.ippon.tatami.AbstractCassandraTatamiTest;
@@ -46,6 +47,7 @@ public class MentionlineServiceTest extends AbstractCassandraTatamiTest
 
 		this.tweetService.setAuthenticationService(mockAuthenticationService);
 		this.userService.setAuthenticationService(mockAuthenticationService);
+		this.contactsService.setAuthenticationService(mockAuthenticationService);
 	}
 
 	@Test(dependsOnMethods = "initForMentionlineServiceTest")
@@ -58,6 +60,14 @@ public class MentionlineServiceTest extends AbstractCassandraTatamiTest
 
 		assertEquals(duyhaiTimeline.size(), 1, "duyhai' timeline has 1 tweet");
 		assertTrue(duyhaiTimeline.contains(tweet.getTweetId()), "duyhaiTimeline contains 'Hello @duyhai, how are you ?'");
+
+		Collection<String> duyhaiMentionLine = this.mentionLineRepository.findMentionTweetsRangeForUser("duyhai", null, 2);
+		assertEquals(duyhaiMentionLine.size(), 1, "duyhai' mentionline has 1 tweet");
+		assertTrue(duyhaiMentionLine.contains(tweet.getTweetId()), "duyhaiMentionLine contains 'Hello @duyhai, how are you ?'");
+
+		Collection<String> mentionTweets = this.mentionLineRepository.findTweetsForUserAndMentioner("jdubois", "duyhai");
+		assertEquals(mentionTweets.size(), 1, "duyhai has been mentioned in 1 tweet by jdubois");
+		assertTrue(mentionTweets.contains(tweet.getTweetId()), "duyhai has been mentioned in tweet by jdubois");
 	}
 
 	@Test(dependsOnMethods = "testOnTweetPostSpreadTweetForMentionLine")
@@ -67,9 +77,12 @@ public class MentionlineServiceTest extends AbstractCassandraTatamiTest
 		this.mentionlineService.onTweetPost(randomTweet);
 
 		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
-
 		assertEquals(duyhaiTimeline.size(), 1, "duyhai' timeline has 1 tweet");
 		assertFalse(duyhaiTimeline.contains(randomTweet.getTweetId()), "duyhaiTimeline does not contain 'Random tweet with no mention'");
+
+		Collection<String> duyhaiMentionLine = this.mentionLineRepository.findMentionTweetsRangeForUser("duyhai", null, 2);
+		assertEquals(duyhaiMentionLine.size(), 1, "duyhai' mentionline has 1 tweet");
+		assertFalse(duyhaiMentionLine.contains(randomTweet.getTweetId()), "duyhaiMentionLine does not contain 'Random tweet with no mention'");
 	}
 
 	@Test(dependsOnMethods = "testOnTweetPostNoActionForMentionLine")
@@ -78,6 +91,9 @@ public class MentionlineServiceTest extends AbstractCassandraTatamiTest
 		// DuyHai now follows Julien
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(duyhai);
 		this.contactsService.onUserFollow("jdubois");
+
+		// Refresh jdubois
+		jdubois = this.userRepository.findUserByLogin("jdubois");
 
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
 
@@ -89,23 +105,44 @@ public class MentionlineServiceTest extends AbstractCassandraTatamiTest
 		assertEquals(duyhaiTimeline.size(), 1, "duyhai' timeline has 1 tweet");
 		assertFalse(duyhaiTimeline.contains(tweet2.getTweetId()), "duyhaiTimeline does not contain 'Hello @duyhai, how are you second time?'");
 
+		Collection<String> duyhaiMentionLine = this.mentionLineRepository.findMentionTweetsRangeForUser("duyhai", null, 2);
+		assertEquals(duyhaiMentionLine.size(), 1, "duyhai' mentionline has 1 tweet");
+
+		Collection<String> mentionTweets = this.mentionLineRepository.findTweetsForUserAndMentioner("jdubois", "duyhai");
+		assertEquals(mentionTweets.size(), 1, "duyhai has been mentioned in 1 tweet by jdubois");
+
 	}
 
 	@Test(dependsOnMethods = "testOnTweetPostNoActionBecauseFollowerForMentionLine")
 	public void testOnTweetRemoveNoActionForMentionLine() throws FunctionalException
 	{
 		this.mentionlineService.onTweetRemove(tweet2);
-		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
 
+		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
 		assertEquals(duyhaiTimeline.size(), 1, "duyhai' timeline has 1 tweet");
+
+		Collection<String> duyhaiMentionLine = this.mentionLineRepository.findMentionTweetsRangeForUser("duyhai", null, 2);
+		assertEquals(duyhaiMentionLine.size(), 1, "duyhai' mentionline has 1 tweet");
+
+		Collection<String> mentionTweets = this.mentionLineRepository.findTweetsForUserAndMentioner("jdubois", "duyhai");
+		assertEquals(mentionTweets.size(), 1, "duyhai has been mentioned in 1 tweet by jdubois");
+
 	}
 
 	@Test(dependsOnMethods = "testOnTweetRemoveNoActionForMentionLine")
 	public void testOnTweetRemoveForMentionLine() throws FunctionalException
 	{
-		this.mentionlineService.onTweetRemove(tweet);
-		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
+		tweet.setContent(DefaultEncoder.getInstance().encodeForHTML(tweet.getContent()));
 
+		this.mentionlineService.onTweetRemove(tweet);
+
+		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 2);
 		assertEquals(duyhaiTimeline.size(), 0, "duyhai' timeline has no tweet");
+
+		Collection<String> duyhaiMentionLine = this.mentionLineRepository.findMentionTweetsRangeForUser("duyhai", null, 2);
+		assertEquals(duyhaiMentionLine.size(), 0, "duyhai' mentionline has 0 tweet");
+
+		Collection<String> mentionTweets = this.mentionLineRepository.findTweetsForUserAndMentioner("jdubois", "duyhai");
+		assertEquals(mentionTweets.size(), 0, "duyhai is no longer mentioned by jdubois");
 	}
 }

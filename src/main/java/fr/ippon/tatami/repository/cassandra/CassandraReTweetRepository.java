@@ -1,9 +1,9 @@
 package fr.ippon.tatami.repository.cassandra;
 
 import static fr.ippon.tatami.config.ColumnFamilyKeys.RETWEETER_CF;
-import static fr.ippon.tatami.config.ColumnFamilyKeys.RETWEET_TARGET_USER_CF;
+import static fr.ippon.tatami.config.ColumnFamilyKeys.RETWEETLINE_CF;
 import static fr.ippon.tatami.config.CounterKeys.RETWEETER_COUNTER;
-import static fr.ippon.tatami.config.CounterKeys.RETWEET_TARGET_USER_COUNTER;
+import static fr.ippon.tatami.config.CounterKeys.RETWEET_COUNTER;
 
 import java.util.Collection;
 
@@ -11,50 +11,81 @@ import fr.ippon.tatami.repository.ReTweetRepository;
 
 public class CassandraReTweetRepository extends CassandraAbstractRepository implements ReTweetRepository
 {
-
 	@Override
-	public void addRetweeter(String retweeterLogin, String tweetId)
+	public void addRetweeter(String retweeterLogin, String originalTweetId, String retweetId)
 	{
-		this.insertIntoCF(RETWEETER_CF, tweetId, retweeterLogin);
-		this.incrementCounter(RETWEETER_COUNTER, tweetId);
+		this.insertIntoCFWithValue(RETWEETER_CF, originalTweetId, retweeterLogin, retweetId);
+		this.incrementCounter(RETWEETER_COUNTER, originalTweetId);
 
 	}
 
 	@Override
-	public void addTargetUserForRetweet(String targetUserLogin, String tweetId)
+	public void removeRetweeter(String retweeterLogin, String originalTweetId)
 	{
-		this.insertIntoCF(RETWEET_TARGET_USER_CF, tweetId, targetUserLogin);
-		this.incrementCounter(RETWEET_TARGET_USER_COUNTER, tweetId);
+		this.removeFromCF(RETWEETER_CF, originalTweetId, retweeterLogin);
+		this.decrementCounter(RETWEETER_COUNTER, originalTweetId);
+	}
+
+	@Override
+	public String findRetweetIdForRetweeter(String retweeterLogin, String originalTweetId)
+	{
+		return (String) this.getValueFromCF(RETWEETER_CF, originalTweetId, retweeterLogin);
+	}
+
+	@Override
+	public Collection<String> findRetweetIdsForTweet(String originalTweetId)
+	{
+		long retweeterCount = this.getCounterValue(RETWEETER_COUNTER, originalTweetId);
+		return this.findRowValuesFromCF(RETWEETER_CF, originalTweetId, false, (int) retweeterCount);
+	}
+
+	@Override
+	public Collection<String> findRetweetersForTweet(String originalTweetId)
+	{
+		long retweeterCount = this.getCounterValue(RETWEETER_COUNTER, originalTweetId);
+		return this.findRangeFromCF(RETWEETER_CF, originalTweetId, null, false, (int) retweeterCount);
+	}
+
+	@Override
+	public long countRetweeters(String originalTweetId)
+	{
+		return this.getCounterValue(RETWEETER_COUNTER, originalTweetId);
 
 	}
 
 	@Override
-	public void removeTargetUserForRetweet(String targetUserLogin, String tweetId)
+	public void removeRetweeterIndex(String originalTweetId)
 	{
-		this.removeFromCF(RETWEET_TARGET_USER_CF, tweetId, targetUserLogin);
-		this.decrementCounter(RETWEET_TARGET_USER_COUNTER, tweetId);
-
+		this.removeRowFromCF(RETWEETER_CF, originalTweetId);
+		this.removeCounter(RETWEETER_COUNTER, originalTweetId);
 	}
 
 	@Override
-	public Collection<String> findRetweeterForTweet(String tweetId)
+	public void addToRetweetLine(String userLogin, String originalTweetId)
 	{
-		long retweetCount = this.countRetweeter(tweetId);
-		return this.findRangeFromCF(RETWEETER_CF, tweetId, null, false, (int) retweetCount);
-
+		this.insertIntoCF(RETWEETLINE_CF, userLogin, originalTweetId);
+		this.incrementCounter(RETWEET_COUNTER, userLogin);
 	}
 
 	@Override
-	public Collection<String> findTartgetUsersForRetweet(String tweetId)
+	public void removeFromRetweetLine(String userLogin, String originalTweetId)
 	{
-		long targetUserForRetweetCount = this.getCounterValue(RETWEET_TARGET_USER_COUNTER, tweetId);
-		return this.findRangeFromCF(RETWEET_TARGET_USER_CF, tweetId, null, false, (int) targetUserForRetweetCount);
+		this.removeFromCF(RETWEETLINE_CF, userLogin, originalTweetId);
+		this.decrementCounter(RETWEET_COUNTER, userLogin);
 	}
 
 	@Override
-	public long countRetweeter(String tweetId)
+	public boolean isTweetInRetweetLine(String userLogin, String tweetId)
 	{
-		return this.getCounterValue(RETWEETER_COUNTER, tweetId);
+		Object value = this.getValueFromCF(RETWEETLINE_CF, userLogin, tweetId);
+		if (value == null)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 
 }

@@ -27,19 +27,26 @@
 				<ref bean="xssEncodingService"/>
 				<ref bean="contactsService"/>
 				<ref bean="tweetService"/>
+				<ref bean="retweetService"/>
 			</list>
 		</property>
-	</bean>
-	
-	<bean id="favoritePipelineManager" class="fr.ippon.tatami.service.pipeline.tweet.FavoritePipelineManager">
-		<property name="tweetService" ref="tweetService"/>
+		
 		<property name="favoriteHandlers">
 			<list>
 				<ref bean="favoritelineService"/>
 				<ref bean="timelineService"/>
 			</list>
 		</property>	
+		
+		<property name="retweetHandlers">
+			<list>
+				<ref bean="contactsService"/>
+				<ref bean="tweetService"/>
+				<ref bean="retweetService"/>
+			</list>		
+		</property>
 	</bean>
+	
 	
 	<bean id="userRenderingPipelineManager" class="fr.ippon.tatami.service.pipeline.user.rendering.UserRenderingPipelineManager">
 		<property name="userRenderingHandlers">

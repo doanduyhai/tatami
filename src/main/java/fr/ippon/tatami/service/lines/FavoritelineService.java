@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.repository.FavoriteTweetIndexRepository;
 import fr.ippon.tatami.service.pipeline.tweet.FavoriteHandler;
 import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
 import fr.ippon.tatami.service.util.TatamiConstants;
@@ -17,8 +16,6 @@ public class FavoritelineService extends AbstractlineService implements Favorite
 {
 
 	private final Logger log = LoggerFactory.getLogger(FavoritelineService.class);
-
-	private FavoriteTweetIndexRepository favoriteTweetIndexRepository;
 
 	@Override
 	public void onAddToFavorite(Tweet tweet) throws FunctionalException
@@ -32,7 +29,7 @@ public class FavoritelineService extends AbstractlineService implements Favorite
 		if (!favoriteTweets.contains(tweet.getTweetId()))
 		{
 			this.favoriteLineRepository.addFavorite(currentUser.getLogin(), tweet.getTweetId());
-			this.favoriteTweetIndexRepository.addTweetToFavoriteIndex(currentUser.getLogin(), tweet.getLogin(), tweet.getTweetId());
+			this.favoriteLineRepository.addTweetToFavoriteIndex(currentUser.getLogin(), tweet.getLogin(), tweet.getTweetId());
 		}
 		else
 		{
@@ -53,7 +50,7 @@ public class FavoritelineService extends AbstractlineService implements Favorite
 		if (favoriteTweets.contains(tweet.getTweetId()))
 		{
 			this.favoriteLineRepository.removeFavorite(currentUser.getLogin(), tweet.getTweetId());
-			this.favoriteTweetIndexRepository.removeTweetFromFavoriteIndex(currentUser.getLogin(), tweet.getLogin(), tweet.getTweetId());
+			this.favoriteLineRepository.removeTweetFromFavoriteIndex(currentUser.getLogin(), tweet.getLogin(), tweet.getTweetId());
 		}
 		else
 		{
@@ -72,7 +69,7 @@ public class FavoritelineService extends AbstractlineService implements Favorite
 	@Override
 	public void onTweetRemove(Tweet tweet) throws FunctionalException
 	{
-		Collection<String> userLogins = this.favoriteTweetIndexRepository.getUsersForTweetFromIndex(tweet.getTweetId());
+		Collection<String> userLogins = this.favoriteLineRepository.getUsersForTweetFromIndex(tweet.getTweetId());
 
 		User currentUser = userService.getCurrentUser();
 
@@ -81,7 +78,7 @@ public class FavoritelineService extends AbstractlineService implements Favorite
 			this.favoriteLineRepository.removeFavorite(login, tweet.getTweetId());
 		}
 
-		this.favoriteTweetIndexRepository.removeIndexForTweet(currentUser.getLogin(), tweet.getLogin(), tweet.getTweetId());
+		this.favoriteLineRepository.removeIndexForTweet(currentUser.getLogin(), tweet.getLogin(), tweet.getTweetId());
 	}
 
 	public Collection<Tweet> getFavoriteslineRange(String startTweetId, int count) throws FunctionalException
@@ -95,11 +92,6 @@ public class FavoritelineService extends AbstractlineService implements Favorite
 
 		Collection<String> tweetIds = favoriteLineRepository.findFavoritesRangeForUser(currentUser.getLogin(), startTweetId, count);
 		return this.buildTweetsList(currentUser, tweetIds);
-	}
-
-	public void setFavoriteTweetIndexRepository(FavoriteTweetIndexRepository favoriteTweetIndexRepository)
-	{
-		this.favoriteTweetIndexRepository = favoriteTweetIndexRepository;
 	}
 
 }

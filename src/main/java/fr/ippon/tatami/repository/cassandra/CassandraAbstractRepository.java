@@ -109,6 +109,23 @@ public abstract class CassandraAbstractRepository
 		return items;
 	}
 
+	protected Collection<String> findRowValuesFromCF(String CF, String key, boolean reverse, int count)
+	{
+		List<HColumn<String, Object>> columns = createSliceQuery(keyspaceOperator, se, se, oe).setColumnFamily(CF).setKey(key)
+				.setRange(null, null, reverse, count).execute().get().getColumns();
+
+		Collection<String> result = new ArrayList<String>();
+		for (HColumn<String, Object> column : columns)
+		{
+			if (column.getValue() != null)
+			{
+				result.add((String) column.getValue());
+			}
+		}
+
+		return result;
+	}
+
 	protected void removeRowFromCF(String CF, String key)
 	{
 		CqlQuery<String, String, Object> cqlQuery = new CqlQuery<String, String, Object>(keyspaceOperator, se, se, oe);

@@ -6,20 +6,17 @@
       <class name="fr.ippon.tatami.repository.TweetRepositoryTest"/>   
       <class name="fr.ippon.tatami.repository.FriendRepositoryTest"/>      
       <class name="fr.ippon.tatami.repository.FollowerRepositoryTest"/>
-      <class name="fr.ippon.tatami.repository.FollowerTweetIndexRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.FavoriteRepositoryTest"/>
-      <class name="fr.ippon.tatami.repository.FavoriteIndexRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.TagLineRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.UserLineRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.TimeLineRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.StatsRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.UserIndexRepositoryTest"/>
       
-      <class name="fr.ippon.tatami.repository.CassandraMentionLineRepositoryTest"/>
-      <class name="fr.ippon.tatami.repository.CassandraMentionTweetIndexRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.MentionLineRepositoryTest"/>
       
-      <class name="fr.ippon.tatami.repository.CassandraBlockedUserRepositoryTest"/>
-      <class name="fr.ippon.tatami.repository.CassandraReTweetRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.BlockedUserRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.ReTweetRepositoryTest"/>
     </classes>
   </test>
 </suite> 

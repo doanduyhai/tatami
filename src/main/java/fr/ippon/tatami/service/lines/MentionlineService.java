@@ -12,11 +12,10 @@ import org.slf4j.LoggerFactory;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
+import fr.ippon.tatami.repository.FollowerRepository;
 import fr.ippon.tatami.repository.MentionLineRepository;
-import fr.ippon.tatami.repository.MentionTweetIndexRepository;
 import fr.ippon.tatami.repository.TimeLineRepository;
 import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
-import fr.ippon.tatami.service.user.ContactsService;
 import fr.ippon.tatami.service.util.TatamiConstants;
 
 public class MentionlineService extends AbstractlineService implements TweetHandler
@@ -25,13 +24,13 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 
 	private static final Pattern USER_PATTERN = Pattern.compile(TatamiConstants.USER_REGEXP);
 
+	private static final Pattern HTML_ENCODED_USER_PATTERN = Pattern.compile(TatamiConstants.HTML_ENCODED_USER_REGEXP);
+
 	private TimeLineRepository timeLineRepository;
 
 	private MentionLineRepository mentionLineRepository;
 
-	private MentionTweetIndexRepository mentionTweetIndexRepository;
-
-	private ContactsService contactsService;
+	private FollowerRepository followerRepository;
 
 	@Override
 	public void onTweetPost(Tweet tweet) throws FunctionalException
@@ -49,13 +48,13 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 			{
 				quotedUsers.add(quotedUser);
 
-				Collection<String> userFollowers = this.contactsService.getFollowersForUser(currentUser.getLogin());
+				Collection<String> userFollowers = this.followerRepository.findFollowersForUser(currentUser);
 				if (!userFollowers.contains(quotedUser))
 				{
 					log.debug("Add tweet to quoted user " + quotedUser + " timeline");
 					this.timeLineRepository.addTweetToTimeline(quotedUser, tweet.getTweetId());
 					this.mentionLineRepository.addTweetToMentionline(quotedUser, tweet.getTweetId());
-					this.mentionTweetIndexRepository.addTweetToIndex(tweet.getLogin(), quotedUser, tweet.getTweetId());
+					this.mentionLineRepository.addTweetToIndex(tweet.getLogin(), quotedUser, tweet.getTweetId());
 				}
 			}
 
@@ -67,7 +66,7 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 	{
 		if (!tweet.isNotification())
 		{
-			Matcher usermatcher = USER_PATTERN.matcher(tweet.getContent());
+			Matcher usermatcher = HTML_ENCODED_USER_PATTERN.matcher(tweet.getContent());
 			// Set to eliminate multiple quotes for same user in same tweet
 			Set<String> quotedUsers = new HashSet<String>();
 			while (usermatcher.find())
@@ -79,7 +78,7 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 					log.debug("Remove tweet from quoted user " + quotedUser + " timeline");
 					this.timeLineRepository.removeTweetFromTimeline(quotedUser, tweet.getTweetId());
 					this.mentionLineRepository.removeTweetFromMentionline(quotedUser, tweet.getTweetId());
-					this.mentionTweetIndexRepository.removeTweetFromIndex(tweet.getLogin(), quotedUser, tweet.getTweetId());
+					this.mentionLineRepository.removeTweetFromIndex(tweet.getLogin(), quotedUser, tweet.getTweetId());
 				}
 			}
 		}
@@ -91,19 +90,14 @@ public class MentionlineService extends AbstractlineService implements TweetHand
 		this.timeLineRepository = timeLineRepository;
 	}
 
-	public void setContactsService(ContactsService contactsService)
+	public void setFollowerRepository(FollowerRepository followerRepository)
 	{
-		this.contactsService = contactsService;
+		this.followerRepository = followerRepository;
 	}
 
 	public void setMentionLineRepository(MentionLineRepository mentionLineRepository)
 	{
 		this.mentionLineRepository = mentionLineRepository;
-	}
-
-	public void setMentionTweetIndexRepository(MentionTweetIndexRepository mentionTweetIndexRepository)
-	{
-		this.mentionTweetIndexRepository = mentionTweetIndexRepository;
 	}
 
 }

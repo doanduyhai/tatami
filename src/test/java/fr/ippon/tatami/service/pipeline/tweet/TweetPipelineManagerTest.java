@@ -19,8 +19,6 @@ import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.domain.UserTweetStat;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.service.pipeline.tweet.TweetHandler;
-import fr.ippon.tatami.service.pipeline.tweet.TweetPipelineManager;
 import fr.ippon.tatami.service.security.AuthenticationService;
 import fr.ippon.tatami.service.tweet.TweetService;
 
@@ -108,6 +106,7 @@ public class TweetPipelineManagerTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testOnRemoveWithMockedManager")
 	public void testOnPostWithXssEncodingTweetPipelineTest() throws FunctionalException
 	{
+		// jdubois posts t1
 		t1 = this.tweetPipelineManager.onPost("tweet1 <script>alert('toto');</script>");
 
 		assertFalse(t1.getContent().contains("<script>alert('toto');</script>"), "t1 does not contain <script>alert('toto');</script>");
@@ -125,6 +124,7 @@ public class TweetPipelineManagerTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testOnPostWithXssEncodingTweetPipelineTest")
 	public void testOnPostWithTagSpreadTweetPipelineTest() throws FunctionalException
 	{
+		// jdubois posts t2
 		t2 = this.tweetPipelineManager.onPost("tweet2 #Java");
 
 		Collection<Tweet> userlineTweets = this.userlineService.getUserlineRange("jdubois", null, 10);
@@ -141,6 +141,7 @@ public class TweetPipelineManagerTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testOnPostWithTagSpreadTweetPipelineTest")
 	public void testOnPostWithMentionSpreadTweetPipelineTest() throws FunctionalException
 	{
+		// jdubois posts t3
 		t3 = this.tweetPipelineManager.onPost("tweet3 hello @duyhai");
 
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(duyhai);
@@ -182,6 +183,7 @@ public class TweetPipelineManagerTest extends AbstractCassandraTatamiTest
 
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
 
+		// jdubois posts t4
 		t4 = this.tweetPipelineManager.onPost("tweet4 hello @duyhai second time");
 
 		// jdubois's timeline contains 6 tweets: 3 from previous tests, 2 from follow notification and 1 from direct tweet
@@ -265,8 +267,52 @@ public class TweetPipelineManagerTest extends AbstractCassandraTatamiTest
 	{
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(duyhai);
 
+		// Exception because duyhai cannot remove jdubois tweet
 		this.tweetPipelineManager.onRemove(t1.getTweetId());
+	}
 
+	@Test(dependsOnMethods = "testOnRemoveTweetExceptionTweetPipelineTest")
+	public void testOnAddToFavorite() throws FunctionalException
+	{
+		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
+
+		this.tweetPipelineManager.onAddToFavorite(t1.getTweetId());
+		this.tweetPipelineManager.onAddToFavorite(t2.getTweetId());
+		this.tweetPipelineManager.onAddToFavorite(t3.getTweetId());
+
+		Collection<String> favoriteTweets = this.favoriteRepository.findFavoritesForUser("jdubois");
+
+		assertEquals(favoriteTweets.size(), 3, "favoriteTweets.size() == 3");
+		assertTrue(favoriteTweets.contains(t1.getTweetId()), "favoriteTweets contains tweet1");
+		assertTrue(favoriteTweets.contains(t2.getTweetId()), "favoriteTweets contains tweet2");
+		assertTrue(favoriteTweets.contains(t3.getTweetId()), "favoriteTweets contains tweet3");
+
+	}
+
+	@Test(dependsOnMethods = "testOnAddToFavorite", expectedExceptions = FunctionalException.class)
+	public void testOnAddToFavoriteWithException() throws FunctionalException
+	{
+		// Exception because t1 is already in favorites
+		this.tweetPipelineManager.onAddToFavorite(t1.getTweetId());
+	}
+
+	@Test(dependsOnMethods = "testOnAddToFavoriteWithException")
+	public void testOnRemoveFromFavorite() throws FunctionalException
+	{
+		this.tweetPipelineManager.onRemoveFromFavorite(t2.getTweetId());
+		this.tweetPipelineManager.onRemoveFromFavorite(t3.getTweetId());
+
+		Collection<String> favoriteTweets = this.favoriteRepository.findFavoritesForUser("jdubois");
+
+		assertEquals(favoriteTweets.size(), 1, "favoriteTweets.size() == 1");
+		assertTrue(favoriteTweets.contains(t1.getTweetId()), "favoriteTweets contains tweet1");
+	}
+
+	@Test(dependsOnMethods = "testOnRemoveFromFavorite", expectedExceptions = FunctionalException.class)
+	public void testOnRemoveFromFavoriteWithException() throws FunctionalException
+	{
+		// Exception because t3 is already removed from favorites
+		this.tweetPipelineManager.onRemoveFromFavorite(t3.getTweetId());
 	}
 
 }

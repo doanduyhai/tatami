@@ -20,6 +20,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 {
 	private User jdubois, duyhai;
 	private Tweet t1, t2, t3, t4, t5, tweet, duyhaiTweet1, duyhaiTweet2;
+	private AuthenticationService mockedAuthenticationService;
 
 	@Test
 	public void initTimelineServiceTest() throws FunctionalException
@@ -40,11 +41,12 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		this.userRepository.createUser(jdubois);
 		this.userRepository.createUser(duyhai);
 
-		AuthenticationService mockAuthenticationService = mock(AuthenticationService.class);
-		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
+		mockedAuthenticationService = mock(AuthenticationService.class);
+		when(mockedAuthenticationService.getCurrentUser()).thenReturn(jdubois);
 
-		this.tweetService.setAuthenticationService(mockAuthenticationService);
-		this.userService.setAuthenticationService(mockAuthenticationService);
+		this.tweetService.setAuthenticationService(mockedAuthenticationService);
+		this.userService.setAuthenticationService(mockedAuthenticationService);
+		this.contactsService.setAuthenticationService(mockedAuthenticationService);
 
 		t1 = this.tweetRepository.createTweet("jdubois", "tweet1", false);
 		t2 = this.tweetRepository.createTweet("jdubois", "tweet2", false);
@@ -113,7 +115,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 		assertEquals(duyhaiTimelineTweets.size(), 1, "duyhaiTimelineTweets.size() == 1");
 
 		duyhai = userService.getUserByLogin("duyhai");
-		mockAuthenticatedUser(duyhai);
+		when(mockedAuthenticationService.getCurrentUser()).thenReturn(duyhai);
 
 		duyhaiTweet1 = this.tweetRepository.createTweet("duyhai", "duyhai tweet1", false);
 		duyhaiTweet2 = this.tweetRepository.createTweet("duyhai", "duyhai tweet2", false);
@@ -130,8 +132,10 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 	@Test(dependsOnMethods = "testOnUserFollowForTimelineService", expectedExceptions = FunctionalException.class)
 	public void testOnUserFollowSelfForTimelineService() throws FunctionalException
 	{
+		// Refresh jdubois
 		jdubois = userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
+		when(mockedAuthenticationService.getCurrentUser()).thenReturn(jdubois);
+
 		this.timelineService.onUserFollow("jdubois");
 	}
 
@@ -139,7 +143,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 	public void testOnUserForgetForTimelineService() throws FunctionalException
 	{
 		jdubois = userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
+		when(mockedAuthenticationService.getCurrentUser()).thenReturn(jdubois);
 
 		this.timelineService.onUserForget("duyhai");
 
@@ -154,7 +158,8 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 	public void testOnUserForgetSelfForTimelineService() throws FunctionalException
 	{
 		jdubois = userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
+		when(mockedAuthenticationService.getCurrentUser()).thenReturn(jdubois);
+
 		this.timelineService.onUserForget("jdubois");
 	}
 
@@ -162,7 +167,7 @@ public class TimelineServiceTest extends AbstractCassandraTatamiTest
 	public void testOnAddToFavoriteForTimelineServiceTest() throws FunctionalException
 	{
 		jdubois = userService.getUserByLogin("jdubois");
-		mockAuthenticatedUser(jdubois);
+		when(mockedAuthenticationService.getCurrentUser()).thenReturn(jdubois);
 
 		this.timelineService.onAddToFavorite(duyhaiTweet1);
 

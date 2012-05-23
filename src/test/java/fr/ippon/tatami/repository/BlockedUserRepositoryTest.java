@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 
 import fr.ippon.tatami.AbstractCassandraTatamiTest;
 
-public class CassandraBlockedUserRepositoryTest extends AbstractCassandraTatamiTest
+public class BlockedUserRepositoryTest extends AbstractCassandraTatamiTest
 {
 	@Test
 	public void testAddUserToBlockRepository()

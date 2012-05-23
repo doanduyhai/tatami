@@ -19,5 +19,5 @@ public class CounterKeys
 
 	public static final String RETWEETER_COUNTER = "RetweeterCounter";
 
-	public static final String RETWEET_TARGET_USER_COUNTER = "RetweetTargetUserCounter";
+	public static final String RETWEET_COUNTER = "RetweetCounter";
 }

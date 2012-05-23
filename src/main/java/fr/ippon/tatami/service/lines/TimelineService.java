@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.repository.FollowerTweetIndexRepository;
+import fr.ippon.tatami.repository.FollowerRepository;
 import fr.ippon.tatami.repository.FriendRepository;
 import fr.ippon.tatami.repository.TimeLineRepository;
 import fr.ippon.tatami.service.pipeline.tweet.FavoriteHandler;
@@ -25,7 +25,7 @@ import fr.ippon.tatami.service.util.TatamiConstants;
  * @author Julien Dubois
  * @author DuyHai DOAN
  */
-public class TimelineService extends AbstractlineService implements TweetHandler, UserHandler, FavoriteHandler
+public class TimelineService extends AbstractlineService implements TweetHandler, FavoriteHandler, UserHandler
 {
 
 	private final Logger log = LoggerFactory.getLogger(TimelineService.class);
@@ -34,7 +34,7 @@ public class TimelineService extends AbstractlineService implements TweetHandler
 
 	private FriendRepository friendRepository;
 
-	private FollowerTweetIndexRepository followerTweetIndexRepository;
+	private FollowerRepository followerRepository;
 
 	@Override
 	public void onTweetPost(Tweet tweet)
@@ -48,7 +48,41 @@ public class TimelineService extends AbstractlineService implements TweetHandler
 	public void onTweetRemove(Tweet tweet) throws FunctionalException
 	{
 		User currentUser = userService.getCurrentUser();
-		timeLineRepository.removeTweetFromTimeline(currentUser.getLogin(), tweet.getTweetId());
+		this.timeLineRepository.removeTweetFromTimeline(currentUser.getLogin(), tweet.getTweetId());
+
+	}
+
+	@Override
+	public void onAddToFavorite(Tweet tweet)
+	{
+		User currentUser = userService.getCurrentUser();
+
+		// Tweet alert
+		if (!currentUser.getLogin().equals(tweet.getLogin()))
+		{
+
+			String content = USERTAG + currentUser.getLogin() + " <strong>liked your tweet:</strong><br/><em>_PH_...</em>";
+
+			int maxLength = TatamiConstants.MAX_TWEET_SIZE - content.length() + 4;
+			if (tweet.getContent().length() > maxLength)
+			{
+				content = content.replace("_PH_", tweet.getContent().substring(0, maxLength));
+			}
+			else
+			{
+				content = content.replace("_PH_", tweet.getContent());
+			}
+
+			Tweet helloTweet = tweetRepository.createTweet(tweet.getLogin(), content, true);
+			timeLineRepository.addTweetToTimeline(tweet.getLogin(), helloTweet.getTweetId());
+		}
+
+	}
+
+	@Override
+	public void onRemoveFromFavorite(Tweet tweet)
+	{
+		// Do nothing
 
 	}
 
@@ -86,14 +120,13 @@ public class TimelineService extends AbstractlineService implements TweetHandler
 		{
 			if (friends.contains(userLoginToForget))
 			{
-				Collection<String> indexedTweets = this.followerTweetIndexRepository.findTweetsForUserAndFollower(userLoginToForget,
-						currentUser.getLogin());
+				Collection<String> indexedTweets = this.followerRepository.findTweetsForUserAndFollower(userLoginToForget, currentUser.getLogin());
 
 				for (String tweetId : indexedTweets)
 				{
 					this.timeLineRepository.removeTweetFromTimeline(currentUser.getLogin(), tweetId);
 				}
-				this.followerTweetIndexRepository.removeIndex(userLoginToForget, currentUser.getLogin());
+				this.followerRepository.removeIndex(userLoginToForget, currentUser.getLogin());
 			}
 		}
 		else
@@ -116,40 +149,6 @@ public class TimelineService extends AbstractlineService implements TweetHandler
 		return this.buildTweetsList(currentUser, tweetIds);
 	}
 
-	@Override
-	public void onAddToFavorite(Tweet tweet)
-	{
-		User currentUser = userService.getCurrentUser();
-
-		// Tweet alert
-		if (!currentUser.getLogin().equals(tweet.getLogin()))
-		{
-
-			String content = USERTAG + currentUser.getLogin() + " <strong>liked your tweet:</strong><br/><em>_PH_...</em>";
-
-			int maxLength = TatamiConstants.MAX_TWEET_SIZE - content.length() + 4;
-			if (tweet.getContent().length() > maxLength)
-			{
-				content = content.replace("_PH_", tweet.getContent().substring(0, maxLength));
-			}
-			else
-			{
-				content = content.replace("_PH_", tweet.getContent());
-			}
-
-			Tweet helloTweet = tweetRepository.createTweet(tweet.getLogin(), content, true);
-			timeLineRepository.addTweetToTimeline(tweet.getLogin(), helloTweet.getTweetId());
-		}
-
-	}
-
-	@Override
-	public void onRemoveFromFavorite(Tweet tweet)
-	{
-		// Do nothing
-
-	}
-
 	public void setTimeLineRepository(TimeLineRepository timeLineRepository)
 	{
 		this.timeLineRepository = timeLineRepository;
@@ -160,9 +159,9 @@ public class TimelineService extends AbstractlineService implements TweetHandler
 		this.friendRepository = friendRepository;
 	}
 
-	public void setFollowerTweetIndexRepository(FollowerTweetIndexRepository followerTweetIndexRepository)
+	public void setFollowerRepository(FollowerRepository followerRepository)
 	{
-		this.followerTweetIndexRepository = followerTweetIndexRepository;
+		this.followerRepository = followerRepository;
 	}
 
 }

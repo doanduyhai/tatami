@@ -23,6 +23,10 @@ public class TweetPipelineManager
 
 	private List<TweetHandler> tweetHandlers;
 
+	private List<RetweetHandler> retweetHandlers;
+
+	private List<FavoriteHandler> favoriteHandlers;
+
 	public Tweet onPost(String tweetContent) throws FunctionalException
 	{
 		log.debug("Creating new tweet : {}", tweetContent);
@@ -58,9 +62,63 @@ public class TweetPipelineManager
 
 	}
 
+	public void onRetweet(String originalTweetId) throws FunctionalException
+	{
+
+		Tweet originalTweet = this.tweetService.findTweetById(originalTweetId);
+		Tweet newTweet = this.tweetService.createTransientTweet(originalTweet.getContent());
+
+		newTweet.setOriginalAuthorLogin(originalTweet.getOriginalAuthorLogin());
+		newTweet.setOriginalTweetId(originalTweetId);
+
+		for (RetweetHandler handler : retweetHandlers)
+		{
+			handler.onRetweet(newTweet);
+		}
+	}
+
+	public void onCancelRetweet(String originalTweetId) throws FunctionalException
+	{
+		for (RetweetHandler handler : retweetHandlers)
+		{
+			handler.onCancelRetweet(originalTweetId);
+		}
+
+	}
+
+	public void onAddToFavorite(String tweetId) throws FunctionalException
+	{
+		Tweet tweet = this.tweetService.findTweetById(tweetId);
+
+		for (FavoriteHandler handler : favoriteHandlers)
+		{
+			handler.onAddToFavorite(tweet);
+		}
+	}
+
+	public void onRemoveFromFavorite(String tweetId) throws FunctionalException
+	{
+		Tweet tweet = this.tweetService.findTweetById(tweetId);
+
+		for (FavoriteHandler handler : favoriteHandlers)
+		{
+			handler.onRemoveFromFavorite(tweet);
+		}
+	}
+
 	public void setTweetHandlers(List<TweetHandler> handlers)
 	{
 		this.tweetHandlers = handlers;
+	}
+
+	public void setRetweetHandlers(List<RetweetHandler> retweetHandlers)
+	{
+		this.retweetHandlers = retweetHandlers;
+	}
+
+	public void setFavoriteHandlers(List<FavoriteHandler> favoriteHandlers)
+	{
+		this.favoriteHandlers = favoriteHandlers;
 	}
 
 	public void setTweetService(TweetService tweetService)

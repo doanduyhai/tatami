@@ -6,7 +6,13 @@
 	<bean id="tweetService" class="fr.ippon.tatami.service.tweet.TweetService">
 		<property name="authenticationService" ref="authenticationService"/>
 		<property name="tweetRepository" ref="tweetRepository"/>
+		<property name="retweetRepository" ref="retweetRepository"/>
 	</bean>	
+	
+	<bean id="retweetService" class="fr.ippon.tatami.service.tweet.RetweetService">
+		<property name="authenticationService" ref="authenticationService"/>
+		<property name="retweetRepository" ref="retweetRepository"/>
+	</bean>
 	
 	<bean id="tweetContentValidationService" class="fr.ippon.tatami.service.tweet.TweetContentValidationService" />
 	

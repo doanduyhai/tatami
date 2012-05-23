@@ -45,6 +45,10 @@ public class Tweet
 	private String tweetId;
 
 	@JsonView(TweetView.Full.class)
+	@Column(name = "originalTweetId")
+	private String originalTweetId;
+
+	@JsonView(TweetView.Full.class)
 	@Column(name = "login")
 	private String login;
 
@@ -59,6 +63,7 @@ public class Tweet
 	@Column(name = "notification")
 	private boolean notification = false;
 
+	@JsonView(TweetView.Full.class)
 	@Column(name = "originalAuthorLogin")
 	private String originalAuthorLogin;
 
@@ -116,7 +121,7 @@ public class Tweet
 		clone.setNotification(this.notification);
 		clone.setTweetDate(this.tweetDate);
 		clone.setTweetId(this.tweetId);
-
+		clone.setOriginalTweetId(this.originalTweetId);
 		return clone;
 	}
 
@@ -128,6 +133,16 @@ public class Tweet
 	public void setTweetId(String tweetId)
 	{
 		this.tweetId = tweetId;
+	}
+
+	public String getOriginalTweetId()
+	{
+		return originalTweetId;
+	}
+
+	public void setOriginalTweetId(String originalTweetId)
+	{
+		this.originalTweetId = originalTweetId;
 	}
 
 	public String getLogin()

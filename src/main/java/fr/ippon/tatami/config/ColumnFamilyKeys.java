@@ -50,7 +50,7 @@ public class ColumnFamilyKeys
 
 	public final static String RETWEETER_CF = "Retweeter";
 
-	public final static String RETWEET_TARGET_USER_CF = "RetweetTargetUser";
+	public final static String RETWEETLINE_CF = "RetweetLine";
 
 	public final static String COUNTER_CF = "Counter";
 

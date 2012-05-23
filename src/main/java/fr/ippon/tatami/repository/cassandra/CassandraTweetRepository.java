@@ -30,6 +30,7 @@ public class CassandraTweetRepository extends CassandraAbstractRepository implem
 	{
 		Tweet tweet = new Tweet();
 		tweet.setTweetId(TimeUUIdReorder.reorderTimeUUId(TimeUUIDUtils.getUniqueTimeUUIDinMillis().toString()));
+		tweet.setOriginalTweetId(tweet.getTweetId());
 		tweet.setLogin(login);
 		tweet.setOriginalAuthorLogin(login);
 		tweet.setContent(content);

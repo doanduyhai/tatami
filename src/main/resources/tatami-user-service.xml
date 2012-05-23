@@ -23,8 +23,9 @@
 	<bean id="contactsService" class="fr.ippon.tatami.service.user.ContactsService" parent="abstractUserService">
 		<property name="followerRepository" ref="followerRepository"/>
 		<property name="timeLineRepository" ref="timeLineRepository"/>
-		<property name="followerTweetIndexRepository" ref="followerTweetIndexRepository"/>
-		<property name="userService" ref="userService"/>
+		<property name="tweetRepository" ref="tweetRepository"/>
+		<property name="retweetRepository" ref="retweetRepository"/>
+		<property name="authenticationService" ref="authenticationService"/>
 		<property name="statslineService" ref="statslineService"/>
 	</bean>
 	

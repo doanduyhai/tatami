@@ -41,7 +41,6 @@ import fr.ippon.tatami.service.lines.StatslineService;
 import fr.ippon.tatami.service.lines.TaglineService;
 import fr.ippon.tatami.service.lines.TimelineService;
 import fr.ippon.tatami.service.lines.UserlineService;
-import fr.ippon.tatami.service.pipeline.tweet.FavoritePipelineManager;
 import fr.ippon.tatami.service.pipeline.tweet.TweetPipelineManager;
 import fr.ippon.tatami.web.json.view.TweetView;
 
@@ -66,8 +65,6 @@ public class TweetController extends AbstractRestController
 	private TaglineService taglineService;
 
 	private TweetPipelineManager tweetPipelineManager;
-
-	private FavoritePipelineManager favoritePipelineManager;
 
 	// /rest/tweetStats/day
 	@RequestMapping(value = DAY_STATS_REST, method = RequestMethod.GET, produces = "application/json")
@@ -146,7 +143,7 @@ public class TweetController extends AbstractRestController
 	{
 		log.debug("REST request to like tweet : {} ", tweetId);
 
-		this.favoritePipelineManager.onAddToFavorite(tweetId);
+		this.tweetPipelineManager.onAddToFavorite(tweetId);
 
 		return true;
 	}
@@ -158,7 +155,7 @@ public class TweetController extends AbstractRestController
 	{
 		log.debug("REST request to unlike tweet : {} ", tweetId);
 
-		this.favoritePipelineManager.onRemoveFromFavorite(tweetId);
+		this.tweetPipelineManager.onRemoveFromFavorite(tweetId);
 
 		return true;
 	}
@@ -255,11 +252,6 @@ public class TweetController extends AbstractRestController
 	public void setTweetPipelineManager(TweetPipelineManager tweetPipelineManager)
 	{
 		this.tweetPipelineManager = tweetPipelineManager;
-	}
-
-	public void setFavoritePipelineManager(FavoritePipelineManager favoritePipelineManager)
-	{
-		this.favoritePipelineManager = favoritePipelineManager;
 	}
 
 }

@@ -42,12 +42,9 @@ import fr.ippon.tatami.config.ColumnFamilyKeys;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.BlockedUserRepository;
 import fr.ippon.tatami.repository.FavoriteRepository;
-import fr.ippon.tatami.repository.FavoriteTweetIndexRepository;
 import fr.ippon.tatami.repository.FollowerRepository;
-import fr.ippon.tatami.repository.FollowerTweetIndexRepository;
 import fr.ippon.tatami.repository.FriendRepository;
 import fr.ippon.tatami.repository.MentionLineRepository;
-import fr.ippon.tatami.repository.MentionTweetIndexRepository;
 import fr.ippon.tatami.repository.ReTweetRepository;
 import fr.ippon.tatami.repository.StatsRepository;
 import fr.ippon.tatami.repository.TagLineRepository;
@@ -62,7 +59,6 @@ import fr.ippon.tatami.service.lines.StatslineService;
 import fr.ippon.tatami.service.lines.TaglineService;
 import fr.ippon.tatami.service.lines.TimelineService;
 import fr.ippon.tatami.service.lines.UserlineService;
-import fr.ippon.tatami.service.pipeline.tweet.FavoritePipelineManager;
 import fr.ippon.tatami.service.pipeline.tweet.TweetPipelineManager;
 import fr.ippon.tatami.service.pipeline.tweet.rendering.TweetRenderingPipelineManager;
 import fr.ippon.tatami.service.pipeline.user.UserPipelineManager;
@@ -110,13 +106,7 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 	protected FollowerRepository followerRepository;
 
 	@Inject
-	protected FollowerTweetIndexRepository followerTweetIndexRepository;
-
-	@Inject
 	protected FavoriteRepository favoriteRepository;
-
-	@Inject
-	protected FavoriteTweetIndexRepository favoriteTweetIndexRepository;
 
 	@Inject
 	protected TagLineRepository tagLineRepository;
@@ -135,9 +125,6 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 
 	@Inject
 	protected MentionLineRepository mentionLineRepository;
-
-	@Inject
-	protected MentionTweetIndexRepository mentionTweetIndexRepository;
 
 	@Inject
 	protected BlockedUserRepository blockedUserRepository;
@@ -174,9 +161,6 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 
 	@Inject
 	protected TweetPipelineManager tweetPipelineManager;
-
-	@Inject
-	protected FavoritePipelineManager favoritePipelineManager;
 
 	@Inject
 	protected UserRenderingPipelineManager userRenderingPipelineManager;
@@ -239,11 +223,13 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 
 	}
 
-	protected void mockAuthenticatedUser(User targetUser)
+	protected AuthenticationService mockAuthenticatedUser(User targetUser)
 	{
 		AuthenticationService mockAuthenticationService = mock(AuthenticationService.class);
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(targetUser);
 		userService.setAuthenticationService(mockAuthenticationService);
+
+		return mockAuthenticationService;
 
 	}
 
@@ -303,6 +289,15 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 		}
 
 		return items;
+	}
+
+	protected Collection<HColumn<String, Object>> findInclusiveColumnsRangeFromCF(String CF, String key, String startItemId, boolean reverse,
+			int count)
+	{
+		List<HColumn<String, Object>> columns = createSliceQuery(keyspace, se, se, oe).setColumnFamily(CF).setKey(key)
+				.setRange(startItemId, null, reverse, count + 1).execute().get().getColumns();
+
+		return columns;
 	}
 
 	protected void removeRowFromCF(String CF, String key)

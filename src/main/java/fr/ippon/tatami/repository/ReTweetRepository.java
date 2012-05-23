@@ -5,16 +5,26 @@ import java.util.Collection;
 public interface ReTweetRepository
 {
 
-	void addRetweeter(String retweeterLogin, String tweetId);
+	// RetweetLine
+	void addToRetweetLine(String userLogin, String originalTweetId);
 
-	void addTargetUserForRetweet(String targetUserLogin, String tweetId);
+	boolean isTweetInRetweetLine(String userLogin, String tweetId);
 
-	void removeTargetUserForRetweet(String targetUserLogin, String tweetId);
+	void removeFromRetweetLine(String userLogin, String originalTweetId);
 
-	Collection<String> findRetweeterForTweet(String tweetId);
+	// Retweeters
+	void addRetweeter(String retweeterLogin, String originalTweetId, String retweetId);
 
-	Collection<String> findTartgetUsersForRetweet(String tweetId);
+	void removeRetweeter(String retweeterLogin, String originalTweetId);
 
-	long countRetweeter(String tweetId);
+	String findRetweetIdForRetweeter(String retweeterLogin, String originalTweetId);
+
+	long countRetweeters(String originalTweetId);
+
+	Collection<String> findRetweetIdsForTweet(String originalTweetId);
+
+	Collection<String> findRetweetersForTweet(String originalTweetId);
+
+	void removeRetweeterIndex(String originalTweetId);
 
 }
