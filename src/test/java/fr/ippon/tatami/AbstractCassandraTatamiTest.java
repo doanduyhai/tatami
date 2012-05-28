@@ -68,6 +68,7 @@ import fr.ippon.tatami.service.renderer.tweet.DeleteTweetRenderer;
 import fr.ippon.tatami.service.renderer.tweet.FavoriteTweetRenderer;
 import fr.ippon.tatami.service.renderer.user.ContactsUserRenderer;
 import fr.ippon.tatami.service.security.AuthenticationService;
+import fr.ippon.tatami.service.tweet.RetweetService;
 import fr.ippon.tatami.service.tweet.TweetService;
 import fr.ippon.tatami.service.tweet.XssEncodingService;
 import fr.ippon.tatami.service.user.ContactsService;
@@ -170,6 +171,9 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 
 	@Inject
 	protected TweetService tweetService;
+
+	@Inject
+	protected RetweetService retweetService;
 
 	@Inject
 	protected XssEncodingService xssEncodingService;

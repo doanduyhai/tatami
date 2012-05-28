@@ -16,18 +16,17 @@ import fr.ippon.tatami.AbstractCassandraTatamiTest;
 import fr.ippon.tatami.domain.Tweet;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.exception.FunctionalException;
-import fr.ippon.tatami.service.pipeline.user.UserHandler;
-import fr.ippon.tatami.service.pipeline.user.UserPipelineManager;
 import fr.ippon.tatami.service.security.AuthenticationService;
 
 public class UserPipelineManagerTest extends AbstractCassandraTatamiTest
 {
 	private UserPipelineManager manager;
-	private User jdubois, duyhai;
+	private User jdubois, duyhai, uncleBob;
 
 	private AuthenticationService mockAuthenticationService;
 	private InOrder mockOrder;
 	private UserHandler handler1, handler2;
+	private Tweet t1;
 
 	@Test
 	public void initUserPipelineManagerTest()
@@ -46,13 +45,22 @@ public class UserPipelineManagerTest extends AbstractCassandraTatamiTest
 		duyhai.setFirstName("DuyHai");
 		duyhai.setLastName("DOAN");
 
+		uncleBob = new User();
+		uncleBob.setLogin("uncleBob");
+		uncleBob.setEmail("uncleBob@ippon.fr");
+		uncleBob.setFirstName("uncle");
+		uncleBob.setLastName("BOB");
+
 		this.userRepository.createUser(jdubois);
 		this.userRepository.createUser(duyhai);
+		this.userRepository.createUser(uncleBob);
 
 		mockAuthenticationService = mock(AuthenticationService.class);
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
 		this.userService.setAuthenticationService(mockAuthenticationService);
 		this.tweetService.setAuthenticationService(mockAuthenticationService);
+		this.contactsService.setAuthenticationService(mockAuthenticationService);
+		this.retweetService.setAuthenticationService(mockAuthenticationService);
 
 		handler1 = mock(UserHandler.class);
 		handler2 = mock(UserHandler.class);
@@ -136,6 +144,22 @@ public class UserPipelineManagerTest extends AbstractCassandraTatamiTest
 	public void testOnForget() throws FunctionalException
 	{
 
+		// duyhai follows uncleBob
+		when(mockAuthenticationService.getCurrentUser()).thenReturn(duyhai);
+		this.userPipelineManager.onFollow("uncleBob");
+
+		// uncleBob post tweet
+		when(mockAuthenticationService.getCurrentUser()).thenReturn(uncleBob);
+		t1 = this.tweetPipelineManager.onPost("test retweet");
+
+		// duyhai retweet tweet
+		when(mockAuthenticationService.getCurrentUser()).thenReturn(duyhai);
+		this.tweetPipelineManager.onRetweet(t1.getTweetId());
+
+		Collection<String> jduboisTimelineTweets = this.timeLineRepository.getTweetsRangeFromTimeline("jdubois", null, 10);
+
+		assertEquals(jduboisTimelineTweets.size(), 3, "jduboisTimelineTweets has 3 tweets");
+
 		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
 		this.userPipelineManager.onForget("duyhai");
 
@@ -145,7 +169,7 @@ public class UserPipelineManagerTest extends AbstractCassandraTatamiTest
 		assertEquals(jdubois.getFriendsCount(), 0, "jdubois has 0 friend");
 		assertEquals(duyhai.getFollowersCount(), 0, "duyhai has 0 follower");
 
-		Collection<String> jduboisTimelineTweets = this.timeLineRepository.getTweetsRangeFromTimeline("jdubois", null, 10);
+		jduboisTimelineTweets = this.timeLineRepository.getTweetsRangeFromTimeline("jdubois", null, 10);
 
 		assertEquals(jduboisTimelineTweets.size(), 0, "jduboisTimelineTweets has been cleaned");
 

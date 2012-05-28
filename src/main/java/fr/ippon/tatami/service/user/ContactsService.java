@@ -51,6 +51,7 @@ public class ContactsService extends AbstractUserService implements TweetHandler
 
 		// Spread tweet to followers and followerTweetIndex
 		Collection<String> followerLogins = this.followerRepository.findFollowersForUser(currentUser);
+
 		for (String followerLogin : followerLogins)
 		{
 			this.timeLineRepository.addTweetToTimeline(followerLogin, tweet.getTweetId());
