@@ -52,6 +52,12 @@ public class ColumnFamilyKeys
 
 	public final static String RETWEETLINE_CF = "RetweetLine";
 
+	public final static String CONVERSATIONLINE_CF = "ConversationLine";
+
+	public final static String DIRECTMESSAGELINE_CF = "DirectMessageLine";
+
+	public final static String DIRECTMESSAGE_INDEX_CF = "DirectMessageIndex";
+
 	public final static String COUNTER_CF = "Counter";
 
 	public final static String USER_INDEX_CF = "UserIndex";

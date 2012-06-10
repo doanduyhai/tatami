@@ -12,6 +12,8 @@ public class TatamiConstants
 
 	public static final int DEFAULT_FAVORITE_LIST_SIZE = 10;
 
+	public static final int DEFAULT_DIRECT_MESSAGE_LIST_SIZE = 5;
+
 	public static final int DEFAULT_DAY_LIST_SIZE = 10;
 
 	public static final int DEFAULT_WEEK_LIST_SIZE = 10;
@@ -25,8 +27,6 @@ public class TatamiConstants
 	public static final int USER_SUGGESTION_LIMIT = 5;
 
 	public static final int USER_SEARCH_LIMIT = 10;
-
-	public static final int MAX_TWEET_SIZE = 140;
 
 	public static final int FIRST_FETCH_SIZE = 5;
 

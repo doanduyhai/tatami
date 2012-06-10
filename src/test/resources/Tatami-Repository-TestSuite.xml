@@ -17,6 +17,9 @@
       
       <class name="fr.ippon.tatami.repository.BlockedUserRepositoryTest"/>
       <class name="fr.ippon.tatami.repository.ReTweetRepositoryTest"/>
+      
+      <class name="fr.ippon.tatami.repository.ConversationRepositoryTest"/>
+      <class name="fr.ippon.tatami.repository.DirectMessageRepositoryTest"/>
     </classes>
   </test>
 </suite> 

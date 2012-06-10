@@ -36,7 +36,7 @@ public class CassandraReTweetRepository extends CassandraAbstractRepository impl
 	public Collection<String> findRetweetIdsForTweet(String originalTweetId)
 	{
 		long retweeterCount = this.getCounterValue(RETWEETER_COUNTER, originalTweetId);
-		return this.findRowValuesFromCF(RETWEETER_CF, originalTweetId, false, (int) retweeterCount);
+		return this.findRowValuesFromCF(RETWEETER_CF, originalTweetId, null, false, (int) retweeterCount);
 	}
 
 	@Override

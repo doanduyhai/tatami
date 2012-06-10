@@ -109,10 +109,10 @@ public abstract class CassandraAbstractRepository
 		return items;
 	}
 
-	protected Collection<String> findRowValuesFromCF(String CF, String key, boolean reverse, int count)
+	protected Collection<String> findRowValuesFromCF(String CF, String key, String startItemId, boolean reverse, int count)
 	{
 		List<HColumn<String, Object>> columns = createSliceQuery(keyspaceOperator, se, se, oe).setColumnFamily(CF).setKey(key)
-				.setRange(null, null, reverse, count).execute().get().getColumns();
+				.setRange(startItemId, null, reverse, count).execute().get().getColumns();
 
 		Collection<String> result = new ArrayList<String>();
 		for (HColumn<String, Object> column : columns)
@@ -124,6 +124,14 @@ public abstract class CassandraAbstractRepository
 		}
 
 		return result;
+	}
+
+	protected Collection<HColumn<String, Object>> findColumnsRangeFromCF(String CF, String key, String startItemId, boolean reverse, int count)
+	{
+		List<HColumn<String, Object>> columns = createSliceQuery(keyspaceOperator, se, se, oe).setColumnFamily(CF).setKey(key)
+				.setRange(startItemId, null, reverse, count).execute().get().getColumns();
+
+		return columns;
 	}
 
 	protected void removeRowFromCF(String CF, String key)

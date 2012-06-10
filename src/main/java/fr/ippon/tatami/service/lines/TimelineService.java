@@ -63,7 +63,7 @@ public class TimelineService extends AbstractlineService implements TweetHandler
 
 			String content = USERTAG + currentUser.getLogin() + " <strong>liked your tweet:</strong><br/><em>_PH_...</em>";
 
-			int maxLength = TatamiConstants.MAX_TWEET_SIZE - content.length() + 4;
+			int maxLength = TatamiConstants.MAX_CHARACTERS_PER_TWEET - content.length() + 4;
 			if (tweet.getContent().length() > maxLength)
 			{
 				content = content.replace("_PH_", tweet.getContent().substring(0, maxLength));

@@ -29,6 +29,7 @@ public class TweetService implements TweetHandler, RetweetHandler
 		Tweet tweet = new Tweet();
 		tweet.setTweetId(TimeUUIdReorder.reorderTimeUUId(TimeUUIDUtils.getUniqueTimeUUIDinMillis().toString()));
 		tweet.setOriginalTweetId(tweet.getTweetId());
+		tweet.setSourceTweetId(tweet.getTweetId());
 		tweet.setLogin(currentUser.getLogin());
 		tweet.setOriginalAuthorLogin(currentUser.getLogin());
 		tweet.setContent(content);

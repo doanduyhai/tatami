@@ -36,6 +36,8 @@
 
 	<bean id="blockedUserRepository" class="fr.ippon.tatami.repository.cassandra.CassandraBlockedUserRepository" parent="abstractRepository"/>
 	<bean id="retweetRepository" class="fr.ippon.tatami.repository.cassandra.CassandraReTweetRepository" parent="abstractRepository"/>
+	<bean id="conversationRepository" class="fr.ippon.tatami.repository.cassandra.CassandraConversationRepository" parent="abstractRepository"/>
+	<bean id="directMessageRepository" class="fr.ippon.tatami.repository.cassandra.CassandraDirectMessageRepository" parent="abstractRepository"/>
 	
 	<bean id="userRepository" class="fr.ippon.tatami.repository.cassandra.CassandraUserRepository" parent="abstractRepository"/>
 </beans>

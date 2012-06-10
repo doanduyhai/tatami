@@ -76,7 +76,7 @@ public class CassandraFollowerRepository extends CassandraAbstractRepository imp
 	@Override
 	public Collection<String> findTweetsForUserAndFollower(String authorLogin, String followerLogin)
 	{
-		long indexTweetsCount = this.getCounterValue(FOLLOWED_TWEET_INDEX_COUNTER, authorLogin + ':' + followerLogin);
+		long indexTweetsCount = this.getCounterValue(FOLLOWED_TWEET_INDEX_COUNTER, authorLogin + LOGIN_SEPARATOR + followerLogin);
 		return this.findRangeFromCF(FOLLOWED_TWEET_INDEX_CF, authorLogin + LOGIN_SEPARATOR + followerLogin, null, false, (int) indexTweetsCount);
 	}
 

@@ -41,6 +41,8 @@ import com.eaio.uuid.UUID;
 import fr.ippon.tatami.config.ColumnFamilyKeys;
 import fr.ippon.tatami.domain.User;
 import fr.ippon.tatami.repository.BlockedUserRepository;
+import fr.ippon.tatami.repository.ConversationRepository;
+import fr.ippon.tatami.repository.DirectMessageRepository;
 import fr.ippon.tatami.repository.FavoriteRepository;
 import fr.ippon.tatami.repository.FollowerRepository;
 import fr.ippon.tatami.repository.FriendRepository;
@@ -132,6 +134,12 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 
 	@Inject
 	protected ReTweetRepository retweetRepository;
+
+	@Inject
+	protected ConversationRepository conversationRepository;
+
+	@Inject
+	protected DirectMessageRepository directMessageRepository;
 
 	@Inject
 	protected UserService userService;

@@ -44,6 +44,12 @@ public class Tweet
 	@JsonView(TweetView.Full.class)
 	private String tweetId;
 
+	// Source tweet id for conversation feature
+	@JsonView(TweetView.Full.class)
+	@Column(name = "originalTweetId")
+	private String sourceTweetId;
+
+	// Original tweet id for retweet feature
 	@JsonView(TweetView.Full.class)
 	@Column(name = "originalTweetId")
 	private String originalTweetId;
@@ -51,6 +57,11 @@ public class Tweet
 	@JsonView(TweetView.Full.class)
 	@Column(name = "login")
 	private String login;
+
+	// Original tweet author login for retweet feature
+	@JsonView(TweetView.Full.class)
+	@Column(name = "originalAuthorLogin")
+	private String originalAuthorLogin;
 
 	@JsonView(TweetView.Full.class)
 	@NotEmpty(message = "The tweet content should not be empty")
@@ -62,10 +73,6 @@ public class Tweet
 
 	@Column(name = "notification")
 	private boolean notification = false;
-
-	@JsonView(TweetView.Full.class)
-	@Column(name = "originalAuthorLogin")
-	private String originalAuthorLogin;
 
 	@JsonView(TweetView.Full.class)
 	private String firstName;
@@ -243,6 +250,16 @@ public class Tweet
 	public void setDeletable(Boolean deletable)
 	{
 		this.deletable = deletable;
+	}
+
+	public String getSourceTweetId()
+	{
+		return sourceTweetId;
+	}
+
+	public void setSourceTweetId(String sourceTweetId)
+	{
+		this.sourceTweetId = sourceTweetId;
 	}
 
 }
