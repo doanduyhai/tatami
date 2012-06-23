@@ -21,9 +21,9 @@ public class CassandraConversationRepository extends CassandraAbstractRepository
 	EntityManagerImpl em;
 
 	@Override
-	public void addTweetToConversation(Tweet tweet, String authorLogin, String sourceTweetId)
+	public void addTweetToConversation(Tweet tweet, String sourceTweetId)
 	{
-		this.insertIntoCFWithValue(CONVERSATIONLINE_CF, sourceTweetId, tweet.getTweetId(), authorLogin);
+		this.insertIntoCFWithValue(CONVERSATIONLINE_CF, sourceTweetId, tweet.getTweetId(), tweet.getLogin());
 		tweet.setSourceTweetId(sourceTweetId);
 		em.persist(tweet);
 	}
@@ -37,7 +37,6 @@ public class CassandraConversationRepository extends CassandraAbstractRepository
 
 		for (HColumn<String, Object> column : columns)
 		{
-
 			result.add(new ConversationItem(column.getName(), (String) column.getValue()));
 		}
 		return result;

@@ -38,4 +38,7 @@
 		<property name="userLineRepository" ref="userLineRepository"/>
 	</bean>	
 	
+	<bean id="conversationlineService" class="fr.ippon.tatami.service.lines.ConversationlineService" parent="abstractlineService">
+		<property name="conversationRepository" ref="conversationRepository"/>
+	</bean>
 </beans>

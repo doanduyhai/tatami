@@ -4,6 +4,13 @@ public class ConversationItem
 {
 	private String tweetId;
 	private String authorLogin;
+	private Tweet tweet;
+
+	public ConversationItem(String tweetId, String authorLogin) {
+		super();
+		this.tweetId = tweetId;
+		this.authorLogin = authorLogin;
+	}
 
 	public String getTweetId()
 	{
@@ -25,10 +32,14 @@ public class ConversationItem
 		this.authorLogin = authorLogin;
 	}
 
-	public ConversationItem(String tweetId, String authorLogin) {
-		super();
-		this.tweetId = tweetId;
-		this.authorLogin = authorLogin;
+	public Tweet getTweet()
+	{
+		return tweet;
+	}
+
+	public void setTweet(Tweet tweet)
+	{
+		this.tweet = tweet;
 	}
 
 }

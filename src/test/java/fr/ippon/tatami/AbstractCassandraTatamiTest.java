@@ -55,6 +55,7 @@ import fr.ippon.tatami.repository.TweetRepository;
 import fr.ippon.tatami.repository.UserIndexRepository;
 import fr.ippon.tatami.repository.UserLineRepository;
 import fr.ippon.tatami.repository.UserRepository;
+import fr.ippon.tatami.service.lines.ConversationlineService;
 import fr.ippon.tatami.service.lines.FavoritelineService;
 import fr.ippon.tatami.service.lines.MentionlineService;
 import fr.ippon.tatami.service.lines.StatslineService;
@@ -164,6 +165,9 @@ public abstract class AbstractCassandraTatamiTest extends AbstractTestNGSpringCo
 
 	@Inject
 	protected UserlineService userlineService;
+
+	@Inject
+	protected ConversationlineService conversationlineService;
 
 	@Inject
 	protected UserPipelineManager userPipelineManager;

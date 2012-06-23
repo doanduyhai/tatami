@@ -26,9 +26,9 @@ public class ConversationRepositoryTest extends AbstractCassandraTatamiTest
 		t3 = this.tweetRepository.createTweet("jdubois", "thanks", false);
 		t4 = this.tweetRepository.createTweet("duyhai", "welcomed", false);
 
-		this.conversationRepository.addTweetToConversation(t2, "duyhai", t1.getTweetId());
-		this.conversationRepository.addTweetToConversation(t3, "jdubois", t1.getTweetId());
-		this.conversationRepository.addTweetToConversation(t4, "duyhai", t1.getTweetId());
+		this.conversationRepository.addTweetToConversation(t2, t1.getTweetId());
+		this.conversationRepository.addTweetToConversation(t3, t1.getTweetId());
+		this.conversationRepository.addTweetToConversation(t4, t1.getTweetId());
 
 		Collection<String> conversationTweets = this.findRangeFromCF(CONVERSATIONLINE_CF, t1.getTweetId(), null, true, 10);
 

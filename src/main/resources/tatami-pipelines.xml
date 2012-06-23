@@ -45,6 +45,12 @@
 				<ref bean="retweetService"/>
 			</list>		
 		</property>
+		
+		<property name="conversationHandlers">
+			<list>
+				<ref bean="conversationlineService"/>
+			</list>
+		</property>
 	</bean>
 	
 	

@@ -27,6 +27,8 @@ public class TweetPipelineManager
 
 	private List<FavoriteHandler> favoriteHandlers;
 
+	private List<ConversationHandler> conversationHandlers;
+
 	public Tweet onPost(String tweetContent) throws FunctionalException
 	{
 		log.debug("Creating new tweet : {}", tweetContent);
@@ -64,7 +66,7 @@ public class TweetPipelineManager
 
 	public void onRetweet(String originalTweetId) throws FunctionalException
 	{
-
+		log.debug("Retweeting : {}", originalTweetId);
 		Tweet originalTweet = this.tweetService.findTweetById(originalTweetId);
 		Tweet newTweet = this.tweetService.createTransientTweet(originalTweet.getContent());
 
@@ -79,6 +81,8 @@ public class TweetPipelineManager
 
 	public void onCancelRetweet(String originalTweetId) throws FunctionalException
 	{
+		log.debug("Cancel retweet of : {}", originalTweetId);
+
 		for (RetweetHandler handler : retweetHandlers)
 		{
 			handler.onCancelRetweet(originalTweetId);
@@ -88,6 +92,8 @@ public class TweetPipelineManager
 
 	public void onAddToFavorite(String tweetId) throws FunctionalException
 	{
+		log.debug("Adding {} to user favorite", tweetId);
+
 		Tweet tweet = this.tweetService.findTweetById(tweetId);
 
 		for (FavoriteHandler handler : favoriteHandlers)
@@ -98,12 +104,32 @@ public class TweetPipelineManager
 
 	public void onRemoveFromFavorite(String tweetId) throws FunctionalException
 	{
+		log.debug("Removing {} from user favorite", tweetId);
+
 		Tweet tweet = this.tweetService.findTweetById(tweetId);
 
 		for (FavoriteHandler handler : favoriteHandlers)
 		{
 			handler.onRemoveFromFavorite(tweet);
 		}
+	}
+
+	public void onAddToConversation(String tweetContent, String sourceTweetId) throws FunctionalException
+	{
+		log.debug("Adding {} to conversation with {}", tweetContent, sourceTweetId);
+
+		Tweet newTweet = this.tweetService.createTransientTweet(tweetContent);
+
+		for (TweetHandler handler : tweetHandlers)
+		{
+			handler.onTweetPost(newTweet);
+		}
+
+		for (ConversationHandler handler : this.conversationHandlers)
+		{
+			handler.onAddToConversation(newTweet, sourceTweetId);
+		}
+
 	}
 
 	public void setTweetHandlers(List<TweetHandler> handlers)
@@ -119,6 +145,11 @@ public class TweetPipelineManager
 	public void setFavoriteHandlers(List<FavoriteHandler> favoriteHandlers)
 	{
 		this.favoriteHandlers = favoriteHandlers;
+	}
+
+	public void setConversationHandlers(List<ConversationHandler> conversationHandlers)
+	{
+		this.conversationHandlers = conversationHandlers;
 	}
 
 	public void setTweetService(TweetService tweetService)

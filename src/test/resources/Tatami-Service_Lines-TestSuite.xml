@@ -8,6 +8,7 @@
    	  <class name="fr.ippon.tatami.service.lines.TaglineServiceTest"/>
    	  <class name="fr.ippon.tatami.service.lines.TimelineServiceTest"/>
    	  <class name="fr.ippon.tatami.service.lines.UserlineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.ConversationlineServiceTest"/>
     </classes>
   </test>         
 </suite> 

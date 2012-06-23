@@ -26,6 +26,7 @@
    	  <class name="fr.ippon.tatami.service.tweet.TweetServiceTest"/>
    	  <class name="fr.ippon.tatami.service.tweet.TweetContentValidationServiceTest"/>
    	  <class name="fr.ippon.tatami.service.tweet.XssEncodingServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.tweet.ReTweetServiceTest"/>
    	  <class name="fr.ippon.tatami.service.renderer.tweet.FavoriteTweetRendererTest"/>
    	  <class name="fr.ippon.tatami.service.renderer.tweet.DeleteTweetRendererTest"/>
    	  <class name="fr.ippon.tatami.service.renderer.tweet.ContentTweetRendererTest"/>   	  
@@ -48,6 +49,7 @@
    	  <class name="fr.ippon.tatami.service.lines.TaglineServiceTest"/>
    	  <class name="fr.ippon.tatami.service.lines.TimelineServiceTest"/>
    	  <class name="fr.ippon.tatami.service.lines.UserlineServiceTest"/>
+   	  <class name="fr.ippon.tatami.service.lines.ConversationlineServiceTest"/>
     </classes>
   </test>  
   
@@ -55,6 +57,9 @@
     <classes>
     	<class name="fr.ippon.tatami.service.pipeline.user.UserPipelineManagerTest"/>	
    	  	<class name="fr.ippon.tatami.service.pipeline.tweet.TweetPipelineManagerTest"/>
+   	  	<class name="fr.ippon.tatami.service.pipeline.tweet.TweetPipelineManagerFavoriteTest"/>
+   	  	<class name="fr.ippon.tatami.service.pipeline.tweet.TweetPipelineManagerRetweetTest"/>
+   	  	<class name="fr.ippon.tatami.service.pipeline.tweet.TweetPipelineManagerConversationTest"/>
    	  	<class name="fr.ippon.tatami.service.pipeline.user.rendering.UserRenderingPipelineManagerTest"/>
    	  	<class name="fr.ippon.tatami.service.pipeline.tweet.rendering.TweetRenderingPipelineManagerTest"/>   	  	
     </classes>

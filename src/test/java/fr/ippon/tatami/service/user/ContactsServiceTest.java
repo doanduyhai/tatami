@@ -325,7 +325,7 @@ public class ContactsServiceTest extends AbstractCassandraTatamiTest
 	}
 
 	@Test(dependsOnMethods = "testOnRetweetExceptionForContactServiceTest")
-	public void testOnCancelTweetForContactServiceTest() throws FunctionalException
+	public void testOnCancelReTweetForContactServiceTest() throws FunctionalException
 	{
 		when(mockedAuthenticationService.getCurrentUser()).thenReturn(userToFollow);
 
@@ -357,7 +357,7 @@ public class ContactsServiceTest extends AbstractCassandraTatamiTest
 
 	}
 
-	@Test(dependsOnMethods = "testOnCancelTweetForContactServiceTest", expectedExceptions = FunctionalException.class)
+	@Test(dependsOnMethods = "testOnCancelReTweetForContactServiceTest", expectedExceptions = FunctionalException.class)
 	public void testOnCancelTweetExceptionForContactServiceTest() throws FunctionalException
 	{
 		when(mockedAuthenticationService.getCurrentUser()).thenReturn(userToFollow);

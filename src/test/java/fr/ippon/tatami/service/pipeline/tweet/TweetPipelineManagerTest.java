@@ -4,7 +4,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -28,7 +27,7 @@ public class TweetPipelineManagerTest extends AbstractCassandraTatamiTest
 	private TweetPipelineManager manager;
 
 	private User jdubois, duyhai, tescolan, uncleBob;
-	private Tweet tweet, t1, t2, t3, t4, t5, t6, retweet5, retweet6;
+	private Tweet tweet, t1, t2, t3, t4;
 	private AuthenticationService mockAuthenticationService;
 	private InOrder mockOrder;
 	private TweetHandler handler1, handler2;
@@ -279,175 +278,5 @@ public class TweetPipelineManagerTest extends AbstractCassandraTatamiTest
 
 		// Exception because duyhai cannot remove jdubois tweet
 		this.tweetPipelineManager.onRemove(t1.getTweetId());
-	}
-
-	@Test(dependsOnMethods = "testOnRemoveTweetExceptionTweetPipelineTest")
-	public void testOnAddToFavorite() throws FunctionalException
-	{
-		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
-
-		this.tweetPipelineManager.onAddToFavorite(t1.getTweetId());
-		this.tweetPipelineManager.onAddToFavorite(t2.getTweetId());
-		this.tweetPipelineManager.onAddToFavorite(t3.getTweetId());
-
-		Collection<String> favoriteTweets = this.favoriteRepository.findFavoritesForUser("jdubois");
-
-		assertEquals(favoriteTweets.size(), 3, "favoriteTweets.size() == 3");
-		assertTrue(favoriteTweets.contains(t1.getTweetId()), "favoriteTweets contains tweet1");
-		assertTrue(favoriteTweets.contains(t2.getTweetId()), "favoriteTweets contains tweet2");
-		assertTrue(favoriteTweets.contains(t3.getTweetId()), "favoriteTweets contains tweet3");
-
-	}
-
-	@Test(dependsOnMethods = "testOnAddToFavorite", expectedExceptions = FunctionalException.class)
-	public void testOnAddToFavoriteWithException() throws FunctionalException
-	{
-		// Exception because t1 is already in favorites
-		this.tweetPipelineManager.onAddToFavorite(t1.getTweetId());
-	}
-
-	@Test(dependsOnMethods = "testOnAddToFavoriteWithException")
-	public void testOnRemoveFromFavorite() throws FunctionalException
-	{
-		this.tweetPipelineManager.onRemoveFromFavorite(t2.getTweetId());
-		this.tweetPipelineManager.onRemoveFromFavorite(t3.getTweetId());
-
-		Collection<String> favoriteTweets = this.favoriteRepository.findFavoritesForUser("jdubois");
-
-		assertEquals(favoriteTweets.size(), 1, "favoriteTweets.size() == 1");
-		assertTrue(favoriteTweets.contains(t1.getTweetId()), "favoriteTweets contains tweet1");
-	}
-
-	@Test(dependsOnMethods = "testOnRemoveFromFavorite", expectedExceptions = FunctionalException.class)
-	public void testOnRemoveFromFavoriteWithException() throws FunctionalException
-	{
-		// Exception because t3 is already removed from favorites
-		this.tweetPipelineManager.onRemoveFromFavorite(t3.getTweetId());
-	}
-
-	@Test(dependsOnMethods = "testOnRemoveFromFavoriteWithException")
-	public void testOnRetweet() throws FunctionalException
-	{
-		// jdubois now follows uncleBob
-		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
-		this.userPipelineManager.onFollow("uncleBob");
-
-		// uncleBob post a tweet
-		when(mockAuthenticationService.getCurrentUser()).thenReturn(uncleBob);
-		t5 = this.tweetPipelineManager.onPost("tweet5 advice");
-		t6 = this.tweetPipelineManager.onPost("tweet6 wisdom");
-
-		// jdubois now retweet uncle bob tweet
-		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
-		this.tweetPipelineManager.onRetweet(t5.getTweetId());
-		this.tweetPipelineManager.onRetweet(t6.getTweetId());
-
-		Collection<String> t5Retweeters = this.retweetRepository.findRetweetersForTweet(t5.getTweetId());
-		Collection<String> t6Retweeters = this.retweetRepository.findRetweetersForTweet(t6.getTweetId());
-
-		assertTrue(t5Retweeters.contains("jdubois"), "jdubois is retweeter of tweet5");
-		assertTrue(t6Retweeters.contains("jdubois"), "jdubois is retweeter of tweet6");
-
-		String t5RetweetId = this.retweetRepository.findRetweetIdForRetweeter("jdubois", t5.getTweetId());
-		String t6RetweetId = this.retweetRepository.findRetweetIdForRetweeter("jdubois", t6.getTweetId());
-
-		Collection<String> retweetIdsForTweet5 = this.retweetRepository.findRetweetIdsForTweet(t5.getTweetId());
-		Collection<String> retweetIdsForTweet6 = this.retweetRepository.findRetweetIdsForTweet(t6.getTweetId());
-
-		assertTrue(retweetIdsForTweet5.contains(t5RetweetId));
-		assertTrue(retweetIdsForTweet6.contains(t6RetweetId));
-
-		boolean isT5inJduboisRetweetline = this.retweetRepository.isTweetInRetweetLine("jdubois", t5.getTweetId());
-		boolean isT6inJduboisRetweetline = this.retweetRepository.isTweetInRetweetLine("jdubois", t6.getTweetId());
-
-		assertTrue(isT5inJduboisRetweetline, "tweet5 is in jdubois retweet line");
-		assertTrue(isT6inJduboisRetweetline, "tweet6 is in jdubois retweet line");
-
-		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 10);
-		Collection<String> tescolanTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("tescolan", null, 10);
-
-		assertTrue(duyhaiTimeline.contains(t5RetweetId), "duyhai timeline contains a retweet of tweet5");
-		assertTrue(duyhaiTimeline.contains(t6RetweetId), "duyhai timeline contains a retweet of tweet6");
-
-		assertTrue(tescolanTimeline.contains(t5RetweetId), "tescolan timeline contains a retweet of tweet5");
-		assertTrue(tescolanTimeline.contains(t6RetweetId), "tescolan timeline contains a retweet of tweet6");
-
-	}
-
-	@Test(dependsOnMethods = "testOnRetweet", expectedExceptions = FunctionalException.class)
-	public void testOnRetweetWithException() throws FunctionalException
-	{
-		when(mockAuthenticationService.getCurrentUser()).thenReturn(uncleBob);
-
-		// Exception, cannot retweet his own tweet
-		this.tweetPipelineManager.onRetweet(t5.getTweetId());
-	}
-
-	@Test(dependsOnMethods = "testOnRetweetWithException")
-	public void testOnCancelRetweet() throws FunctionalException
-	{
-		// jdubois now retweet uncle bob tweet
-		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
-		this.tweetPipelineManager.onCancelRetweet(t5.getTweetId());
-
-		Collection<String> t5Retweeters = this.retweetRepository.findRetweetersForTweet(t5.getTweetId());
-
-		assertTrue(t5Retweeters.isEmpty(), "No retweeter for tweet5");
-
-		String t5RetweetId = this.retweetRepository.findRetweetIdForRetweeter("jdubois", t5.getTweetId());
-
-		assertNull(t5RetweetId, "t5RetweetId not found");
-
-		Collection<String> retweetIdsForTweet5 = this.retweetRepository.findRetweetIdsForTweet(t5.getTweetId());
-		assertTrue(retweetIdsForTweet5.isEmpty(), "No retweetId for tweet5");
-
-		boolean isT5inJduboisRetweetline = this.retweetRepository.isTweetInRetweetLine("jdubois", t5.getTweetId());
-
-		assertFalse(isT5inJduboisRetweetline, "tweet5 is not in jdubois retweet line");
-
-		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 10);
-		Collection<String> tescolanTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("tescolan", null, 10);
-
-		assertEquals(duyhaiTimeline.size(), 2, "duyhai timeline has 2 tweets");
-		assertEquals(tescolanTimeline.size(), 1, "tescolan timeline has 1 tweet");
-	}
-
-	@Test(dependsOnMethods = "testOnCancelRetweet", expectedExceptions = FunctionalException.class)
-	public void testOnCancelRetweetWithException() throws FunctionalException
-	{
-		when(mockAuthenticationService.getCurrentUser()).thenReturn(jdubois);
-
-		// Exception because tweet5 retweet has been already canceled
-		this.tweetPipelineManager.onCancelRetweet(t5.getTweetId());
-	}
-
-	@Test(dependsOnMethods = "testOnCancelRetweetWithException")
-	public void testOnRemoveTweetWithRetweet() throws FunctionalException
-	{
-		when(mockAuthenticationService.getCurrentUser()).thenReturn(uncleBob);
-
-		// Exception because tweet5 cannot cancel reweet on its own
-		this.tweetPipelineManager.onRemove(t6.getTweetId());
-
-		Collection<String> t6Retweeters = this.retweetRepository.findRetweetersForTweet(t6.getTweetId());
-
-		assertTrue(t6Retweeters.isEmpty(), "No retweeter for tweet6");
-
-		String t6RetweetId = this.retweetRepository.findRetweetIdForRetweeter("jdubois", t6.getTweetId());
-
-		assertNull(t6RetweetId, "t6RetweetId not found");
-
-		Collection<String> retweetIdsForTweet6 = this.retweetRepository.findRetweetIdsForTweet(t6.getTweetId());
-		assertTrue(retweetIdsForTweet6.isEmpty(), "No retweetId for tweet6");
-
-		boolean isT6inJduboisRetweetline = this.retweetRepository.isTweetInRetweetLine("jdubois", t6.getTweetId());
-
-		assertFalse(isT6inJduboisRetweetline, "tweet6 is not in jdubois retweet line");
-
-		Collection<String> duyhaiTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("duyhai", null, 10);
-		Collection<String> tescolanTimeline = this.timeLineRepository.getTweetsRangeFromTimeline("tescolan", null, 10);
-
-		assertEquals(duyhaiTimeline.size(), 1, "duyhai timeline has 1 tweets");
-		assertEquals(tescolanTimeline.size(), 0, "tescolan timeline has 0 tweet");
 	}
 }

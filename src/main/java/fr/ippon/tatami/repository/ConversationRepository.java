@@ -8,7 +8,7 @@ import fr.ippon.tatami.domain.Tweet;
 public interface ConversationRepository
 {
 
-	public void addTweetToConversation(Tweet tweet, String authorLogin, String sourceTweetId);
+	public void addTweetToConversation(Tweet tweet, String sourceTweetId);
 
 	public Collection<ConversationItem> getTweetsForConversation(String sourceTweetId);
 }
